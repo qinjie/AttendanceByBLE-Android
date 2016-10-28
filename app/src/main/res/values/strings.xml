@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Attendance Taking</string>
+    <string name="action_registerDevice"> I agree to register this device for my account. </string>
+
+    <string name="error_title_login_failed">Login Failed</string>
+    <string name="error_message_login_failed">Network connection unavailable.\nPlease check that you have a data connection and try again.</string>
+
+    <string name="error_title_server_failed">Server Failed</string>
+    <string name="error_message_server_failed">Server is not responded.\nPlease try again later.</string>
+
+    <string name="error_title_bluetooth_not_support">Unsupported Device</string>
+    <string name="error_message_bluetooth_not_support">This device does not support bluetooth.\nPlease try again with another device.</string>
+
+    <string name="login_title">Log In</string>
+    <string name="signup_title">Sign Up</string>
+    <string name="forgot_password_title">Reset Password</string>
+
+    <string name="not_register_device_title">Alert</string>
+    <string name="not_register_device_message">This device is not registered for your account.\nDo you want to register it now?</string>
+
+
+    <string name="register_device_message">Please register device before finish creating account!</string>
+
+
+
+</resources>
