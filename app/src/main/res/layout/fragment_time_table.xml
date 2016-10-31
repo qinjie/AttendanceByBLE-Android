@@ -1,0 +1,111 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.sonata.attendancetakingapplication.Fragment.TimeTableFragment">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+       <TableLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:baselineAligned="false">
+
+                <TableLayout
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:layout_weight="95"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableRow>
+                        <TextView
+                            android:id="@+id/header1"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:lines="2"
+                            android:background="@android:color/holo_blue_light"
+                            android:text="Time" />
+                    </TableRow>
+                </TableLayout>
+
+                <TableLayout
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:layout_weight="30"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableRow>
+                        <TextView
+                            android:id="@+id/header2"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_weight="4"
+                            android:lines="2"
+                            android:background="@android:color/holo_blue_light"
+                            android:text="Subject Information" />
+                    </TableRow>
+                </TableLayout>
+
+
+            </LinearLayout>
+        </TableLayout>
+
+        <ScrollView
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/header"
+            android:fillViewport="true"
+            android:scrollbarStyle="insideOverlay"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal|vertical"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:layout_below="@+id/header"
+                android:layout_centerHorizontal="true">
+
+                <TableLayout
+                    android:id="@+id/tableLayout1"
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:layout_weight="95"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </TableLayout>
+
+                <TableLayout
+                    android:id="@+id/tableLayout2"
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:layout_weight="30"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </TableLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</FrameLayout>
