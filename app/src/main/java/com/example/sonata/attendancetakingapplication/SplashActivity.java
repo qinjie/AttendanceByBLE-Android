@@ -6,8 +6,17 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.example.sonata.attendancetakingapplication.Utils.BluetoothUtils;
 import com.example.sonata.attendancetakingapplication.Utils.ConnectivityUtils;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -38,18 +47,48 @@ public class SplashActivity extends AppCompatActivity {
                     break;
             }
 
-            // get Shared Preferences of the app
-            SharedPreferences pref = getApplicationContext().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
+        obtainedAuCode();
+    }
 
-            // get session token from the Shared Preferences
-            String token = pref.getString("token", "");
+    private void obtainedAuCode()
+    {
+        Preferences.showLoading(SplashActivity.this, "Initialize", "Checking authentication...");
+        try
+        {
+            SharedPreferences pref = getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
+            String auCode = pref.getString("authorizationCode", null);
 
-            // if a token is available then try to login
-            if (!token.equalsIgnoreCase("")) {
-                startAuthenticatedArea();
-            } else {
-                startLogin();
-            }
+            ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+
+            String expand = new String("lesson,lesson_date,lecturers,venue");
+            Call<List<TimetableResult>> call = client.getTimetableCurrentWeek(expand);
+            call.enqueue(new ServerCallBack<List<TimetableResult>>() {
+                @Override
+                public void onResponse(Call<List<TimetableResult>> call, Response<List<TimetableResult>> response) {
+                    try{
+                        Preferences.dismissLoading();
+
+                        int code = response.code();
+                        if (code == 200)
+                        {
+                            startAuthenticatedArea();
+                        }
+                        else
+                        {
+                            startLogin();
+                        }
+
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void requestTurnOnBluetooth()

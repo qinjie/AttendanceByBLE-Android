@@ -4,7 +4,7 @@
     <tab
         id="@+id/tab_schedule"
         icon="@drawable/ic_content"
-        title="Schedule" />
+        title="Timetable" />
     <tab
         id="@+id/tab_history"
         icon="@drawable/ic_recents"

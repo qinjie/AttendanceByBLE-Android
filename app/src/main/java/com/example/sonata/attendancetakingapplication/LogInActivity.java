@@ -1,6 +1,5 @@
 package com.example.sonata.attendancetakingapplication;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -12,14 +11,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.sonata.attendancetakingapplication.Model.LoginInfo;
+import com.example.sonata.attendancetakingapplication.Model.LoginResult;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,18 +31,18 @@ public class LogInActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     private static final int REQUEST_FORGOT_PASSWORD = 1;
 
-    @InjectView(R.id.input_username)  EditText _usernameText;
-    @InjectView(R.id.input_password)  EditText _passwordText;
-    @InjectView(R.id.btn_login)       Button   _loginButton;
-    @InjectView(R.id.link_forgotPass) TextView _forgotPasswordLink;
-    @InjectView(R.id.link_signup)     TextView _signupLink;
+    @BindView(R.id.input_username)  EditText _usernameText;
+    @BindView(R.id.input_password)  EditText _passwordText;
+    @BindView(R.id.btn_login)       Button   _loginButton;
+    @BindView(R.id.link_forgotPass) TextView _forgotPasswordLink;
+    @BindView(R.id.link_signup)     TextView _signupLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_log_in);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +84,7 @@ public class LogInActivity extends AppCompatActivity {
         final String username = _usernameText.getText().toString();
         final String password = _passwordText.getText().toString();
 
-        loginAction(username, password, this);
+        loginAction(username, password);
     }
 
     @Override
@@ -201,25 +202,22 @@ public class LogInActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public void loginAction(String username, String password, final Activity activity) {
+    public void loginAction(String username, String password) {
 
         Preferences.showLoading(this, "Log In", "Authenticating...");
 
         ServerApi client = ServiceGenerator.createService(ServerApi.class);
         LoginInfo up = new LoginInfo(username, password, this);
-        Call<ResponseBody> call = client.login(up);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<LoginResult> call = client.login(up);
+        call.enqueue(new ServerCallBack<LoginResult>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
                 try {
                     Preferences.dismissLoading();
                     int messageCode = response.code();
                     if (messageCode == 200) // SUCCESS
                     {
-                        JSONObject data = new JSONObject(response.body().string());
-
-                        Preferences.setStudentInfo(data);
-                        Preferences.setAuCodeInSP(LogInActivity.this, data.getString("token"));
+                        Preferences.setStudentInfo(response.body());
 
                         startNavigation();
                         onLoginSuccess();
@@ -229,27 +227,13 @@ public class LogInActivity extends AppCompatActivity {
                         onLoginFailed();
                         if (messageCode == 400) // BAD REQUEST HTTP
                         {
-                            JSONObject data = new JSONObject(response.body().string());
-                            int errorCode = data.getInt("code");
-                            if (errorCode == Preferences.CODE_UNVERIFIED_DEVICE)
-                            {
-                                requestRegisterNewDevice();
-                            }
-                            else
-                            {
-                                Preferences.showBadRequestNotificationDialog(LogInActivity.this, errorCode, R.string.login_title);
-                            }
+
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-            }
         });
-
     }
 }
