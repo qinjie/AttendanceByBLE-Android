@@ -15,8 +15,8 @@ import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.google.gson.JsonObject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,15 +24,15 @@ import retrofit2.Response;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
-    @InjectView(R.id.input_email)    EditText _emailText;
-    @InjectView(R.id.btn_forgotPass) Button   _resetPasswordButton;
+    @BindView(R.id.input_email)    EditText _emailText;
+    @BindView(R.id.btn_forgotPass) Button   _resetPasswordButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         this.setTitle("Reset Password");
 

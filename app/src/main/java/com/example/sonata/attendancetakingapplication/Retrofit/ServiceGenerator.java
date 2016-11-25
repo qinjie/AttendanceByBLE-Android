@@ -18,6 +18,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -25,7 +26,7 @@ public class ServiceGenerator {
 
     public static final String API_BASE_URL = "http://188.166.247.154/atk-ble/api/web/index.php/v1/";
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder().addInterceptor(new ErrorInterceptor());
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -53,7 +54,14 @@ public class ServiceGenerator {
                     return chain.proceed(request);
                 }
             });
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            // set your desired log level
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            httpClient.addInterceptor(logging);
         }
+
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = builder.client(client).build();
         return retrofit.create(serviceClass);

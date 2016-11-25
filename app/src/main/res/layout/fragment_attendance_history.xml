@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.sonata.attendancetakingapplication.Fragment.AttendanceHistoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/history_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:dividerHeight="1px"
+        android:divider="@color/divider" />
 
 </FrameLayout>

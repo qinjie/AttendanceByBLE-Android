@@ -15,8 +15,8 @@ import com.example.sonata.attendancetakingapplication.Model.SignupInfo;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,14 +26,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     private static boolean isRegisterDevice = false;
 
-    @InjectView(R.id.input_username)    EditText _usernameText;
-    @InjectView(R.id.input_email)       EditText _emailText;
-    @InjectView(R.id.input_studentId)   EditText _studentIdText;
-    @InjectView(R.id.input_password)    EditText _passwordText;
-    @InjectView(R.id.input_confirmpass) EditText _confirmedPasswordText;
-    @InjectView(R.id.btn_signup)        Button   _signupButton;
-    @InjectView(R.id.link_login)        TextView _loginLink;
-    @InjectView(R.id.item_check)        CheckBox _checkBox;
+    @BindView(R.id.input_username)    EditText _usernameText;
+    @BindView(R.id.input_email)       EditText _emailText;
+    @BindView(R.id.input_studentId)   EditText _studentIdText;
+    @BindView(R.id.input_password)    EditText _passwordText;
+    @BindView(R.id.input_confirmpass) EditText _confirmedPasswordText;
+    @BindView(R.id.btn_signup)        Button   _signupButton;
+    @BindView(R.id.link_login)        TextView _loginLink;
+    @BindView(R.id.item_check)        CheckBox _checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         this.setTitle("Sign Up");
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override

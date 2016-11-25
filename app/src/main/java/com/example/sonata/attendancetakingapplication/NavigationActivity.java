@@ -24,7 +24,6 @@ public class NavigationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_navigation);
 
         setLayoutContent();
-        loadDefaultFragment();
     }
 
     private void setLayoutContent()
@@ -37,22 +36,30 @@ public class NavigationActivity extends AppCompatActivity {
                 @Override
                 public void onTabSelected(@IdRes int tabId) {
                     android.app.Fragment fragment = null;
+                    String title = null;
                     switch (tabId)
                     {
                         case R.id.tab_schedule:
                             fragment = new TimeTableFragment();
+                            title = "Timetable";
                             break;
                         case R.id.tab_history:
                             fragment = new AttendanceHistoryFragment();
+                            title = "History";
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         case R.id.tab_user:
                             fragment = new UserSettingFragment();
+                            title = "User setting";
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         default:
                             fragment = new TimeTableFragment();
+                            title = "Timetable";
                             break;
                     }
 
+                    setActionBarTitle(title);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, fragment)
@@ -64,21 +71,30 @@ public class NavigationActivity extends AppCompatActivity {
                 @Override
                 public void onTabReSelected(@IdRes int tabId) {
                     android.app.Fragment fragment = null;
+                    String title = null;
                     switch (tabId)
                     {
                         case R.id.tab_schedule:
+                            title = "Timetable";
                             fragment = new TimeTableFragment();
                             break;
                         case R.id.tab_history:
+                            title = "History";
                             fragment = new AttendanceHistoryFragment();
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         case R.id.tab_user:
+                            title = "User setting";
                             fragment = new UserSettingFragment();
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         default:
+                            title = "Timetable";
                             fragment = new TimeTableFragment();
                             break;
                     }
+
+                    setActionBarTitle(title);
 
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
@@ -94,12 +110,7 @@ public class NavigationActivity extends AppCompatActivity {
         }
     }
 
-    private void loadDefaultFragment()
-    {
-        android.app.Fragment fragment = new TimeTableFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

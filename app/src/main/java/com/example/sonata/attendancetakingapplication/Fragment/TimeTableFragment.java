@@ -1,14 +1,33 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+
+import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
+import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
+import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +48,16 @@ public class TimeTableFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private Activity context;
+    private Calendar calendar;
+
+    private List<TimetableResult> timetableList;
+
+    private View myView;
+
+    private List<TimetableResult> data = new ArrayList<>();
+    private List<Integer> itemType = new ArrayList<>();
 
     public TimeTableFragment() {
         // Required empty public constructor
@@ -59,13 +88,99 @@ public class TimeTableFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        context = this.getActivity();
+        calendar = Calendar.getInstance();
+    }
+
+    public void onResume(){
+        super.onResume();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(dateFormat.format(calendar.getTime()));
+    }
+
+    private boolean isOnDifferentDate(TimetableResult temp1, TimetableResult temp2)
+    {
+        if (temp1.getLesson_date().getLdate().compareToIgnoreCase(temp2.getLesson_date().getLdate()) == 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private void addItem(TimetableResult subject, Integer type)
+    {
+        data.add(subject);
+        itemType.add(type);
+    }
+
+    private void initTimetableList()
+    {
+        try
+        {
+            for (int i = 0; i < timetableList.size(); i++) {
+                 if(i == 0 || isOnDifferentDate(timetableList.get(i), timetableList.get(i - 1))) {
+                     addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_1);
+                 }
+
+                 addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_2);
+             }
+
+             TimetableListAdapter adapter = new TimetableListAdapter(context, R.layout.item_subject, R.layout.item_week_day, data, itemType);
+             adapter.notifyDataSetChanged();
+
+             ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
+             listView.setAdapter(adapter);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadTimetable()
+    {
+        Preferences.showLoading(context, "Timetable", "Loading data from server...");
+        try
+        {
+            SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
+            String auCode = pref.getString("authorizationCode", null);
+
+            ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+
+            String expand = new String("lesson,lesson_date,lecturers,venue");
+            Call<List<TimetableResult>> call = client.getTimetableCurrentWeek(expand);
+            call.enqueue(new ServerCallBack<List<TimetableResult>>() {
+                @Override
+                public void onResponse(Call<List<TimetableResult>> call, Response<List<TimetableResult>> response) {
+                    try{
+                        Preferences.dismissLoading();
+
+                        timetableList = response.body();
+                        initTimetableList();
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_time_table, container, false);
+        myView = inflater.inflate(R.layout.fragment_time_table, container, false);
+
+        loadTimetable();
+
+        return myView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

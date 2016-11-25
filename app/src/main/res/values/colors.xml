@@ -4,4 +4,14 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#ffffff</color>
+    <color name="red">#FF3B30</color>
+    <color name="grey">#999999</color>
+    <color name="cardview_dark_font">#FF424242</color>
+    <color name="divider">#FF424242</color>
+    <color name="orange">#FFB74D</color>
+    <color name="green">#4CAF50</color>
+
+
+
+
 </resources>

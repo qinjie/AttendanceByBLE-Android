@@ -9,9 +9,12 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
+import com.example.sonata.attendancetakingapplication.Model.LoginResult;
 import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 
 import org.json.JSONObject;
 
@@ -25,8 +28,12 @@ import retrofit2.Call;
 public class Preferences {
 
     // tags for Shared Preferences to store and retrieve some piece of data from local
-    public static final String SharedPreferencesTag = "Resident_Tracking_Preferences";
+    public static final String SharedPreferencesTag = "ATK_BLE_Preferences";
     public static final int SharedPreferences_ModeTag = Context.MODE_PRIVATE;
+
+    public static final int LIST_ITEM_TYPE_1 = 0;
+    public static final int LIST_ITEM_TYPE_2 = 1;
+    public static final int LIST_ITEM_TYPE_COUNT = 2;
 
     private static final int CODE_INCORRECT_USERNAME      = 10;
     private static final int CODE_INCORRECT_PASSWORD      = 11;
@@ -81,11 +88,13 @@ public class Preferences {
         }
     }
 
-    public static void setAuCodeInSP(Activity activity, String authorizationCode) {
+    public static boolean obtainedAuCode (Activity activity) {
         SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("authorizationCode", "Bearer " + authorizationCode);
-        editor.apply();
+        String auCode = pref.getString("authorizationCode", null);
+        if (auCode != null && auCode != "{\"password\":[\"Incorrect username or password.\"]}"){
+            return true;
+        }
+        return false;
     }
 
     public static void showBadRequestNotificationDialog(final Activity activity, int badRequestCode, int title)
@@ -137,9 +146,35 @@ public class Preferences {
         return address;
     }
 
-    public static void setStudentInfo(JSONObject _studentInfo)
+    public static void setStudentInfo(LoginResult _studentInfo)
     {
-        studentInfo = new StudentInfo(_studentInfo);
+        SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString("student_id", _studentInfo.getId());
+        editor.putString("student_name", _studentInfo.getName());
+        editor.putString("student_acad", _studentInfo.getAcad());
+        editor.putString("authorizationCode", "Bearer " + _studentInfo.getToken());
+        editor.putString("major", _studentInfo.getMajor());
+        editor.putString("minor", _studentInfo.getMinor());
+
+        editor.apply();
     }
 
+    public static void clearStudentInfo()
+    {
+        SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        String auCode = pref.getString("authorizationCode", null);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.clear();
+        editor.apply();
+
+        ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+        client.logout();
+
+        Intent intent = new Intent(activity, LogInActivity.class);
+        activity.startActivity(intent);
+    }
 }

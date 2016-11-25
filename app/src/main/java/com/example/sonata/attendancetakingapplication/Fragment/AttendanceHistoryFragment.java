@@ -1,14 +1,32 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.example.sonata.attendancetakingapplication.Adapter.HistoryListAdapter;
+import com.example.sonata.attendancetakingapplication.Model.HistoricalResult;
+import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
+import com.example.sonata.attendancetakingapplication.NavigationActivity;
+import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +47,13 @@ public class AttendanceHistoryFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private List<HistoricalResult> historicalList;
+
+    private View myView;
+    private Activity context;
+
+    public static View.OnClickListener myOnClickListener;
 
     public AttendanceHistoryFragment() {
         // Required empty public constructor
@@ -59,13 +84,61 @@ public class AttendanceHistoryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        context = getActivity();
+        setHasOptionsMenu(true);
+    }
+
+    private void initHistoricalList()
+    {
+        HistoryListAdapter adapter = new HistoryListAdapter(context, R.layout.item_history, historicalList);
+        adapter.notifyDataSetChanged();
+
+        ListView listView = (ListView) myView.findViewById(R.id.history_list);
+        listView.setAdapter(adapter);
+    }
+
+    private void loadHistoricalRecords()
+    {
+        Preferences.showLoading(context, "History", "Loading data from server...");
+        try
+        {
+            SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
+            String auCode = pref.getString("authorizationCode", null);
+
+            ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+
+            Call<List<HistoricalResult>> call = client.getHistoricalReports();
+            call.enqueue(new ServerCallBack<List<HistoricalResult>>() {
+                @Override
+                public void onResponse(Call<List<HistoricalResult>> call, Response<List<HistoricalResult>> response) {
+                    try{
+                        Preferences.dismissLoading();
+
+                        historicalList = response.body();
+                        initHistoricalList();
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_attendance_history, container, false);
+        myView = inflater.inflate(R.layout.fragment_attendance_history, container, false);
+
+        loadHistoricalRecords();
+
+        return myView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

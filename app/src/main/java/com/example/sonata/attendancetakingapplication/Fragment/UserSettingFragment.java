@@ -1,14 +1,29 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.example.sonata.attendancetakingapplication.ChangePasswordActivity;
+import com.example.sonata.attendancetakingapplication.NavigationActivity;
+import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
+
+import java.text.SimpleDateFormat;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +44,10 @@ public class UserSettingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private Activity context;
+
+    private View inflateView;
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -59,13 +78,39 @@ public class UserSettingFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        context = this.getActivity();
+    }
+
+    public void setUserSettingLayout()
+    {
+        TextView signoutTv = (TextView) inflateView.findViewById(R.id.btn_signout);
+        signoutTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Preferences.clearStudentInfo();
+            }
+        });
+
+        TextView changePasswordTv = (TextView) inflateView.findViewById(R.id.btn_change_password);
+        changePasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ChangePasswordActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_setting, container, false);
+        inflateView = inflater.inflate(R.layout.fragment_user_setting, container, false);
+
+        setUserSettingLayout();
+
+        return inflateView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
