@@ -53,4 +53,7 @@ public interface ServerApi {
 
     @POST("user/signup-student")
     Call<ResponseBody> signup(@Body SignupInfo user);
+
+    @POST("test/create")
+    Call<ResponseBody> pushStudentArrayList(@Body JsonObject toUp);
 }
