@@ -16,7 +16,7 @@
     <string name="forgot_password_title">Reset Password</string>
 
     <string name="not_register_device_title">Alert</string>
-    <string name="not_register_device_message">This device is not registered for your account.\nDo you want to register it now?</string>
+    <string name="not_register_device_message">This device is not registered for your account.\nDo you want to register it now?\nAfter register, you cannot take attendance until next day. Please contact your teacher if you want take attendance.</string>
 
 
     <string name="register_device_message">Please register device before finish creating account!</string>

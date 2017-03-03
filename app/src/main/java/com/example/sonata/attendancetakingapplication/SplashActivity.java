@@ -20,7 +20,7 @@ import retrofit2.Response;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final static int REQUEST_ENABLE_BT = 1;
+//    private final static int REQUEST_ENABLE_BT = 1;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +33,6 @@ public class SplashActivity extends AppCompatActivity {
                 return;
             }
 
-            int bluetoothStatus = BluetoothUtils.isConnected();
-            switch (bluetoothStatus)
-            {
-                case BluetoothUtils.BLUETOOTH_NOT_SUPPORT:
-                    BluetoothUtils.showNotSupportedBluetoothDialog(this);
-                    finish();
-                    break;
-                case BluetoothUtils.BLUETOOTH_NOT_ENABLE:
-                    requestTurnOnBluetooth();
-                    break;
-                case BluetoothUtils.BLUETOOTH_ENABLE:
-                    break;
-            }
-
         obtainedAuCode();
     }
 
@@ -57,7 +43,6 @@ public class SplashActivity extends AppCompatActivity {
         {
             SharedPreferences pref = getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
             String auCode = pref.getString("authorizationCode", null);
-
             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
 
             String expand = new String("lesson,lesson_date,lecturers,venue");
@@ -91,25 +76,25 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void requestTurnOnBluetooth()
-    {
-        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(intent, REQUEST_ENABLE_BT);
-    }
+//    private void requestTurnOnBluetooth()
+//    {
+//        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//        startActivityForResult(intent, REQUEST_ENABLE_BT);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == REQUEST_ENABLE_BT) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-
-            }
-            else
-            {
-                finish();
-            }
-        }
+//        if (requestCode == REQUEST_ENABLE_BT) {
+//            // Make sure the request was successful
+//            if (resultCode == RESULT_OK) {
+//
+//            }
+//            else
+//            {
+//                finish();
+//            }
+//        }
     }
 
     private void startLogin() {

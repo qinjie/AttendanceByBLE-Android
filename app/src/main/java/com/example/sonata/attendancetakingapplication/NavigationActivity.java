@@ -3,10 +3,12 @@ package com.example.sonata.attendancetakingapplication;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.FragmentManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Fragment.AttendanceHistoryFragment;
 import com.example.sonata.attendancetakingapplication.Fragment.TimeTableFragment;
@@ -43,7 +46,9 @@ public class NavigationActivity extends AppCompatActivity {
     private static final String STUDENT_MINOR = "2";
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-//    private BeaconManager beaconManager;
+
+    BluetoothAdapter bluetoothAdapter;
+
 
     Intent mServiceIntent;
     private BeaconConsumingService mSensorService;
@@ -83,7 +88,9 @@ public class NavigationActivity extends AppCompatActivity {
             Preferences.notify(context, "Service", "Sensor Service started successfully!");
         }
 
+        initBluetooth();
         checkPermissions();
+
     }
 
     @Override
@@ -222,6 +229,16 @@ public class NavigationActivity extends AppCompatActivity {
         }
     }
 
+    private void initBluetooth() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent, 9);
+
+        }
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -248,4 +265,6 @@ public class NavigationActivity extends AppCompatActivity {
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
+
+
 }

@@ -1,8 +1,9 @@
 package com.example.sonata.attendancetakingapplication;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +27,16 @@ import retrofit2.Response;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-    @BindView(R.id.old_password)      EditText _currentpasswordText;
-    @BindView(R.id.input_password)    EditText _passwordText;
-    @BindView(R.id.input_confirmpass) EditText _confirmedPasswordText;
-    @BindView(R.id.btn_submit)        Button   _submitButton;
+    private static final int CODE_INCORRECT_PASSWORD = 11;
+
+    @BindView(R.id.old_password)
+    EditText _currentpasswordText;
+    @BindView(R.id.input_password)
+    EditText _passwordText;
+    @BindView(R.id.input_confirmpass)
+    EditText _confirmedPasswordText;
+    @BindView(R.id.btn_submit)
+    Button _submitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +118,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+            _passwordText.setError("Password must be between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
             _passwordText.setError(null);
@@ -149,7 +156,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
         Call<ResponseBody> call = client.changePassword(toUp);
 
-        call.enqueue (new Callback<ResponseBody>() {
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
@@ -158,19 +165,30 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     {
                         onChangePasswordSuccess();
                         Toast.makeText(getBaseContext(), "Change password successfully!", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
+                    } else {
                         onChangePasswordFailed();
                         if (messageCode == 400) // BAD REQUEST HTTP
                         {
                             JSONObject data = new JSONObject(response.errorBody().string());
                             int errorCode = data.getInt("code");
-                            Preferences.showBadRequestNotificationDialog(ChangePasswordActivity.this, errorCode, R.string.change_password_title);
+                            if (errorCode == CODE_INCORRECT_PASSWORD) {
+                                android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(ChangePasswordActivity.this).create();
+                                alertDialog.setTitle("Change password failed");
+
+                                alertDialog.setMessage("Wrong password.");
+
+                                alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
+//                            Preferences.showBadRequestNotificationDialog(ChangePasswordActivity.this, errorCode, R.string.change_password_title);
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     onChangePasswordFailed();
                 }
@@ -179,6 +197,19 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 onChangePasswordFailed();
+                android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(ChangePasswordActivity.this).create();
+                alertDialog.setTitle("Change password failed");
+
+                alertDialog.setMessage("Please turn on internet connection.");
+
+
+                alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         });
 

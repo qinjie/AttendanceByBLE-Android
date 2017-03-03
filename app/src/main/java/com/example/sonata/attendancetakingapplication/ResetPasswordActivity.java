@@ -113,7 +113,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
+            _emailText.setError("Enter a valid email address");
             valid = false;
         } else {
             _emailText.setError(null);
@@ -155,8 +155,21 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
+//                startActivity(intent);
+                android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(ResetPasswordActivity.this).create();
+                alertDialog.setTitle("Change password failed");
+
+                alertDialog.setMessage("Please turn on internet connection.");
+
+
+                alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         });
     }

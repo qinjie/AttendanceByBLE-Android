@@ -29,7 +29,7 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
 //    private static final String REGION_UUID = "B9407F30-F5F8-466E-AFF9-25556B57FE6D";
     private static final String INTENT_NAME_TOAST = "edu.np.ece.beaconmonitor.toast";
 
-    Context context;
+//    Context context;
 
     public BeaconConsumingService() {
         super();
@@ -43,7 +43,7 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.bind(this);
 
-        context = getApplicationContext();
+//        context = getBaseContext();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
             public void didEnterRegion(Region region) {
                 Log.i(TAG, "didEnterRegion(): " + region.getUniqueId());
 
-                if (region.getUniqueId().compareTo(Preferences.getVenueBeaconName(context)) == 0)
+                if (region.getUniqueId().compareTo(Preferences.getVenueBeaconName( getBaseContext())) == 0)
                 {
                     Preferences.setEnterVenueRegion(true);
                     //TODO Check date of the lesson in local data
@@ -99,7 +99,7 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
                             //TODO Check lesson is processed or not
                             if (isProcessStarted == false)
                             {
-                                Preferences.notify(context, "ATK_BLE Process", "Enter Venue Beacon!");
+                                Preferences.notify(getBaseContext(), "ATK_BLE Process", "Enter Venue Beacon!");
                                 isProcessStarted = true;
                                 Intent intent = new Intent(getApplicationContext(), BeaconTransmittingService.class);
                                 startService(intent);
@@ -112,19 +112,19 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
                         }
                     }
                 }
-                else if (region.getUniqueId().compareTo(Preferences.getLessonBeaconName(context)) == 0)
+                else if (region.getUniqueId().compareTo(Preferences.getLessonBeaconName( getBaseContext())) == 0)
                 {
-                    Preferences.notify(context, "ATK_BLE Process", "Found Virtual Beacon in range!");
+                    Preferences.notify(getBaseContext(), "ATK_BLE Process", "Found Virtual Beacon in range!");
 
                     if (Preferences.getEnterVenueRegion() == true)
                     {
-                        Preferences.notify(context, "ATK_BLE Process", "Found Virtual Beacon in range!");
+                        Preferences.notify(getBaseContext(), "ATK_BLE Process", "Found Virtual Beacon in range!");
                         Intent intent = new Intent(getApplicationContext(), BeaconRangingService.class);
                         startService(intent);
                     }
                     else
                     {
-                        Preferences.notify(context, "ATK_BLE Process", "You are not in the class!");
+                        Preferences.notify(getBaseContext(), "ATK_BLE Process", "You are not in the class!");
                     }
 
                     //-- Test
@@ -142,7 +142,7 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
 
                 Preferences.setEnterVenueRegion(false);
 
-                Preferences.notify(context, "ATK_BLE Process", "Exit Venue Beacon!");
+                Preferences.notify(getBaseContext(), "ATK_BLE Process", "Exit Venue Beacon!");
 
                 //-- Test
                 Intent broadcastIntent = new Intent(INTENT_NAME_TOAST);
@@ -157,17 +157,17 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
 
         try {
             // Venue beacon monitoring
-            String Region_Name = Preferences.getVenueBeaconName(context);
-            String Region_UUID = Preferences.getVenueBeaconUUID(context);
-            Region monitoringVenueRegion = new Region(Region_Name, Identifier.parse(Region_UUID), null, null);
-            beaconManager.startMonitoringBeaconsInRegion(monitoringVenueRegion);
-
-            // Student beacon monitoring
-            String Lesson_Name = Preferences.getLessonBeaconName(context);
-            String Lesson_UUID = Preferences.getLessonBeaconUUID(context);
-            Region monitoringLessonRegion = new Region(Lesson_Name, Identifier.parse(Lesson_UUID), null, null);
-            beaconManager.startMonitoringBeaconsInRegion(monitoringLessonRegion);
-        } catch (RemoteException e) {
+//            String Region_Name = Preferences.getVenueBeaconName( getBaseContext());
+//            String Region_UUID = Preferences.getVenueBeaconUUID( getBaseContext());
+//            Region monitoringVenueRegion = new Region(Region_Name, Identifier.parse(Region_UUID), null, null);
+//            beaconManager.startMonitoringBeaconsInRegion(monitoringVenueRegion);
+//
+//            // Student beacon monitoring
+//            String Lesson_Name = Preferences.getLessonBeaconName( getBaseContext());
+//            String Lesson_UUID = Preferences.getLessonBeaconUUID( getBaseContext());
+//            Region monitoringLessonRegion = new Region(Lesson_Name, Identifier.parse(Lesson_UUID), null, null);
+//            beaconManager.startMonitoringBeaconsInRegion(monitoringLessonRegion);
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
     }

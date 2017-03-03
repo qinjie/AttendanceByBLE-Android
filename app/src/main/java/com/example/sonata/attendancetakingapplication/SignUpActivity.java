@@ -1,8 +1,8 @@
 package com.example.sonata.attendancetakingapplication;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,14 +26,22 @@ public class SignUpActivity extends AppCompatActivity {
 
     private static boolean isRegisterDevice = false;
 
-    @BindView(R.id.input_username)    EditText _usernameText;
-    @BindView(R.id.input_email)       EditText _emailText;
-    @BindView(R.id.input_studentId)   EditText _studentIdText;
-    @BindView(R.id.input_password)    EditText _passwordText;
-    @BindView(R.id.input_confirmpass) EditText _confirmedPasswordText;
-    @BindView(R.id.btn_signup)        Button   _signupButton;
-    @BindView(R.id.link_login)        TextView _loginLink;
-    @BindView(R.id.item_check)        CheckBox _checkBox;
+    @BindView(R.id.input_username)
+    EditText _usernameText;
+    @BindView(R.id.input_email)
+    EditText _emailText;
+    @BindView(R.id.input_studentId)
+    EditText _studentIdText;
+    @BindView(R.id.input_password)
+    EditText _passwordText;
+    @BindView(R.id.input_confirmpass)
+    EditText _confirmedPasswordText;
+    @BindView(R.id.btn_signup)
+    Button _signupButton;
+    @BindView(R.id.link_login)
+    TextView _loginLink;
+    @BindView(R.id.item_check)
+    CheckBox _checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +70,9 @@ public class SignUpActivity extends AppCompatActivity {
         _checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (_checkBox.isChecked())
-                {
+                if (_checkBox.isChecked()) {
                     isRegisterDevice = true;
-                }
-                else {
+                } else {
                     isRegisterDevice = false;
                 }
             }
@@ -103,18 +109,19 @@ public class SignUpActivity extends AppCompatActivity {
         Preferences.showLoading(SignUpActivity.this, "Sign Up", "Creating Account...");
         if (!validate()) {
             onSignupFailed();
-            return;
+        }else{
+            _signupButton.setEnabled(false);
+
+            String username = _usernameText.getText().toString();
+            String password = _passwordText.getText().toString();
+            String studentId = _studentIdText.getText().toString();
+            String email = _emailText.getText().toString();
+
+            SignupInfo user = new SignupInfo(username, password, email, studentId, this);
+            signupAction(user);
         }
 
-        _signupButton.setEnabled(false);
 
-        String username  = _usernameText.getText().toString();
-        String password  = _passwordText.getText().toString();
-        String studentId = _studentIdText.getText().toString();
-        String email     = _emailText.getText().toString();
-
-        SignupInfo user = new SignupInfo(username, password, email, studentId, this);
-        signupAction(user);
     }
 
     public void onSignupSuccess() {
@@ -132,11 +139,11 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String username          = _usernameText.getText().toString();
-        String email             = _emailText.getText().toString();
-        String password          = _passwordText.getText().toString();
+        String username = _usernameText.getText().toString();
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
         String confirmedPassword = _confirmedPasswordText.getText().toString();
-        String studentId         = _studentIdText.getText().toString();
+        String studentId = _studentIdText.getText().toString();
 
 
         if (username.isEmpty() || username.length() < 4 || username.length() > 255) {
@@ -174,8 +181,7 @@ public class SignUpActivity extends AppCompatActivity {
             _passwordText.setError(null);
         }
 
-        if (isRegisterDevice == false)
-        {
+        if (isRegisterDevice == false) {
             Preferences.showNotificationDialog(SignUpActivity.this, R.string.signup_title, R.string.register_device_message);
             valid = false;
         }
@@ -196,14 +202,11 @@ public class SignUpActivity extends AppCompatActivity {
                     if (messageCode == 200) // SUCCESS
                     {
                         onSignupSuccess();
-                    }
-                    else
-                    {
+                    } else {
                         onSignupFailed();
                     }
 
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     Intent intent = new Intent(SignUpActivity.this, SignUpActivity.class);
                     startActivity(intent);

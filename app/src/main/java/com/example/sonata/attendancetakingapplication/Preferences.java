@@ -9,20 +9,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.example.sonata.attendancetakingapplication.Model.LoginResult;
-import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 
-import org.json.JSONObject;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Sonata on 10/26/2016.
@@ -38,13 +32,13 @@ public class Preferences {
     public static final int LIST_ITEM_TYPE_2 = 1;
     public static final int LIST_ITEM_TYPE_COUNT = 2;
 
-    private static final int CODE_INCORRECT_USERNAME      = 10;
-    private static final int CODE_INCORRECT_PASSWORD      = 11;
-    private static final int CODE_INCORRECT_DEVICE        = 12;
-    private static final int CODE_UNVERIFIED_EMAIL        = 13;
-    public  static final int CODE_UNVERIFIED_DEVICE       = 14;
+    private static final int CODE_INCORRECT_USERNAME = 10;
+    private static final int CODE_INCORRECT_PASSWORD = 11;
+    private static final int CODE_INCORRECT_DEVICE = 12;
+    private static final int CODE_UNVERIFIED_EMAIL = 13;
+    public static final int CODE_UNVERIFIED_DEVICE = 14;
     private static final int CODE_UNVERIFIED_EMAIL_DEVICE = 15;
-    private static final int CODE_INVALID_ACCOUNT         = 16;
+    private static final int CODE_INVALID_ACCOUNT = 16;
 
     public static int cnt = 0;
 
@@ -55,7 +49,7 @@ public class Preferences {
 
     public static boolean isEnterVenueRegion = false;
 
-    public static void showLoading(final Activity activity, final String title, final String message){
+    public static void showLoading(final Activity activity, final String title, final String message) {
         try {
             if (!isShownLoading) {
                 activity.runOnUiThread(new Runnable() {
@@ -67,29 +61,27 @@ public class Preferences {
                 });
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void dismissLoading(){
+    public static void dismissLoading() {
         try {
             if (isShownLoading) {
 
                 loading.dismiss();
                 isShownLoading = false;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void showBadRequestNotificationDialog(final Activity activity, int badRequestCode, int title)
-    {
+    public static void showBadRequestNotificationDialog(final Activity activity, int badRequestCode, int title) {
         int message;
 
-        switch (badRequestCode)
-        {
+        switch (badRequestCode) {
             case CODE_INCORRECT_USERNAME:
 
                 break;
@@ -127,14 +119,32 @@ public class Preferences {
     }
 
     public static String getMac(Context context) {
-        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        String address = info.getMacAddress();
-        return address;
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
     }
 
-    public static void setStudentInfo(LoginResult _studentInfo)
-    {
+    public static void setStudentInfo(LoginResult _studentInfo) {
         SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -144,12 +154,13 @@ public class Preferences {
         editor.putString("authorizationCode", "Bearer " + _studentInfo.getToken());
         editor.putString("major", _studentInfo.getMajor());
         editor.putString("minor", _studentInfo.getMinor());
+        editor.putString("status", _studentInfo.getStatus());
+
 
         editor.apply();
     }
 
-    public static void clearStudentInfo()
-    {
+    public static void clearStudentInfo() {
         SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String auCode = pref.getString("authorizationCode", null);
 
@@ -182,8 +193,7 @@ public class Preferences {
 
     public static void saveDataToLocal(String Venue_Beacon_Name, String Venue_Beacon_UUID,
                                        String Lesson_Beacon_Name, String Lesson_Beacon_UUID,
-                                       String Student_Beacon_Major, String Student_Beacon_Minor)
-    {
+                                       String Student_Beacon_Major, String Student_Beacon_Minor) {
         SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -197,50 +207,43 @@ public class Preferences {
         editor.apply();
     }
 
-    public static String getVenueBeaconName(Context context)
-    {
+    public static String getVenueBeaconName(Context context) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String Venue_Beacon_Name = pref.getString("Venue_Beacon_Name", null);
         return Venue_Beacon_Name;
     }
 
-    public static String getVenueBeaconUUID(Context context)
-    {
+    public static String getVenueBeaconUUID(Context context) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String Venue_Beacon_UUID = pref.getString("Venue_Beacon_UUID", null);
         return Venue_Beacon_UUID;
     }
 
-    public static String getLessonBeaconName(Context context)
-    {
+    public static String getLessonBeaconName(Context context) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String Lesson_Beacon_Name = pref.getString("Lesson_Beacon_Name", null);
         return Lesson_Beacon_Name;
     }
 
-    public static String getLessonBeaconUUID(Context context)
-    {
+    public static String getLessonBeaconUUID(Context context) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String Lesson_Beacon_UUID = pref.getString("Lesson_Beacon_UUID", null);
         return Lesson_Beacon_UUID;
     }
 
-    public static String getStudentBeaconMajor(Context context)
-    {
+    public static String getStudentBeaconMajor(Context context) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String Student_Beacon_Major = pref.getString("Student_Beacon_Major", null);
         return Student_Beacon_Major;
     }
 
-    public static String getStudentBeaconMinor(Context context)
-    {
+    public static String getStudentBeaconMinor(Context context) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         String Student_Beacon_Minor = pref.getString("Student_Beacon_Minor", null);
         return Student_Beacon_Minor;
     }
 
-    public static void setActivity(Activity act)
-    {
+    public static void setActivity(Activity act) {
         activity = act;
     }
 
@@ -248,13 +251,11 @@ public class Preferences {
         return activity;
     }
 
-    public static void setEnterVenueRegion(boolean status)
-    {
+    public static void setEnterVenueRegion(boolean status) {
         isEnterVenueRegion = status;
     }
 
-    public static boolean getEnterVenueRegion()
-    {
+    public static boolean getEnterVenueRegion() {
         return isEnterVenueRegion;
     }
 }
