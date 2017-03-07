@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -193,6 +194,30 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                 alertDialog.show();
                             }
 //                            Preferences.showBadRequestNotificationDialog(ChangePasswordActivity.this, errorCode, R.string.change_password_title);
+                        }else{
+                            onChangePasswordFailed();
+                            android.app.AlertDialog builder = new android.app.AlertDialog.Builder(ChangePasswordActivity.this).create();
+                            builder.setTitle(getString(R.string.another_login_title));
+                            builder.setMessage(getString(R.string.another_login_content));
+
+                            builder.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Preferences.clearStudentInfo();
+                                            Intent intent = new Intent(getBaseContext(), LogInActivity.class);
+                                            startActivity(intent);                                        }
+                                    });
+                            builder.show();
+//                            builder.setPositiveButton("Yes",
+//                                    new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(final DialogInterface dialogInterface, final int i) {
+//                                            Preferences.clearStudentInfo();
+//                                            Intent intent = new Intent(getBaseContext(), LogInActivity.class);
+//                                            startActivity(intent);
+//                                        }
+//                                    });
+//                            builder.create().show();
                         }
                     }
                 } catch (Exception e) {
@@ -203,20 +228,23 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                onChangePasswordFailed();
-                android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(ChangePasswordActivity.this).create();
-                alertDialog.setTitle("Change password failed");
+                if(Preferences.checkInternetOn()){
+                    onChangePasswordFailed();
+                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(ChangePasswordActivity.this).create();
+                    alertDialog.setTitle("Change password failed1111111");
 
-                alertDialog.setMessage("Please turn on internet connection.");
+                    alertDialog.setMessage("Please turn on internet connection.");
 
 
-                alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+                    alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+
             }
         });
 

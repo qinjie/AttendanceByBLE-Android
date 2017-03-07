@@ -2,10 +2,12 @@ package com.example.sonata.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
+import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
@@ -29,9 +32,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
-
-import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
-import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 
 
 public class TimeTableFragment extends Fragment {
@@ -128,7 +128,7 @@ public class TimeTableFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Toast.makeText(getActivity().getBaseContext(),data.get(i).getLesson().getCatalog_number(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getBaseContext(), data.get(i).getLesson().getCatalog_number(), Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -155,7 +155,24 @@ public class TimeTableFragment extends Fragment {
                         Preferences.dismissLoading();
 
                         timetableList = response.body();
-                        initTimetableList();
+                        if (timetableList == null) {
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Detected another login");
+                            builder.setMessage("Your account has been sign in from another device. Please sign in again.");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                                            Preferences.clearStudentInfo();
+                                            Intent intent = new Intent(context, LogInActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+                            builder.create().show();
+
+                        } else {
+                            initTimetableList();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -164,6 +181,7 @@ public class TimeTableFragment extends Fragment {
                 @Override
                 public void onFailure(Call<List<TimetableResult>> call, Throwable t) {
                     super.onFailure(call, t);
+
 
                 }
             });

@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -122,6 +124,18 @@ public class Preferences {
                 .show();
     }
 
+//    public static void showNotificationDialog(final Activity activity, String title, String message) {
+//        new android.app.AlertDialog.Builder(activity)
+//                .setTitle(title)
+//                .setMessage(message)
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        activity.finish();
+//                    }
+//                })
+//                .show();
+//    }
+
     public static String getMac(Context context) {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -192,25 +206,18 @@ public class Preferences {
     }
 
     public static void studentNotify(Context context, String title, String content, int id) {
-//        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//        Notification noti = new Notification.Builder(context)
-//                .setContentTitle(title)
-//                .setContentText(content)
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-//                .build();
-//        mNotificationManager.notify(id, noti);
-
 
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context)
-                        .setContentTitle(title)
-                        .setContentText(content)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                                R.drawable.ic_launcher))
-                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                        .setAutoCancel(true);
+                new NotificationCompat.Builder(context);
+
+        builder.setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.ic_launcher))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         Intent intent = new Intent(context, LogInActivity.class);
@@ -221,12 +228,46 @@ public class Preferences {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
+
+
         builder.setContentIntent(resultPendingIntent);
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, builder.build());
     }
 
+    public static void studentNotifyWithLongText(Context context, String title, String content, int id) {
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context);
+
+        builder.setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.ic_launcher))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(content));
+
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        Intent intent = new Intent(context, LogInActivity.class);
+
+        stackBuilder.addNextIntent(intent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(id, builder.build());
+    }
 
 
     public static void saveDataToLocal(String Venue_Beacon_Name, String Venue_Beacon_UUID,
@@ -296,5 +337,17 @@ public class Preferences {
 
     public static boolean getEnterVenueRegion() {
         return isEnterVenueRegion;
+    }
+
+    public static boolean checkInternetOn() {
+        ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if (netInfo == null) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 }

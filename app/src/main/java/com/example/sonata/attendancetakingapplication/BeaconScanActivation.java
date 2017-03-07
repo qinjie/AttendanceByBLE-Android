@@ -70,7 +70,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
         mHandler = new Handler();
         startRepeatingTask();
-
     }
 
     @Override
@@ -80,20 +79,24 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
         String isLogin = pref.getString("isLogin", "false");
         if (isLogin.equals("true")) {
-            Log.i("Activation-determine", region.getUniqueId() + " : " + status);
+            if (specificTimetable != null) {
+                Log.i("Activation-determine", region.getUniqueId() + ": " + status);
 
-            Region region2 = new Region("Teacher", Identifier.parse(LESSON_UUID), Identifier.parse("58949"), Identifier.parse("29933"));
-            if (region.equals(region2) && status == 1) {
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("hasTeacher", "true");
-                editor.apply();
+                String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+                String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+                Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
 
-            }
+                if (region.equals(region2) && status == 1) {
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("hasTeacher", "true");
+                    editor.apply();
+                }
 
-            String hasTeacher = pref.getString("hasTeacher", "");
-            if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
-                Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
-                Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
+                String hasTeacher = pref.getString("hasTeacher", "");
+                if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
+                    Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
+                    Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
+                }
             }
         }
     }
@@ -106,17 +109,21 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     @Override
     public void didExitRegion(Region region) {
 
-        Region region2 = new Region("Teacher", Identifier.parse(LESSON_UUID), Identifier.parse("58949"), Identifier.parse("29933"));
-        if (region.equals(region2)) {
-            SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("hasTeacher", "false");
-            editor.apply();
-            Log.i("Outgoing", region.getUniqueId());
-        }
-    }
+        if (specificTimetable != null) {
+            String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+            String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+            Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
 
-    private static final String LESSON_UUID = "B9407F30-F5F8-466E-AFF9-25556B57FE6D";
+            if (region.equals(region2)) {
+                SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("hasTeacher", "false");
+                editor.apply();
+                Log.i("Outgoing", region.getUniqueId());
+            }
+        }
+
+    }
 
 
     //this will re-run after every 10 seconds
@@ -142,10 +149,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 //                obj.addProperty("student_id", studentId);
 //                obj.addProperty("datetime", dateObj);
 
-
                 JsonParser parser = new JsonParser();
                 JsonObject obj = parser.parse("{\"datetime\": \"" + dateObj + "\"}").getAsJsonObject();
-
 
                 ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
                 Call<TimetableResult> call = client.getLessonAtSpecificTime(obj);
@@ -163,8 +168,11 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     editor.putString("isLogin", "false");
                                     editor.apply();
 
-                                    Preferences.studentNotify(getBaseContext(), "Detected another login", "Your account has been sign out. Please sign in again ", Integer.parseInt(studentId));
+                                    Preferences.studentNotifyWithLongText(getBaseContext(), "Detected another login", "Your account has been sign in from another device. You will automatically sign out. Click here to sign in again.", Integer.parseInt(studentId));
                                 }
+
+                                specificTimetable = null;
+                                lesson = null;
 
                             }
                         } catch (Exception e) {
@@ -175,7 +183,10 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                     @Override
                     public void onFailure(Call<TimetableResult> call, Throwable t) {
                         if (!checkInternetOn()) {
-                            Preferences.notify(getBaseContext(), "Attendance taking", "Please check your internet connection");
+                            Preferences.notify(getBaseContext(), "Attendance taking", "Please check your internet connection.");
+                        } else {
+                            Preferences.notify(getBaseContext(), "Attendance taking", "Server is busy. Please try again later.");
+
                         }
 
                     }

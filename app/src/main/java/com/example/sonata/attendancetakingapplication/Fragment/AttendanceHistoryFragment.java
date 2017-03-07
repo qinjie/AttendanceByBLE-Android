@@ -1,22 +1,21 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.sonata.attendancetakingapplication.Adapter.HistoryListAdapter;
+import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.HistoricalResult;
-import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
-import com.example.sonata.attendancetakingapplication.NavigationActivity;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -82,8 +81,7 @@ public class AttendanceHistoryFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    private void initHistoricalList()
-    {
+    private void initHistoricalList() {
         HistoryListAdapter adapter = new HistoryListAdapter(context, R.layout.item_history, historicalList);
         adapter.notifyDataSetChanged();
 
@@ -91,11 +89,9 @@ public class AttendanceHistoryFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    private void loadHistoricalRecords()
-    {
+    private void loadHistoricalRecords() {
         Preferences.showLoading(context, "History", "Loading data from server...");
-        try
-        {
+        try {
             SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
             String auCode = pref.getString("authorizationCode", null);
 
@@ -105,20 +101,34 @@ public class AttendanceHistoryFragment extends Fragment {
             call.enqueue(new ServerCallBack<List<HistoricalResult>>() {
                 @Override
                 public void onResponse(Call<List<HistoricalResult>> call, Response<List<HistoricalResult>> response) {
-                    try{
+                    try {
                         Preferences.dismissLoading();
 
                         historicalList = response.body();
-                        initHistoricalList();
-                    }
-                    catch(Exception e){
+
+                        if (historicalList == null) {
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Detected another login");
+                            builder.setMessage("Your account has been sign in from another device. Please sign in again.");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                                            Preferences.clearStudentInfo();
+                                            Intent intent = new Intent(context, LogInActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+                            builder.create().show();
+                        } else {
+                            initHistoricalList();
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
