@@ -56,4 +56,8 @@ public interface ServerApi {
 
     @POST("test/create")
     Call<ResponseBody> pushStudentArrayList(@Body JsonObject toUp);
+
+    @POST("timetable/time")
+    Call<TimetableResult> getLessonAtSpecificTime(@Body JsonObject obj);
+
 }

@@ -1,6 +1,7 @@
 package com.example.sonata.attendancetakingapplication;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -96,6 +97,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         _passwordText.setText("");
         _confirmedPasswordText.setText("");
 
+        finish();
+
+        Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+        startActivity(intent);
     }
 
     public void onChangePasswordFailed() {
@@ -142,6 +147,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     void changePasswordAction() {
+
+        Preferences.showLoading(ChangePasswordActivity.this, "Reset Password", "Processing...");
 
         SharedPreferences pref = getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
         String auCode = pref.getString("authorizationCode", null);

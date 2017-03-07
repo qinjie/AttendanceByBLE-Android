@@ -3,12 +3,16 @@ package com.example.sonata.attendancetakingapplication;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.example.sonata.attendancetakingapplication.Model.LoginResult;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -177,10 +181,6 @@ public class Preferences {
     }
 
     public static void notify(Context context, String title, String content) {
-//        boolean isBeingDebugged = android.os.Debug.isDebuggerConnected();
-//        if(!isBeingDebugged){
-//            return;
-//        }
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification noti = new Notification.Builder(context)
                 .setContentTitle(title)
@@ -190,6 +190,44 @@ public class Preferences {
                 .build();
         mNotificationManager.notify(Preferences.cnt++, noti);
     }
+
+    public static void studentNotify(Context context, String title, String content, int id) {
+//        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//        Notification noti = new Notification.Builder(context)
+//                .setContentTitle(title)
+//                .setContentText(content)
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+//                .build();
+//        mNotificationManager.notify(id, noti);
+
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context)
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                                R.drawable.ic_launcher))
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setAutoCancel(true);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        Intent intent = new Intent(context, LogInActivity.class);
+
+        stackBuilder.addNextIntent(intent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(id, builder.build());
+    }
+
+
 
     public static void saveDataToLocal(String Venue_Beacon_Name, String Venue_Beacon_UUID,
                                        String Lesson_Beacon_Name, String Lesson_Beacon_UUID,
@@ -251,7 +289,8 @@ public class Preferences {
         return activity;
     }
 
-    public static void setEnterVenueRegion(boolean status) {
+    public static void
+    setEnterVenueRegion(boolean status) {
         isEnterVenueRegion = status;
     }
 

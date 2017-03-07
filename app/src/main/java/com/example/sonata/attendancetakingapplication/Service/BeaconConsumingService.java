@@ -157,7 +157,7 @@ public class BeaconConsumingService extends Service implements BeaconConsumer {
 
         try {
             // Venue beacon monitoring
-//            String Region_Name = Preferences.getVenueBeaconName( getBaseContext());
+            String Region_Name = Preferences.getVenueBeaconName( getBaseContext());
 //            String Region_UUID = Preferences.getVenueBeaconUUID( getBaseContext());
 //            Region monitoringVenueRegion = new Region(Region_Name, Identifier.parse(Region_UUID), null, null);
 //            beaconManager.startMonitoringBeaconsInRegion(monitoringVenueRegion);

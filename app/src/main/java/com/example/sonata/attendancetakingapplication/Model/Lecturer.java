@@ -29,6 +29,10 @@ public class Lecturer {
     @Expose
     private String user_id;
 
+    @SerializedName("beacon")
+    @Expose
+    private LectureBeacon beacon;
+
     public String getId() {
         return id;
     }
@@ -67,5 +71,13 @@ public class Lecturer {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public LectureBeacon getBeacon() {
+        return beacon;
+    }
+
+    public void setBeacon(LectureBeacon beacon) {
+        this.beacon = beacon;
     }
 }

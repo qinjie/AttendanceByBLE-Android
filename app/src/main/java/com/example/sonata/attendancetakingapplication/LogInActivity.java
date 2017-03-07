@@ -84,6 +84,11 @@ public class LogInActivity extends AppCompatActivity {
             }
         });
 
+        SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("isLogin", "false");
+        editor.apply();
+
 //        _usernameText.clearFocus();
 //        _passwordText.clearFocus();
     }
@@ -182,6 +187,10 @@ public class LogInActivity extends AppCompatActivity {
     private void startNavigation() {
         Intent intent = new Intent(this, NavigationActivity.class);
         startActivity(intent);
+        SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("isLogin", "true");
+        editor.apply();
     }
 
     public void onRegisterFailed(int errorCode) {
@@ -276,10 +285,12 @@ public class LogInActivity extends AppCompatActivity {
                     if (messageCode == 200) // SUCCESS
                     {
                         if (response.body().getDevice_hash().equals(Preferences.getMac(getBaseContext()))) {
+
                             Preferences.setStudentInfo(response.body());
                             startNavigation();
                             onLoginSuccess();
                         } else {
+                            Preferences.setStudentInfo(response.body());
                             requestRegisterNewDevice();
                         }
                     } else {

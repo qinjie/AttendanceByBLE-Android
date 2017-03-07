@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
@@ -27,6 +29,9 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
+
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 
 
 public class TimeTableFragment extends Fragment {
@@ -117,8 +122,17 @@ public class TimeTableFragment extends Fragment {
             TimetableListAdapter adapter = new TimetableListAdapter(context, R.layout.item_subject, R.layout.item_week_day, data, itemType);
             adapter.notifyDataSetChanged();
 
-            ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
+            final ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
             listView.setAdapter(adapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Toast.makeText(getActivity().getBaseContext(),data.get(i).getLesson().getCatalog_number(),Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,6 +159,12 @@ public class TimeTableFragment extends Fragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                @Override
+                public void onFailure(Call<List<TimetableResult>> call, Throwable t) {
+                    super.onFailure(call, t);
+
                 }
             });
         } catch (Exception e) {
