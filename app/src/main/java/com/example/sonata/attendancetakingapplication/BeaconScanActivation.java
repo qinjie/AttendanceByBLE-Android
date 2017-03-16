@@ -16,8 +16,10 @@ import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.BeaconTransmitter;
 import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
@@ -26,6 +28,7 @@ import org.altbeacon.beacon.startup.RegionBootstrap;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -217,6 +220,22 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 }
 
             }
+
+
+            Beacon beacon = new Beacon.Builder()
+                    .setId1("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6")
+                    .setId2("10001")
+                    .setId3("20001")
+                    .setManufacturer(0x015D)
+                    //Estimo company code
+                    //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+                    .setTxPower(-59)
+                    .setDataFields(Arrays.asList(new Long[] {0l}))
+                    .build();
+            BeaconParser beaconParser = new BeaconParser()
+                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+            BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
+            beaconTransmitter.startAdvertising(beacon);
 
             mHandler.postDelayed(mStatusChecker, mInterval);
 

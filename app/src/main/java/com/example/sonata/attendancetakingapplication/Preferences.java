@@ -195,14 +195,62 @@ public class Preferences {
     }
 
     public static void notify(Context context, String title, String content) {
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification noti = new Notification.Builder(context)
+//        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        NotificationCompat.Builder builder =
+//                new NotificationCompat.Builder(context);
+//
+//        Notification noti = new Notification.Builder(context)
+//                .setContentTitle(title)
+//                .setContentText(content)
+//                .setSmallIcon(R.mipmap.ic_launcher2)
+//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+//                .build();
+//
+//
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//        Intent intent = new Intent(context, LogInActivity.class);
+//
+//        stackBuilder.addNextIntent(intent);
+//        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(
+//                        0,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                );
+//
+//
+//        mNotificationManager.notify(9696, noti);
+
+
+
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context);
+
+        builder.setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(content)
-                .setSmallIcon(R.mipmap.ic_launcher2)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .build();
-        mNotificationManager.notify(Preferences.cnt++, noti);
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.ic_launcher))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        Intent intent = new Intent(context, LogInActivity.class);
+
+        stackBuilder.addNextIntent(intent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(9696, builder.build());
     }
 
     public static void studentNotify(Context context, String title, String content, int id) {

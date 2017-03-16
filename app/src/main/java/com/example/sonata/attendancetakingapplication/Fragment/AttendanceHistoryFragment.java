@@ -108,8 +108,8 @@ public class AttendanceHistoryFragment extends Fragment {
 
                         if (historicalList == null) {
                             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            builder.setTitle("Detected another login");
-                            builder.setMessage("Your account has been sign in from another device. Please sign in again.");
+                            builder.setTitle(R.string.another_login_title);
+                            builder.setMessage(R.string.another_login_content);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         @Override

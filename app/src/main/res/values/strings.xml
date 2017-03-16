@@ -19,7 +19,7 @@
     <string name="not_register_device_message">This device is not registered for your account.\nDo you want to register it now?\nAfter register, you cannot take attendance until next day. Please contact your teacher if you want take attendance.</string>
 
 
-    <string name="register_device_message">Please register device before finish creating account!</string>
+    <string name="register_device_message">Please register device before finish creating account.</string>
 
     <string name="subject_name">1AMPR</string>
     <string name="absent_slot">You can only miss this class 10 times</string>
@@ -33,7 +33,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="another_login_content">Your account has been sign in from another device. Please sign in again.</string>
+    <string name="another_login_content">Your account has been sign in from another device. You will automatically sign out. Click here to sign in again.</string>
     <string name="another_login_title">Detected another login</string>
 
 

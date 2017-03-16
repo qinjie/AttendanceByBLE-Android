@@ -208,16 +208,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                             startActivity(intent);                                        }
                                     });
                             builder.show();
-//                            builder.setPositiveButton("Yes",
-//                                    new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(final DialogInterface dialogInterface, final int i) {
-//                                            Preferences.clearStudentInfo();
-//                                            Intent intent = new Intent(getBaseContext(), LogInActivity.class);
-//                                            startActivity(intent);
-//                                        }
-//                                    });
-//                            builder.create().show();
+
                         }
                     }
                 } catch (Exception e) {
