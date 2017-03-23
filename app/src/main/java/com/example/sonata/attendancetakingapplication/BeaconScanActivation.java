@@ -186,7 +186,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                     @Override
                     public void onFailure(Call<TimetableResult> call, Throwable t) {
                         if (!checkInternetOn()) {
-                            Preferences.notify(getBaseContext(), "Attendance taking", "Please check your internet connection.");
+//                            Preferences.notify(getBaseContext(), "Attendance taking", "Please check your internet connection.");
                         } else {
                             Preferences.notify(getBaseContext(), "Attendance taking", "Server is busy. Please try again later.");
 

@@ -21,7 +21,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
         android:name=".BeaconScanActivation"
         android:allowBackup="true"
@@ -30,44 +29,49 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--<service-->
-            <!--android:name=".Service.BeaconConsumingService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false"/>-->
+        <!-- <service -->
+        <!-- android:name=".Service.BeaconConsumingService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false"/> -->
 
-        <!--<service-->
-            <!--android:name=".Service.BeaconRangingService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false"/>-->
 
-        <!--<service-->
-            <!--android:name=".Service.BeaconTransmittingService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false"/>-->
+        <!-- <service -->
+        <!-- android:name=".Service.BeaconRangingService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false"/> -->
 
-        <!--<receiver-->
-            <!--android:name=".BroadcastReceiver.BootReceiver"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true"-->
-            <!--android:label="RestartServiceWhenStopped">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
 
-                <!--<category android:name="android.intent.category.HOME" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
+        <!-- <service -->
+        <!-- android:name=".Service.BeaconTransmittingService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false"/> -->
 
-        <!--<receiver-->
-            <!--android:name=".BroadcastReceiver.ToastMakerReceiver"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="edu.np.ece.beaconmonitor.toast" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
+
+        <!-- <receiver -->
+        <!-- android:name=".BroadcastReceiver.BootReceiver" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" -->
+        <!-- android:label="RestartServiceWhenStopped"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
+
+
+        <!-- <category android:name="android.intent.category.HOME" /> -->
+        <!-- </intent-filter> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+
+
+        <!-- <receiver -->
+        <!-- android:name=".BroadcastReceiver.ToastMakerReceiver" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="edu.np.ece.beaconmonitor.toast" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
 
         <activity
             android:name=".SplashActivity"
@@ -82,7 +86,8 @@
         <activity android:name=".SignUpActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".NavigationActivity" />
-        <activity android:name=".ChangePasswordActivity"/>
+        <activity android:name=".ChangePasswordActivity" />
+        <activity android:name=".TestActivity"></activity>
     </application>
 
 </manifest>

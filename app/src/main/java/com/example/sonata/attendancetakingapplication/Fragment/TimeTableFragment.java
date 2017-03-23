@@ -19,6 +19,10 @@ import android.widget.Toast;
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
+import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseHelper;
+import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
+import com.example.sonata.attendancetakingapplication.OrmLite.Subject;
+import com.example.sonata.attendancetakingapplication.OrmLite.Time;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -88,6 +92,9 @@ public class TimeTableFragment extends Fragment {
 
         context = this.getActivity();
         calendar = Calendar.getInstance();
+
+        DatabaseManager.init(getActivity().getBaseContext());
+
     }
 
     public void onResume() {
@@ -111,12 +118,32 @@ public class TimeTableFragment extends Fragment {
 
     private void initTimetableList() {
         try {
+
+            //TODO
+            //for test
+            DatabaseManager.getInstance().deleteAllSubject();
+
+
             for (int i = 0; i < timetableList.size(); i++) {
                 if (i == 0 || isOnDifferentDate(timetableList.get(i), timetableList.get(i - 1))) {
                     addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_1);
                 }
 
                 addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_2);
+
+                //TODO
+                //for test
+                Subject aSubject = new Subject();
+                aSubject.setName(timetableList.get(i).getLesson().getSubject_area());
+                DatabaseManager.getInstance().addSubject(aSubject);
+
+                Time aTime = DatabaseManager.getInstance().newTimeItem();
+                aTime.setDatetime(timetableList.get(i).getLesson_date().getDate());
+                aTime.setSubjectList(aSubject);
+                DatabaseManager.getInstance().updateTimeItem(aTime);
+
+
+
             }
 
             TimetableListAdapter adapter = new TimetableListAdapter(context, R.layout.item_subject, R.layout.item_week_day, data, itemType);

@@ -181,9 +181,17 @@ public class NavigationActivity extends AppCompatActivity {
                             getSupportActionBar().setSubtitle(null);
                             break;
                         case R.id.tab_user:
-                            fragment = new UserSettingFragment();
-                            title = "User setting";
-                            getSupportActionBar().setSubtitle(null);
+
+                            //TODO
+                            //for test
+                            Intent intent = new Intent(getBaseContext(),TestActivity.class);
+                            startActivity(intent);
+
+                            //TODO
+                            //bo cmt di, for test
+//                            fragment = new UserSettingFragment();
+//                            title = "User setting";
+//                            getSupportActionBar().setSubtitle(null);
                             break;
                         default:
                             fragment = new TimeTableFragment();
@@ -191,11 +199,13 @@ public class NavigationActivity extends AppCompatActivity {
                             break;
                     }
 
-                    setActionBarTitle(title);
-                    FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.container, fragment)
-                            .commit();
+                    //TODO
+                    //bo cmt di, for test
+//                    setActionBarTitle(title);
+//                    FragmentManager fragmentManager = getFragmentManager();
+//                    fragmentManager.beginTransaction()
+//                            .replace(R.id.container, fragment)
+//                            .commit();
                 }
             });
 
