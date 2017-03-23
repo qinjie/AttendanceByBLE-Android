@@ -134,7 +134,7 @@ public class TimeTableFragment extends Fragment {
                 //TODO
                 //for test
                 Subject aSubject = new Subject();
-                aSubject.setName(timetableList.get(i).getLesson().getSubject_area());
+                aSubject.setName(timetableList.get(i).getLesson().getSubject_area()+" "+ timetableList.get(i).getLesson().getCatalog_number());
                 DatabaseManager.getInstance().addSubject(aSubject);
 
                 Time aTime = DatabaseManager.getInstance().newTimeItem();
