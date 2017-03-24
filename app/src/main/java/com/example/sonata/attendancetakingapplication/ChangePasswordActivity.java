@@ -222,7 +222,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 if(Preferences.checkInternetOn()){
                     onChangePasswordFailed();
                     android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(ChangePasswordActivity.this).create();
-                    alertDialog.setTitle("Change password failed1111111");
+                    alertDialog.setTitle("Change password failed");
 
                     alertDialog.setMessage("Please turn on internet connection.");
 

@@ -285,7 +285,6 @@ public class LogInActivity extends AppCompatActivity {
                     if (messageCode == 200) // SUCCESS
                     {
                         if (response.body().getDevice_hash().equals(Preferences.getMac(getBaseContext()))) {
-
                             Preferences.setStudentInfo(response.body());
                             startNavigation();
                             onLoginSuccess();

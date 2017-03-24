@@ -17,12 +17,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
+import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
+import com.example.sonata.attendancetakingapplication.Model.Lesson;
+import com.example.sonata.attendancetakingapplication.Model.LessonDate;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
-import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseHelper;
+import com.example.sonata.attendancetakingapplication.Model.Venue;
 import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
 import com.example.sonata.attendancetakingapplication.OrmLite.Subject;
-import com.example.sonata.attendancetakingapplication.OrmLite.Time;
+import com.example.sonata.attendancetakingapplication.OrmLite.SubjectDateTime;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -111,6 +114,13 @@ public class TimeTableFragment extends Fragment {
         return true;
     }
 
+    private boolean isOnDifferentDateForOffline(SubjectDateTime temp1, SubjectDateTime temp2) {
+        if (temp1.getLesson_date().compareToIgnoreCase(temp2.getEndTime()) == 0) {
+            return false;
+        }
+        return true;
+    }
+
     private void addItem(TimetableResult subject, Integer type) {
         data.add(subject);
         itemType.add(type);
@@ -118,32 +128,11 @@ public class TimeTableFragment extends Fragment {
 
     private void initTimetableList() {
         try {
-
-            //TODO
-            //for test
-            DatabaseManager.getInstance().deleteAllSubject();
-
-
             for (int i = 0; i < timetableList.size(); i++) {
                 if (i == 0 || isOnDifferentDate(timetableList.get(i), timetableList.get(i - 1))) {
                     addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_1);
                 }
-
                 addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_2);
-
-                //TODO
-                //for test
-                Subject aSubject = new Subject();
-                aSubject.setName(timetableList.get(i).getLesson().getSubject_area()+" "+ timetableList.get(i).getLesson().getCatalog_number());
-                DatabaseManager.getInstance().addSubject(aSubject);
-
-                Time aTime = DatabaseManager.getInstance().newTimeItem();
-                aTime.setDatetime(timetableList.get(i).getLesson_date().getDate());
-                aTime.setSubjectList(aSubject);
-                DatabaseManager.getInstance().updateTimeItem(aTime);
-
-
-
             }
 
             TimetableListAdapter adapter = new TimetableListAdapter(context, R.layout.item_subject, R.layout.item_week_day, data, itemType);
@@ -198,6 +187,26 @@ public class TimeTableFragment extends Fragment {
                             builder.create().show();
 
                         } else {
+                            //clear old data
+                            DatabaseManager.getInstance().deleteAllSubject();
+                            for (int i = 0; i < timetableList.size(); i++) {
+                                Subject aSubject = new Subject();
+                                aSubject.setLesson_id(timetableList.get(i).getLesson_id());
+                                aSubject.setSubject_area(timetableList.get(i).getLesson().getSubject_area());
+                                aSubject.setCatalog_number(timetableList.get(i).getLesson().getCatalog_number());
+                                aSubject.setLocation(timetableList.get(i).getVenue().getAddress());
+                                aSubject.setUuid(timetableList.get(i).getLessonBeacon().getUuid());
+                                DatabaseManager.getInstance().addSubject(aSubject);
+
+                                SubjectDateTime aSubjectDateTime = DatabaseManager.getInstance().newSubjectDateTimeItem();
+                                aSubjectDateTime.setLesson_date_id(timetableList.get(i).getLesson_date().getId());
+                                aSubjectDateTime.setStartTime(timetableList.get(i).getLesson().getStart_time());
+                                aSubjectDateTime.setEndTime(timetableList.get(i).getLesson().getEnd_time());
+                                aSubjectDateTime.setLesson_date(timetableList.get(i).getLesson_date().getLdate());
+                                aSubjectDateTime.setSubject(aSubject);
+                                DatabaseManager.getInstance().updateTimeItem(aSubjectDateTime);
+                            }
+
                             initTimetableList();
                         }
                     } catch (Exception e) {
@@ -208,7 +217,48 @@ public class TimeTableFragment extends Fragment {
                 @Override
                 public void onFailure(Call<List<TimetableResult>> call, Throwable t) {
                     super.onFailure(call, t);
+                    Preferences.dismissLoading();
 
+                    //Create the temporary timetableList with minimum attribute on each element
+                    //all unused attribute will be null
+                    //if you want to add more information for display when offline,
+                    //please add more attribute into objects in OrmLite folder first
+                    //then get new attribute from server and set that attribute for OrmLite object in onResponse method code above
+                    timetableList = new ArrayList<TimetableResult>();
+
+                    List<Subject> listSubject = DatabaseManager.getInstance().getAllSubjects();
+
+                    for (Subject tmp : listSubject) {
+                        for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()) {
+
+                            TimetableResult aTimetableResult = new TimetableResult();
+                            aTimetableResult.setLesson_id(tmp.getLesson_id());
+
+                            Lesson aLesson = new Lesson();
+                            aLesson.setSubject_area(tmp.getSubject_area());
+                            aLesson.setCatalog_number(tmp.getCatalog_number());
+                            aLesson.setStart_time(tmp2.getStartTime());
+                            aLesson.setEnd_time(tmp2.getEndTime());
+                            aTimetableResult.setLesson(aLesson);
+
+                            LessonDate aLessonDate = new LessonDate();
+                            aLessonDate.setLesson_id(tmp.getLesson_id());
+                            aLessonDate.setLdate(tmp2.getLesson_date());
+                            aTimetableResult.setLesson_date(aLessonDate);
+
+                            LessonBeacon aLessonBeacon = new LessonBeacon();
+                            aLessonBeacon.setUuid(tmp.getUuid());
+                            aTimetableResult.setLessonBeacon(aLessonBeacon);
+
+                            Venue aVenue = new Venue();
+                            aVenue.setAddress(tmp.getLocation());
+                            aTimetableResult.setVenue(aVenue);
+
+                            timetableList.add(aTimetableResult);
+                        }
+
+                    }
+                    initTimetableList();
 
                 }
             });

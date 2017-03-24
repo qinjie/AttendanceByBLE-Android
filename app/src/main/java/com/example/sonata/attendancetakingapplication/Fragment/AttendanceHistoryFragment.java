@@ -16,6 +16,7 @@ import android.widget.ListView;
 import com.example.sonata.attendancetakingapplication.Adapter.HistoryListAdapter;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.HistoricalResult;
+import com.example.sonata.attendancetakingapplication.NavigationActivity;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -126,6 +127,52 @@ public class AttendanceHistoryFragment extends Fragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                @Override
+                public void onFailure(Call<List<HistoricalResult>> call, Throwable t) {
+                    super.onFailure(call, t);
+                    Preferences.dismissLoading();
+
+
+                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity()).create();
+                    alertDialog.setTitle("This function needs internet connection");
+                    alertDialog.setMessage("Please turn on internet to get latest update about you attendance history.");
+                    alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+
+//                                    FragmentManager fragmentManager = getFragmentManager();
+//                                    fragmentManager.beginTransaction()
+//                                            .replace(R.id.container, new TimeTableFragment())
+//                                            .commit();
+
+                                    Intent intent = new Intent(getActivity().getBaseContext(), NavigationActivity.class);
+                                    getActivity().finish();
+                                    startActivity(intent);
+
+                                }
+                            });
+                    alertDialog.show();
+
+
+//                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getBaseContext());
+//                    builder.setTitle("This function needs internet connection");
+//                    builder.setMessage("Please turn on internet to get newest update about you attendance history.");
+//                    builder.setPositiveButton(android.R.string.ok, null);
+//                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                        @RequiresApi(api = Build.VERSION_CODES.M)
+//                        @Override
+//                        public void onDismiss(DialogInterface dialog) {
+//                            FragmentManager fragmentManager = getFragmentManager();
+//                            fragmentManager.beginTransaction()
+//                                    .replace(R.id.container, new TimeTableFragment())
+//                                    .commit();
+//                        }
+//                    });
+//                    builder.show();
+
                 }
             });
         } catch (Exception e) {

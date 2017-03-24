@@ -1,16 +1,14 @@
 package com.example.sonata.attendancetakingapplication;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
-import com.example.sonata.attendancetakingapplication.Utils.BluetoothUtils;
 import com.example.sonata.attendancetakingapplication.Utils.ConnectivityUtils;
 
 import java.util.List;
@@ -18,29 +16,34 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
+
 public class SplashActivity extends AppCompatActivity {
 
 //    private final static int REQUEST_ENABLE_BT = 1;
 
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-            Preferences.setActivity(this);
-
+        Preferences.setActivity(this);
+        SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        String islogin = pref.getString("isLogin", "");
+        if (!islogin.equals("true")) {
             if (!ConnectivityUtils.isConnected(this)) {
                 ConnectivityUtils.showConnectionFailureDialog(this);
                 return;
             }
-
-        obtainedAuCode();
+            obtainedAuCode();
+        }else{
+            startAuthenticatedArea();
+        }
     }
 
-    private void obtainedAuCode()
-    {
+    private void obtainedAuCode() {
         Preferences.showLoading(SplashActivity.this, "Initialize", "Checking authentication...");
-        try
-        {
+        try {
             SharedPreferences pref = getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
             String auCode = pref.getString("authorizationCode", null);
             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
@@ -50,28 +53,22 @@ public class SplashActivity extends AppCompatActivity {
             call.enqueue(new ServerCallBack<List<TimetableResult>>() {
                 @Override
                 public void onResponse(Call<List<TimetableResult>> call, Response<List<TimetableResult>> response) {
-                    try{
+                    try {
                         Preferences.dismissLoading();
 
                         int code = response.code();
-                        if (code == 200)
-                        {
+                        if (code == 200) {
                             startAuthenticatedArea();
-                        }
-                        else
-                        {
+                        } else {
                             startLogin();
                         }
 
-                    }
-                    catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

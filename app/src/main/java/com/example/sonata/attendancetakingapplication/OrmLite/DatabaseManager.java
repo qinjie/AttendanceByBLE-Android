@@ -54,19 +54,19 @@ public class DatabaseManager {
         }
     }
 
-    public Time newTimeItem() {
-        Time timeItem = new Time();
+    public SubjectDateTime newSubjectDateTimeItem() {
+        SubjectDateTime subjectDateTimeItem = new SubjectDateTime();
         try {
-            getHelper().getTimeDao().create(timeItem);
+            getHelper().getSubjectDateTimeDao().create(subjectDateTimeItem);
         } catch (java.sql.SQLException e) {
             e.printStackTrace();
         }
-        return timeItem;
+        return subjectDateTimeItem;
     }
 
-    public void updateTimeItem(Time item) {
+    public void updateTimeItem(SubjectDateTime item) {
         try {
-            getHelper().getTimeDao().update(item);
+            getHelper().getSubjectDateTimeDao().update(item);
         } catch (java.sql.SQLException e) {
             e.printStackTrace();
         }
@@ -87,5 +87,16 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
-    
+
+    public List<Subject> getSubjectWithSubjectArea(String wishListId) {
+        List<Subject> wishList = null;
+        try {
+            wishList = getHelper().getSubjectDao().queryForEq("subject_area", wishListId);
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return wishList;
+    }
+
+
 }

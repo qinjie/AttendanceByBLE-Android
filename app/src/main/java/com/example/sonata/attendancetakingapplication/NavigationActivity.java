@@ -14,6 +14,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -184,14 +185,14 @@ public class NavigationActivity extends AppCompatActivity {
 
                             //TODO
                             //for test
-                            Intent intent = new Intent(getBaseContext(),TestActivity.class);
-                            startActivity(intent);
+//                            Intent intent = new Intent(getBaseContext(),TestActivity.class);
+//                            startActivity(intent);
 
                             //TODO
                             //bo cmt di, for test
-//                            fragment = new UserSettingFragment();
-//                            title = "User setting";
-//                            getSupportActionBar().setSubtitle(null);
+                            fragment = new UserSettingFragment();
+                            title = "User setting";
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         default:
                             fragment = new TimeTableFragment();
@@ -201,11 +202,11 @@ public class NavigationActivity extends AppCompatActivity {
 
                     //TODO
                     //bo cmt di, for test
-//                    setActionBarTitle(title);
-//                    FragmentManager fragmentManager = getFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.container, fragment)
-//                            .commit();
+                    setActionBarTitle(title);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commit();
                 }
             });
 
@@ -247,6 +248,21 @@ public class NavigationActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void returnToDefaultTab(){
+//        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+//
+//        bottomBar.selectTabAtPosition(0);
+
+        String title = "Timetable";
+        android.app.Fragment fragment = new TimeTableFragment();
+//        setActionBarTitle(title);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
     }
 
     private void checkPermissions() {
