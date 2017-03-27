@@ -294,9 +294,10 @@ public class LogInActivity extends AppCompatActivity {
                         }
                     } else {
                         onLoginFailed();
-
                     }
                 } catch (Exception e) {
+                    Preferences.setStudentInfo(response.body());
+                    requestRegisterNewDevice();
                     e.printStackTrace();
 
                 }

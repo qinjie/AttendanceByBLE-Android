@@ -83,23 +83,25 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
         String isLogin = pref.getString("isLogin", "false");
         if (isLogin.equals("true")) {
             if (specificTimetable != null) {
-                Log.i("Activation-determine", region.getUniqueId() + ": " + status);
-
-                String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-                String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-                Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-
-                if (region.equals(region2) && status == 1) {
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("hasTeacher", "true");
-                    editor.apply();
-                }
-
-                String hasTeacher = pref.getString("hasTeacher", "");
-                if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
-                    Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
-                    Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
-                }
+//                Log.i("Activation-determine", region.getUniqueId() + ": " + status);
+//
+//                String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+//                String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+//
+//
+//                Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+//
+//                if (region.equals(region2) && status == 1) {
+//                    SharedPreferences.Editor editor = pref.edit();
+//                    editor.putString("hasTeacher", "true");
+//                    editor.apply();
+//                }
+//
+//                String hasTeacher = pref.getString("hasTeacher", "");
+//                if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
+//                    Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
+//                    Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
+//                }
             }
         }
     }
@@ -113,17 +115,17 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     public void didExitRegion(Region region) {
 
         if (specificTimetable != null) {
-            String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-            String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-            Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-
-            if (region.equals(region2)) {
-                SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("hasTeacher", "false");
-                editor.apply();
-                Log.i("Outgoing", region.getUniqueId());
-            }
+//            String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+//            String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+//            Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+//
+//            if (region.equals(region2)) {
+//                SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+//                SharedPreferences.Editor editor = pref.edit();
+//                editor.putString("hasTeacher", "false");
+//                editor.apply();
+//                Log.i("Outgoing", region.getUniqueId());
+//            }
         }
 
     }
@@ -196,14 +198,20 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 });
 
                 if (lesson != null) {
-                    Region region = new Region("AllStudent", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), null, null);
-
-                    String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-                    String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-                    Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-
-                    regionList.add(region);
-                    regionList.add(region2);
+//                    Region region = new Region("AllStudent", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), null, null);
+//
+////                    String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+////                    String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+//
+//
+//                    String teacherMajor = "555";
+//                    String teacherMinor = "333";
+//
+//
+//                    Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+//
+//                    regionList.add(region);
+//                    regionList.add(region2);
                 }
 
                 regionBootstrap = new RegionBootstrap(tmp, regionList);
@@ -222,20 +230,20 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
             }
 
 
-            Beacon beacon = new Beacon.Builder()
-                    .setId1("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6")
-                    .setId2("10001")
-                    .setId3("20001")
-                    .setManufacturer(0x015D)
-                    //Estimo company code
-                    //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
-                    .setTxPower(-59)
-                    .setDataFields(Arrays.asList(new Long[] {0l}))
-                    .build();
-            BeaconParser beaconParser = new BeaconParser()
-                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
-            BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
-            beaconTransmitter.startAdvertising(beacon);
+//            Beacon beacon = new Beacon.Builder()
+//                    .setId1("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6")
+//                    .setId2("10001")
+//                    .setId3("22222")
+//                    .setManufacturer(0x015D)
+//                    //Estimo company code
+//                    //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+//                    .setTxPower(-59)
+//                    .setDataFields(Arrays.asList(new Long[] {0l}))
+//                    .build();
+//            BeaconParser beaconParser = new BeaconParser()
+//                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+//            BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
+//            beaconTransmitter.startAdvertising(beacon);
 
             mHandler.postDelayed(mStatusChecker, mInterval);
 

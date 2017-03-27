@@ -1,29 +1,24 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
-import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.os.PersistableBundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.sonata.attendancetakingapplication.ChangePasswordActivity;
-import com.example.sonata.attendancetakingapplication.NavigationActivity;
+import com.example.sonata.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
-
-import java.text.SimpleDateFormat;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
 
 
 public class UserSettingFragment extends Fragment {
@@ -41,6 +36,10 @@ public class UserSettingFragment extends Fragment {
     private Activity context;
 
     private View inflateView;
+
+
+    BeaconJobScheduler testService;
+    private static int kJobId = 0;
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -67,16 +66,51 @@ public class UserSettingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        try {
+            if (getArguments() != null) {
+                mParam1 = getArguments().getString(ARG_PARAM1);
+                mParam2 = getArguments().getString(ARG_PARAM2);
+            }
 
-        context = this.getActivity();
+            context = this.getActivity();
+
+            Intent startServiceIntent = new Intent(getActivity().getBaseContext(), BeaconJobScheduler.class);
+            getActivity().startService(startServiceIntent);
+
+            ComponentName serviceName = new ComponentName(context, BeaconJobScheduler.class);
+            JobInfo builder = new JobInfo.Builder(kJobId, serviceName)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .build();
+            JobScheduler jobScheduler =
+                    (JobScheduler) getActivity().getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(builder);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setUserSettingLayout()
-    {
+    public void startJob() {
+        ComponentName serviceComponent = new ComponentName(getActivity().getBaseContext(), BeaconJobScheduler.class);
+        JobInfo.Builder builder = new JobInfo.Builder(kJobId++, serviceComponent);
+        builder.setMinimumLatency(1 * 1000); // wait at least
+        builder.setOverrideDeadline(2 * 1000); // maximum delay
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
+        builder.setRequiresDeviceIdle(true); // device should be idle
+        builder.setRequiresCharging(false); // we don't care if the device is charging or not
+        PersistableBundle bundle = new PersistableBundle();
+        bundle.putString("abc", "123");
+        builder.setExtras(bundle);
+        JobScheduler jobScheduler =
+                (JobScheduler) getActivity().getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(builder.build());
+    }
+
+    public void cancelJob() {
+        JobScheduler tm = (JobScheduler) getActivity().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        tm.cancelAll();
+    }
+
+    public void setUserSettingLayout() {
         TextView signoutTv = (TextView) inflateView.findViewById(R.id.btn_signout);
         signoutTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +123,7 @@ public class UserSettingFragment extends Fragment {
         changePasswordTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                cancelJob();
                 Intent intent = new Intent(context, ChangePasswordActivity.class);
                 startActivity(intent);
             }
