@@ -121,13 +121,6 @@ public class TimeTableFragment extends Fragment {
         return true;
     }
 
-    private boolean isOnDifferentDateForOffline(SubjectDateTime temp1, SubjectDateTime temp2) {
-        if (temp1.getLesson_date().compareToIgnoreCase(temp2.getEndTime()) == 0) {
-            return false;
-        }
-        return true;
-    }
-
     private void addItem(TimetableResult subject, Integer type) {
         data.add(subject);
         itemType.add(type);
@@ -206,6 +199,17 @@ public class TimeTableFragment extends Fragment {
                                 aSubject.setCatalog_number(timetableList.get(i).getLesson().getCatalog_number());
                                 aSubject.setLocation(timetableList.get(i).getVenue().getAddress());
                                 aSubject.setUuid(timetableList.get(i).getLessonBeacon().getUuid());
+                                aSubject.setTeacher_id(timetableList.get(i).getLecturers().getId());
+                                aSubject.setTeacher_name(timetableList.get(i).getLecturers().getName());
+                                aSubject.setTeacher_acad(timetableList.get(i).getLecturers().getAcad());
+                                aSubject.setTeacher_email(timetableList.get(i).getLecturers().getEmail());
+                                if(timetableList.get(i).getLecturers().getBeacon()==null){
+                                    aSubject.setTeacher_major("");
+                                    aSubject.setTeacher_minor("");
+                                }else {
+                                    aSubject.setTeacher_major(timetableList.get(i).getLecturers().getBeacon().getMajor());
+                                    aSubject.setTeacher_minor(timetableList.get(i).getLecturers().getBeacon().getMinor());
+                                }
                                 DatabaseManager.getInstance().addSubject(aSubject);
 
                                 SubjectDateTime aSubjectDateTime = DatabaseManager.getInstance().newSubjectDateTimeItem();
@@ -218,9 +222,15 @@ public class TimeTableFragment extends Fragment {
 
                                 for(StudentInfo theStudent: timetableList.get(i).getStudentList()){
                                     Student aStudent = DatabaseManager.getInstance().newStudentItem();
-                                    aStudent.setBeacon_id(theStudent.getBeacon().getId());
-                                    aStudent.setBeacon_major(theStudent.getBeacon().getMajor());
-                                    aStudent.setBeacon_minor(theStudent.getBeacon().getMinor());
+                                    if(theStudent.getBeacon()==null){
+                                        aStudent.setBeacon_id("");
+                                        aStudent.setBeacon_major("");
+                                        aStudent.setBeacon_minor("");
+                                    }else {
+                                        aStudent.setBeacon_id(theStudent.getBeacon().getId());
+                                        aStudent.setBeacon_major(theStudent.getBeacon().getMajor());
+                                        aStudent.setBeacon_minor(theStudent.getBeacon().getMinor());
+                                    }
                                     aStudent.setCard(theStudent.getCard());
                                     aStudent.setName(theStudent.getName());
                                     aStudent.setStudent_id(theStudent.getId());

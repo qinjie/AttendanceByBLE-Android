@@ -33,6 +33,25 @@ public class Subject extends OrmLiteBaseActivity {
     @DatabaseField
     private String uuid;
 
+    @DatabaseField
+    private String teacher_id;
+
+    @DatabaseField
+    private String teacher_name;
+
+    @DatabaseField
+    private String teacher_acad;
+
+    @DatabaseField
+    private String teacher_email;
+
+    @DatabaseField
+    private String teacher_major;
+
+    @DatabaseField
+    private String teacher_minor;
+
+
     @ForeignCollectionField
     private ForeignCollection<SubjectDateTime> subject_datetime;
 
@@ -101,6 +120,54 @@ public class Subject extends OrmLiteBaseActivity {
         this.uuid = uuid;
     }
 
+
+    public String getTeacher_id() {
+        return teacher_id;
+    }
+
+    public void setTeacher_id(String teacher_id) {
+        this.teacher_id = teacher_id;
+    }
+
+    public String getTeacher_name() {
+        return teacher_name;
+    }
+
+    public void setTeacher_name(String teacher_name) {
+        this.teacher_name = teacher_name;
+    }
+
+    public String getTeacher_acad() {
+        return teacher_acad;
+    }
+
+    public void setTeacher_acad(String teacher_acad) {
+        this.teacher_acad = teacher_acad;
+    }
+
+    public String getTeacher_email() {
+        return teacher_email;
+    }
+
+    public void setTeacher_email(String teacher_email) {
+        this.teacher_email = teacher_email;
+    }
+
+    public String getTeacher_major() {
+        return teacher_major;
+    }
+
+    public void setTeacher_major(String teacher_major) {
+        this.teacher_major = teacher_major;
+    }
+
+    public String getTeacher_minor() {
+        return teacher_minor;
+    }
+
+    public void setTeacher_minor(String teacher_minor) {
+        this.teacher_minor = teacher_minor;
+    }
 
     public List<SubjectDateTime> getSubject_Datetime(){
         ArrayList<SubjectDateTime> itemList = new ArrayList<SubjectDateTime>();
