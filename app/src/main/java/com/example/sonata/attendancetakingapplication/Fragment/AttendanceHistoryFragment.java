@@ -103,7 +103,6 @@ public class AttendanceHistoryFragment extends Fragment {
                 @Override
                 public void onResponse(Call<List<HistoricalResult>> call, Response<List<HistoricalResult>> response) {
                     try {
-                        Preferences.dismissLoading();
 
                         historicalList = response.body();
 
@@ -127,6 +126,8 @@ public class AttendanceHistoryFragment extends Fragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    Preferences.dismissLoading();
+
                 }
 
                 @Override
@@ -143,35 +144,14 @@ public class AttendanceHistoryFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
 
-//                                    FragmentManager fragmentManager = getFragmentManager();
-//                                    fragmentManager.beginTransaction()
-//                                            .replace(R.id.container, new TimeTableFragment())
-//                                            .commit();
-
                                     Intent intent = new Intent(getActivity().getBaseContext(), NavigationActivity.class);
-                                    getActivity().finish();
                                     startActivity(intent);
+                                    getActivity().finish();
+
 
                                 }
                             });
                     alertDialog.show();
-
-
-//                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getBaseContext());
-//                    builder.setTitle("This function needs internet connection");
-//                    builder.setMessage("Please turn on internet to get newest update about you attendance history.");
-//                    builder.setPositiveButton(android.R.string.ok, null);
-//                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                        @RequiresApi(api = Build.VERSION_CODES.M)
-//                        @Override
-//                        public void onDismiss(DialogInterface dialog) {
-//                            FragmentManager fragmentManager = getFragmentManager();
-//                            fragmentManager.beginTransaction()
-//                                    .replace(R.id.container, new TimeTableFragment())
-//                                    .commit();
-//                        }
-//                    });
-//                    builder.show();
 
                 }
             });

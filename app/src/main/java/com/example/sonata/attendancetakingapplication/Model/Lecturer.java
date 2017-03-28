@@ -31,7 +31,7 @@ public class Lecturer {
 
     @SerializedName("beacon")
     @Expose
-    private LectureBeacon beacon;
+    private UserBeacon beacon;
 
     public String getId() {
         return id;
@@ -73,11 +73,11 @@ public class Lecturer {
         this.user_id = user_id;
     }
 
-    public LectureBeacon getBeacon() {
+    public UserBeacon getBeacon() {
         return beacon;
     }
 
-    public void setBeacon(LectureBeacon beacon) {
+    public void setBeacon(UserBeacon beacon) {
         this.beacon = beacon;
     }
 }

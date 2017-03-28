@@ -1,7 +1,11 @@
 package com.example.sonata.attendancetakingapplication;
 
 import android.app.Application;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -9,6 +13,7 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.example.sonata.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -132,7 +137,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
 
     //this will re-run after every 10 seconds
-    private int mInterval = 10000;
+    private int mInterval = 30000;
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
@@ -215,6 +220,21 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 }
 
                 regionBootstrap = new RegionBootstrap(tmp, regionList);
+
+
+
+
+                Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
+                startService(startServiceIntent);
+
+                ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
+                JobInfo builder = new JobInfo.Builder(1, serviceName)
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .setPeriodic(30000)
+                        .build();
+                JobScheduler jobScheduler =
+                        (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                jobScheduler.schedule(builder);
 
             } else {
                 if (regionList != null && regionList.size() > 0) {

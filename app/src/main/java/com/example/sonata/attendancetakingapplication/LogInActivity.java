@@ -1,5 +1,6 @@
 package com.example.sonata.attendancetakingapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,8 +47,8 @@ public class LogInActivity extends AppCompatActivity {
     Button _loginButton;
     @BindView(R.id.link_forgotPass)
     TextView _forgotPasswordLink;
-    @BindView(R.id.link_signup)
-    TextView _signupLink;
+//    @BindView(R.id.link_signup)
+//    TextView _signupLink;
 
 
     @Override
@@ -74,15 +75,15 @@ public class LogInActivity extends AppCompatActivity {
             }
         });
 
-        _signupLink.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-            }
-        });
+//        _signupLink.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                // Start the Signup activity
+//                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+//                startActivityForResult(intent, REQUEST_SIGNUP);
+//            }
+//        });
 
         SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
         SharedPreferences.Editor editor = pref.edit();
@@ -194,7 +195,23 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     public void onRegisterFailed(int errorCode) {
-        Preferences.showBadRequestNotificationDialog(this, errorCode, R.string.login_title);
+//        Preferences.showBadRequestNotificationDialog(this, errorCode, R.string.login_title);
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(LogInActivity.this).create();
+        alertDialog.setTitle("Register Failed");
+        if (checkInternetOn() && errorCode ==400) {
+            alertDialog.setMessage("This device has been registered with another account. Please contact to teacher for help.");
+
+        } else {
+            alertDialog.setMessage("Please turn on internet connection.");
+
+        }
+        alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     private void registerNewDevice() {
@@ -226,11 +243,10 @@ public class LogInActivity extends AppCompatActivity {
                         onLoginSuccess();
                         startNavigation();
                     } else {
-
                         if (messageCode == 400) // BAD REQUEST HTTP
                         {
                             JSONObject data = new JSONObject(response.errorBody().string());
-                            onRegisterFailed(data.getInt("code"));
+                            onRegisterFailed(messageCode);
                         }
                     }
                 } catch (Exception e) {
@@ -272,35 +288,36 @@ public class LogInActivity extends AppCompatActivity {
 
 
         Preferences.showLoading(this, "Log In", "Authenticating...");
-
+        final Activity act = this;
         ServerApi client = ServiceGenerator.createService(ServerApi.class);
         LoginInfo up = new LoginInfo(username, password, this);
         Call<LoginResult> call = client.login(up);
         call.enqueue(new ServerCallBack<LoginResult>() {
             @Override
             public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
-                try {
-                    Preferences.dismissLoading();
-                    int messageCode = response.code();
-                    if (messageCode == 200) // SUCCESS
-                    {
-                        if (response.body().getDevice_hash().equals(Preferences.getMac(getBaseContext()))) {
-                            Preferences.setStudentInfo(response.body());
-                            startNavigation();
-                            onLoginSuccess();
-                        } else {
-                            Preferences.setStudentInfo(response.body());
-                            requestRegisterNewDevice();
-                        }
+//                try {
+                Preferences.setActivity(act);
+                Preferences.dismissLoading();
+                int messageCode = response.code();
+                if (messageCode == 200) // SUCCESS
+                {
+                    if (response.body().getDevice_hash().equals(Preferences.getMac(getBaseContext()))) {
+                        Preferences.setStudentInfo(response.body());
+                        startNavigation();
+                        onLoginSuccess();
                     } else {
-                        onLoginFailed();
+                        Preferences.setStudentInfo(response.body());
+                        requestRegisterNewDevice();
                     }
-                } catch (Exception e) {
-                    Preferences.setStudentInfo(response.body());
-                    requestRegisterNewDevice();
-                    e.printStackTrace();
-
+                } else {
+                    onLoginFailed();
                 }
+//                } catch (Exception e) {
+//                    Preferences.setStudentInfo(response.body());
+//                    requestRegisterNewDevice();
+//                    e.printStackTrace();
+//
+//                }
             }
 
             @Override

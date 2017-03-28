@@ -34,49 +34,6 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true"/>
 
-        <!-- <service -->
-        <!-- android:name=".Service.BeaconConsumingService" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="false"/> -->
-
-
-        <!-- <service -->
-        <!-- android:name=".Service.BeaconRangingService" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="false"/> -->
-
-
-        <!-- <service -->
-        <!-- android:name=".Service.BeaconTransmittingService" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="false"/> -->
-
-
-        <!-- <receiver -->
-        <!-- android:name=".BroadcastReceiver.BootReceiver" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true" -->
-        <!-- android:label="RestartServiceWhenStopped"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
-
-
-        <!-- <category android:name="android.intent.category.HOME" /> -->
-        <!-- </intent-filter> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="uk.ac.shef.oak.ActivityRecognition.RestartSensor" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
-
-
-        <!-- <receiver -->
-        <!-- android:name=".BroadcastReceiver.ToastMakerReceiver" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="edu.np.ece.beaconmonitor.toast" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
 
         <activity
             android:name=".SplashActivity"
@@ -88,7 +45,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".LogInActivity" />
-        <activity android:name=".SignUpActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".NavigationActivity" />
         <activity android:name=".ChangePasswordActivity" />

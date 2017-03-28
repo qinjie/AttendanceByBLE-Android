@@ -28,6 +28,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // the DAO object we use to access the SimpleData table
     private Dao<Subject, Integer> SubjectDao = null;
     private Dao<SubjectDateTime, Integer> SubjectDateTimeDao = null;
+    private Dao<Student, Integer> students = null;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,6 +39,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(connectionSource, Subject.class);
             TableUtils.createTable(connectionSource, SubjectDateTime.class);
+            TableUtils.createTable(connectionSource, Student.class);
+
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
             throw new RuntimeException(e);
@@ -88,5 +91,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
         return SubjectDateTimeDao;
     }
+
+
+    public Dao<Student, Integer> getStudentDao() {
+        if (null == students) {
+            try {
+                students = getDao(Student.class);
+            }catch (java.sql.SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return students;
+    }
+
 
 }

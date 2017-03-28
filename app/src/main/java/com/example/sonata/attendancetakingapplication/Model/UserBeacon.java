@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by hoanglong on 07-Mar-17.
  */
 
-public class LectureBeacon {
+public class UserBeacon {
     @SerializedName("id")
     @Expose
     private String id;

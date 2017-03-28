@@ -3,6 +3,8 @@ package com.example.sonata.attendancetakingapplication.OrmLite;
 import android.content.Context;
 import android.database.SQLException;
 
+import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
+
 import java.util.List;
 
 /**
@@ -54,24 +56,6 @@ public class DatabaseManager {
         }
     }
 
-    public SubjectDateTime newSubjectDateTimeItem() {
-        SubjectDateTime subjectDateTimeItem = new SubjectDateTime();
-        try {
-            getHelper().getSubjectDateTimeDao().create(subjectDateTimeItem);
-        } catch (java.sql.SQLException e) {
-            e.printStackTrace();
-        }
-        return subjectDateTimeItem;
-    }
-
-    public void updateTimeItem(SubjectDateTime item) {
-        try {
-            getHelper().getSubjectDateTimeDao().update(item);
-        } catch (java.sql.SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void deleteSubject(Subject subject) {
         try {
             getHelper().getSubjectDao().delete(subject);
@@ -97,6 +81,43 @@ public class DatabaseManager {
         }
         return wishList;
     }
+
+    public SubjectDateTime newSubjectDateTimeItem() {
+        SubjectDateTime subjectDateTimeItem = new SubjectDateTime();
+        try {
+            getHelper().getSubjectDateTimeDao().create(subjectDateTimeItem);
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return subjectDateTimeItem;
+    }
+
+    public void updateSubjectDateTimeItem(SubjectDateTime item) {
+        try {
+            getHelper().getSubjectDateTimeDao().update(item);
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Student newStudentItem() {
+        Student studentItem = new Student();
+        try {
+            getHelper().getStudentDao().create(studentItem);
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return studentItem;
+    }
+
+    public void updateStudentItem(Student item) {
+        try {
+            getHelper().getStudentDao().update(item);
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

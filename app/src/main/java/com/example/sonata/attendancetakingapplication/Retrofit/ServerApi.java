@@ -8,7 +8,6 @@ import com.example.sonata.attendancetakingapplication.Model.HistoricalResult;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
 import com.example.sonata.attendancetakingapplication.Model.LoginInfo;
 import com.example.sonata.attendancetakingapplication.Model.LoginResult;
-import com.example.sonata.attendancetakingapplication.Model.SignupInfo;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Model.Venue;
 import com.google.gson.JsonObject;
@@ -50,9 +49,6 @@ public interface ServerApi {
 
     @POST("user/reset-password")
     Call<ResponseBody> resetPassword(@Body JsonObject email);
-
-    @POST("user/signup-student")
-    Call<ResponseBody> signup(@Body SignupInfo user);
 
     @POST("test/create")
     Call<ResponseBody> pushStudentArrayList(@Body JsonObject toUp);

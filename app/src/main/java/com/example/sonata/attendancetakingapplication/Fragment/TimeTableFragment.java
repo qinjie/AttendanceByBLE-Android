@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -21,9 +22,11 @@ import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
 import com.example.sonata.attendancetakingapplication.Model.LessonDate;
+import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Model.Venue;
 import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
+import com.example.sonata.attendancetakingapplication.OrmLite.Student;
 import com.example.sonata.attendancetakingapplication.OrmLite.Subject;
 import com.example.sonata.attendancetakingapplication.OrmLite.SubjectDateTime;
 import com.example.sonata.attendancetakingapplication.Preferences;
@@ -50,6 +53,10 @@ public class TimeTableFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Handler handler;
+    private Thread mThread;
+
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -128,6 +135,8 @@ public class TimeTableFragment extends Fragment {
 
     private void initTimetableList() {
         try {
+            final ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
+
             for (int i = 0; i < timetableList.size(); i++) {
                 if (i == 0 || isOnDifferentDate(timetableList.get(i), timetableList.get(i - 1))) {
                     addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_1);
@@ -135,11 +144,11 @@ public class TimeTableFragment extends Fragment {
                 addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_2);
             }
 
+
             TimetableListAdapter adapter = new TimetableListAdapter(context, R.layout.item_subject, R.layout.item_week_day, data, itemType);
+            listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
-            final ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
-            listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -168,8 +177,6 @@ public class TimeTableFragment extends Fragment {
                 @Override
                 public void onResponse(Call<List<TimetableResult>> call, Response<List<TimetableResult>> response) {
                     try {
-                        Preferences.dismissLoading();
-
                         timetableList = response.body();
                         if (timetableList == null) {
                             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -182,11 +189,14 @@ public class TimeTableFragment extends Fragment {
                                             Preferences.clearStudentInfo();
                                             Intent intent = new Intent(context, LogInActivity.class);
                                             startActivity(intent);
+                                            getActivity().finish();
                                         }
                                     });
                             builder.create().show();
 
                         } else {
+                            initTimetableList();
+
                             //clear old data
                             DatabaseManager.getInstance().deleteAllSubject();
                             for (int i = 0; i < timetableList.size(); i++) {
@@ -204,14 +214,31 @@ public class TimeTableFragment extends Fragment {
                                 aSubjectDateTime.setEndTime(timetableList.get(i).getLesson().getEnd_time());
                                 aSubjectDateTime.setLesson_date(timetableList.get(i).getLesson_date().getLdate());
                                 aSubjectDateTime.setSubject(aSubject);
-                                DatabaseManager.getInstance().updateTimeItem(aSubjectDateTime);
-                            }
+                                DatabaseManager.getInstance().updateSubjectDateTimeItem(aSubjectDateTime);
 
-                            initTimetableList();
+                                for(StudentInfo theStudent: timetableList.get(i).getStudentList()){
+                                    Student aStudent = DatabaseManager.getInstance().newStudentItem();
+                                    aStudent.setBeacon_id(theStudent.getBeacon().getId());
+                                    aStudent.setBeacon_major(theStudent.getBeacon().getMajor());
+                                    aStudent.setBeacon_minor(theStudent.getBeacon().getMinor());
+                                    aStudent.setCard(theStudent.getCard());
+                                    aStudent.setName(theStudent.getName());
+                                    aStudent.setStudent_id(theStudent.getId());
+                                    aStudent.setSubject(aSubject);
+                                    DatabaseManager.getInstance().updateStudentItem(aStudent);
+
+                                }
+
+                            }
                         }
+
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    Preferences.dismissLoading();
+
+
                 }
 
                 @Override

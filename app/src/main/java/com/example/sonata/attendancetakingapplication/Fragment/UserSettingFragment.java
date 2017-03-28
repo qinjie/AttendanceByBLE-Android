@@ -74,41 +74,42 @@ public class UserSettingFragment extends Fragment {
 
             context = this.getActivity();
 
-            Intent startServiceIntent = new Intent(getActivity().getBaseContext(), BeaconJobScheduler.class);
-            getActivity().startService(startServiceIntent);
-
-            ComponentName serviceName = new ComponentName(context, BeaconJobScheduler.class);
-            JobInfo builder = new JobInfo.Builder(kJobId, serviceName)
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                    .build();
-            JobScheduler jobScheduler =
-                    (JobScheduler) getActivity().getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            jobScheduler.schedule(builder);
+//            Intent startServiceIntent = new Intent(getActivity().getBaseContext(), BeaconJobScheduler.class);
+//            getActivity().startService(startServiceIntent);
+//
+//            ComponentName serviceName = new ComponentName(context, BeaconJobScheduler.class);
+//            JobInfo builder = new JobInfo.Builder(kJobId, serviceName)
+//                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+//                    .setPeriodic(30000)
+//                    .build();
+//            JobScheduler jobScheduler =
+//                    (JobScheduler) getActivity().getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//            jobScheduler.schedule(builder);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void startJob() {
-        ComponentName serviceComponent = new ComponentName(getActivity().getBaseContext(), BeaconJobScheduler.class);
-        JobInfo.Builder builder = new JobInfo.Builder(kJobId++, serviceComponent);
-        builder.setMinimumLatency(1 * 1000); // wait at least
-        builder.setOverrideDeadline(2 * 1000); // maximum delay
-        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
-        builder.setRequiresDeviceIdle(true); // device should be idle
-        builder.setRequiresCharging(false); // we don't care if the device is charging or not
-        PersistableBundle bundle = new PersistableBundle();
-        bundle.putString("abc", "123");
-        builder.setExtras(bundle);
-        JobScheduler jobScheduler =
-                (JobScheduler) getActivity().getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(builder.build());
-    }
-
-    public void cancelJob() {
-        JobScheduler tm = (JobScheduler) getActivity().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        tm.cancelAll();
-    }
+//    public void startJob() {
+//        ComponentName serviceComponent = new ComponentName(getActivity().getBaseContext(), BeaconJobScheduler.class);
+//        JobInfo.Builder builder = new JobInfo.Builder(kJobId++, serviceComponent);
+//        builder.setMinimumLatency(1 * 1000); // wait at least
+//        builder.setOverrideDeadline(2 * 1000); // maximum delay
+//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
+//        builder.setRequiresDeviceIdle(true); // device should be idle
+//        builder.setRequiresCharging(false); // we don't care if the device is charging or not
+//        PersistableBundle bundle = new PersistableBundle();
+//        bundle.putString("abc", "123");
+//        builder.setExtras(bundle);
+//        JobScheduler jobScheduler =
+//                (JobScheduler) getActivity().getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        jobScheduler.schedule(builder.build());
+//    }
+//
+//    public void cancelJob() {
+//        JobScheduler tm = (JobScheduler) getActivity().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        tm.cancelAll();
+//    }
 
     public void setUserSettingLayout() {
         TextView signoutTv = (TextView) inflateView.findViewById(R.id.btn_signout);
@@ -123,7 +124,6 @@ public class UserSettingFragment extends Fragment {
         changePasswordTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancelJob();
                 Intent intent = new Intent(context, ChangePasswordActivity.class);
                 startActivity(intent);
             }

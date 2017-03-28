@@ -36,16 +36,22 @@ public class Subject extends OrmLiteBaseActivity {
     @ForeignCollectionField
     private ForeignCollection<SubjectDateTime> subject_datetime;
 
+    @ForeignCollectionField
+    private ForeignCollection<Student> student;
+
     public Subject() {
     }
 
-    public Subject(int id, String subject_area, String catalog_number, ForeignCollection<SubjectDateTime> subject_datetime) {
+    public Subject(int id, String lesson_id, String subject_area, String catalog_number, String location, String uuid, ForeignCollection<SubjectDateTime> subject_datetime, ForeignCollection<Student> student_list) {
         this.id = id;
+        this.lesson_id = lesson_id;
         this.subject_area = subject_area;
         this.catalog_number = catalog_number;
+        this.location = location;
+        this.uuid = uuid;
         this.subject_datetime = subject_datetime;
+        this.student = student_list;
     }
-
 
     public int getId() {
         return id;
@@ -95,14 +101,19 @@ public class Subject extends OrmLiteBaseActivity {
         this.uuid = uuid;
     }
 
-    public void setSubject_datetime(ForeignCollection<SubjectDateTime> subject_datetime) {
-        this.subject_datetime = subject_datetime;
-    }
 
     public List<SubjectDateTime> getSubject_Datetime(){
         ArrayList<SubjectDateTime> itemList = new ArrayList<SubjectDateTime>();
         for(SubjectDateTime aSubjectDateTime : subject_datetime){
             itemList.add(aSubjectDateTime);
+        }
+        return itemList;
+    }
+
+    public List<Student> getStudent_list(){
+        ArrayList<Student> itemList = new ArrayList<Student>();
+        for(Student aStudent : student){
+            itemList.add(aStudent);
         }
         return itemList;
     }

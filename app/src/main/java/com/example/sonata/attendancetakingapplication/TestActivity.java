@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
+import com.example.sonata.attendancetakingapplication.OrmLite.Student;
 import com.example.sonata.attendancetakingapplication.OrmLite.Subject;
 import com.example.sonata.attendancetakingapplication.OrmLite.SubjectDateTime;
 
@@ -26,6 +27,10 @@ public class TestActivity extends AppCompatActivity {
             for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()){
                 text += tmp.getSubject_area() + " | " + tmp.getCatalog_number() +" | "+ tmp.getUuid()+" | "+tmp.getLesson_id() +" | "+tmp.getLocation() +" |xxx| "
                 +tmp2.getLesson_date_id()+" | "+ tmp2.getLesson_date()+" | "+ tmp2.getStartTime()+" | "+ tmp2.getEndTime()+" ";
+            }
+
+            for (Student tmp3 : tmp.getStudent_list()){
+                text += " ** "+ tmp3.getName() + " | " + tmp3.getBeacon_major()+ " | " +tmp3.getBeacon_minor()+ " ??? ";
             }
 
         }
