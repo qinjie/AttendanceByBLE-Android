@@ -17,10 +17,12 @@ import com.example.sonata.attendancetakingapplication.JobScheduler.BeaconJobSche
 import com.example.sonata.attendancetakingapplication.Model.Lecturer;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
 import com.example.sonata.attendancetakingapplication.Model.LessonDate;
+import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Model.UserBeacon;
 import com.example.sonata.attendancetakingapplication.Model.Venue;
 import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
+import com.example.sonata.attendancetakingapplication.OrmLite.Student;
 import com.example.sonata.attendancetakingapplication.OrmLite.Subject;
 import com.example.sonata.attendancetakingapplication.OrmLite.SubjectDateTime;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
@@ -201,6 +203,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                     public void onFailure(Call<TimetableResult> call, Throwable t) {
 
                         final List<Subject> subjectList = DatabaseManager.getInstance().getAllSubjects();
+                        specificTimetable = new TimetableResult();
 
                         for (Subject tmp : subjectList) {
                             for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()) {
@@ -226,7 +229,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     Date x = calendar3.getTime();
                                     if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
                                         Log.d("test date", " true");
-                                        specificTimetable= new TimetableResult();
                                         specificTimetable.setLesson_id(tmp.getLesson_id());
 
                                         Lesson aLesson = new Lesson();
@@ -263,15 +265,23 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
-//
-//                                if (true) {
-//
-//
-//                                }
-
-
                             }
+
+                            List<StudentInfo> studentList = new ArrayList<StudentInfo>();
+                            for (Student tmp3 : tmp.getStudent_list()) {
+                                StudentInfo aStudent = new StudentInfo();
+                                aStudent.setName(tmp3.getName());
+                                aStudent.setCard(tmp3.getCard());
+                                aStudent.setId(tmp3.getStudent_id());
+                                UserBeacon aStudentBeacon = new UserBeacon();
+                                aStudentBeacon.setMajor(tmp3.getBeacon_major());
+                                aStudentBeacon.setMinor(tmp3.getBeacon_minor());
+                                aStudent.setBeacon(aStudentBeacon);
+
+                                studentList.add(aStudent);
+                            }
+
+                            specificTimetable.setStudentList(studentList);
                         }
 
 
@@ -305,8 +315,22 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                         String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
                         String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
                         Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-                        regionList.add(region2);
+                        if (!regionList.contains(region2)) {
+                            regionList.add(region2);
+                        }
                     }
+
+                    for(StudentInfo aStudent : specificTimetable.getStudentList()){
+                        if (!aStudent.getBeacon().getMajor().equals("")) {
+                            String studentMajor = aStudent.getBeacon().getMajor();
+                            String studentMinor = aStudent.getBeacon().getMinor();
+                            Region region = new Region(aStudent.getName(), Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(studentMajor), Identifier.parse(studentMinor));
+                            if (!regionList.contains(region)) {
+                                regionList.add(region);
+                            }
+                        }
+                    }
+
 
                 }
 
