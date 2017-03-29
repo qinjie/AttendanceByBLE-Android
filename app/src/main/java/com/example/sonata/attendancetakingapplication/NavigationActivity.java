@@ -185,14 +185,14 @@ public class NavigationActivity extends AppCompatActivity {
 
                             //TODO
                             //for test
-                            Intent intent = new Intent(getBaseContext(),TestActivity.class);
-                            startActivity(intent);
+//                            Intent intent = new Intent(getBaseContext(),TestActivity.class);
+//                            startActivity(intent);
 
                             //TODO
                             //bo cmt di, for test
-//                            fragment = new UserSettingFragment();
-//                            title = "User setting";
-//                            getSupportActionBar().setSubtitle(null);
+                            fragment = new UserSettingFragment();
+                            title = "User setting";
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         default:
                             fragment = new TimeTableFragment();
@@ -202,11 +202,11 @@ public class NavigationActivity extends AppCompatActivity {
 
                     //TODO
                     //bo cmt di, for test
-//                    setActionBarTitle(title);
-//                    FragmentManager fragmentManager = getFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.container, fragment)
-//                            .commit();
+                    setActionBarTitle(title);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commit();
                 }
             });
 

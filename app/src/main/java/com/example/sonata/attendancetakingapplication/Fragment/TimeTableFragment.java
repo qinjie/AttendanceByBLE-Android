@@ -20,10 +20,12 @@ import android.widget.Toast;
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
 import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
+import com.example.sonata.attendancetakingapplication.Model.Lecturer;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
 import com.example.sonata.attendancetakingapplication.Model.LessonDate;
 import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
+import com.example.sonata.attendancetakingapplication.Model.UserBeacon;
 import com.example.sonata.attendancetakingapplication.Model.Venue;
 import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
 import com.example.sonata.attendancetakingapplication.OrmLite.Student;
@@ -103,7 +105,6 @@ public class TimeTableFragment extends Fragment {
         context = this.getActivity();
         calendar = Calendar.getInstance();
 
-        DatabaseManager.init(getActivity().getBaseContext());
 
     }
 
@@ -203,10 +204,10 @@ public class TimeTableFragment extends Fragment {
                                 aSubject.setTeacher_name(timetableList.get(i).getLecturers().getName());
                                 aSubject.setTeacher_acad(timetableList.get(i).getLecturers().getAcad());
                                 aSubject.setTeacher_email(timetableList.get(i).getLecturers().getEmail());
-                                if(timetableList.get(i).getLecturers().getBeacon()==null){
+                                if (timetableList.get(i).getLecturers().getBeacon() == null) {
                                     aSubject.setTeacher_major("");
                                     aSubject.setTeacher_minor("");
-                                }else {
+                                } else {
                                     aSubject.setTeacher_major(timetableList.get(i).getLecturers().getBeacon().getMajor());
                                     aSubject.setTeacher_minor(timetableList.get(i).getLecturers().getBeacon().getMinor());
                                 }
@@ -220,13 +221,13 @@ public class TimeTableFragment extends Fragment {
                                 aSubjectDateTime.setSubject(aSubject);
                                 DatabaseManager.getInstance().updateSubjectDateTimeItem(aSubjectDateTime);
 
-                                for(StudentInfo theStudent: timetableList.get(i).getStudentList()){
+                                for (StudentInfo theStudent : timetableList.get(i).getStudentList()) {
                                     Student aStudent = DatabaseManager.getInstance().newStudentItem();
-                                    if(theStudent.getBeacon()==null){
+                                    if (theStudent.getBeacon() == null) {
                                         aStudent.setBeacon_id("");
                                         aStudent.setBeacon_major("");
                                         aStudent.setBeacon_minor("");
-                                    }else {
+                                    } else {
                                         aStudent.setBeacon_id(theStudent.getBeacon().getId());
                                         aStudent.setBeacon_major(theStudent.getBeacon().getMajor());
                                         aStudent.setBeacon_minor(theStudent.getBeacon().getMinor());
@@ -286,6 +287,17 @@ public class TimeTableFragment extends Fragment {
                             LessonBeacon aLessonBeacon = new LessonBeacon();
                             aLessonBeacon.setUuid(tmp.getUuid());
                             aTimetableResult.setLessonBeacon(aLessonBeacon);
+
+                            Lecturer aLecturer= new Lecturer();
+                            aLecturer.setId(tmp.getTeacher_id());
+                            aLecturer.setName(tmp.getTeacher_name());
+                            aLecturer.setAcad(tmp.getTeacher_acad());
+                            aLecturer.setEmail(tmp.getTeacher_email());
+                            UserBeacon aLecturerBeacon = new UserBeacon();
+                            aLecturerBeacon.setMajor(tmp.getTeacher_major());
+                            aLecturerBeacon.setMinor(tmp.getTeacher_minor());
+                            aLecturer.setBeacon(aLecturerBeacon);
+                            aTimetableResult.setLecturers(aLecturer);
 
                             Venue aVenue = new Venue();
                             aVenue.setAddress(tmp.getLocation());

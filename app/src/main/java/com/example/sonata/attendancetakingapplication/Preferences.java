@@ -211,37 +211,37 @@ public class Preferences {
         notificationManager.notify(9696, builder.build());
     }
 
-//    public static void studentNotify(Context context, String title, String content, int id) {
-//
-//        NotificationCompat.Builder builder =
-//                new NotificationCompat.Builder(context);
-//
-//        builder.setSmallIcon(R.drawable.ic_launcher)
-//                .setContentTitle(title)
-//                .setContentText(content)
-//                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-//                        R.drawable.ic_launcher))
-//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-//                .setAutoCancel(true);
-//
-//        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-//
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-//        Intent intent = new Intent(context, LogInActivity.class);
-//
-//        stackBuilder.addNextIntent(intent);
-//        PendingIntent resultPendingIntent =
-//                stackBuilder.getPendingIntent(
-//                        0,
-//                        PendingIntent.FLAG_UPDATE_CURRENT
-//                );
-//
-//
-//        builder.setContentIntent(resultPendingIntent);
-//        NotificationManager notificationManager =
-//                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//        notificationManager.notify(id, builder.build());
-//    }
+    public static void studentNotify(Context context, String title, String content, int id) {
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context);
+
+        builder.setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.drawable.ic_launcher))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setAutoCancel(true);
+
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        Intent intent = new Intent(context, LogInActivity.class);
+
+        stackBuilder.addNextIntent(intent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(id, builder.build());
+    }
 
     public static void studentNotifyWithLongText(Context context, String title, String content, int id) {
 

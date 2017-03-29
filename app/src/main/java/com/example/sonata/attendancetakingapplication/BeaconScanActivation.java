@@ -14,17 +14,22 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.example.sonata.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
+import com.example.sonata.attendancetakingapplication.Model.Lecturer;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
+import com.example.sonata.attendancetakingapplication.Model.LessonDate;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
+import com.example.sonata.attendancetakingapplication.Model.UserBeacon;
+import com.example.sonata.attendancetakingapplication.Model.Venue;
+import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
+import com.example.sonata.attendancetakingapplication.OrmLite.Subject;
+import com.example.sonata.attendancetakingapplication.OrmLite.SubjectDateTime;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.BeaconTransmitter;
 import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
@@ -33,8 +38,9 @@ import org.altbeacon.beacon.startup.RegionBootstrap;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,7 +63,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     private BeaconManager mBeaconmanager;
 
     ArrayList<Region> regionList = new ArrayList();
-    Lesson lesson = null;
     TimetableResult specificTimetable = null;
 
     final BootstrapNotifier tmp = this;
@@ -76,6 +81,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
         mBeaconmanager.setBackgroundBetweenScanPeriod(25000l);
         mBeaconmanager.setBackgroundScanPeriod(20000l);
 
+        DatabaseManager.init(getBaseContext());
+
         mHandler = new Handler();
         startRepeatingTask();
     }
@@ -89,24 +96,26 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
         if (isLogin.equals("true")) {
             if (specificTimetable != null) {
 //                Log.i("Activation-determine", region.getUniqueId() + ": " + status);
+                if (!specificTimetable.getLecturers().getBeacon().getMajor().equals("")) {
+
+                    String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+                    String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+
+                    Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+
+                    if (region.equals(region2) && status == 1) {
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("hasTeacher", "true");
+                        editor.apply();
+                    }
+
+                    String hasTeacher = pref.getString("hasTeacher", "");
+                    if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
+                        Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
+                        Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
+                    }
+                }
 //
-//                String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-//                String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-//
-//
-//                Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-//
-//                if (region.equals(region2) && status == 1) {
-//                    SharedPreferences.Editor editor = pref.edit();
-//                    editor.putString("hasTeacher", "true");
-//                    editor.apply();
-//                }
-//
-//                String hasTeacher = pref.getString("hasTeacher", "");
-//                if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
-//                    Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
-//                    Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
-//                }
             }
         }
     }
@@ -120,17 +129,21 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     public void didExitRegion(Region region) {
 
         if (specificTimetable != null) {
-//            String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-//            String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-//            Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-//
-//            if (region.equals(region2)) {
-//                SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//                SharedPreferences.Editor editor = pref.edit();
-//                editor.putString("hasTeacher", "false");
-//                editor.apply();
-//                Log.i("Outgoing", region.getUniqueId());
-//            }
+
+            if (!specificTimetable.getLecturers().getBeacon().getMajor().equals("")) {
+                String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+                String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+                Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+
+                if (region.equals(region2)) {
+                    SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("hasTeacher", "false");
+                    editor.apply();
+                    Log.i("Outgoing", region.getUniqueId());
+                }
+            }
+
         }
 
     }
@@ -155,10 +168,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 SimpleDateFormat curFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String dateObj = curFormatter.format(aDate);
 
-//                JsonObject obj = new JsonObject();
-//                obj.addProperty("student_id", studentId);
-//                obj.addProperty("datetime", dateObj);
-
                 JsonParser parser = new JsonParser();
                 JsonObject obj = parser.parse("{\"datetime\": \"" + dateObj + "\"}").getAsJsonObject();
 
@@ -170,7 +179,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                         try {
                             if (response.body() != null) {
                                 specificTimetable = response.body();
-                                lesson = response.body().getLesson();
                             } else {
                                 if (response.code() == LOGIN_ANOTHER_DEVICE) {
                                     SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
@@ -182,7 +190,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 }
 
                                 specificTimetable = null;
-                                lesson = null;
 
                             }
                         } catch (Exception e) {
@@ -192,6 +199,95 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
                     @Override
                     public void onFailure(Call<TimetableResult> call, Throwable t) {
+
+                        final List<Subject> subjectList = DatabaseManager.getInstance().getAllSubjects();
+
+                        for (Subject tmp : subjectList) {
+                            for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()) {
+                                try {
+                                    String string1 = tmp2.getLesson_date() + " " + tmp2.getStartTime();
+                                    Date time1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(string1);
+                                    Calendar calendar1 = Calendar.getInstance();
+                                    calendar1.setTime(time1);
+
+                                    String string2 = tmp2.getLesson_date() + " " + tmp2.getEndTime();
+                                    Date time2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(string2);
+                                    Calendar calendar2 = Calendar.getInstance();
+                                    calendar2.setTime(time2);
+//                                    calendar2.add(Calendar.DATE, 1);
+
+//                                    String someRandomTime = "01:00:00";
+                                    Date aDate = new Date();
+//                                    Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(someRandomTime);
+                                    Calendar calendar3 = Calendar.getInstance();
+                                    calendar3.setTime(aDate);
+//                                    calendar3.add(Calendar.DATE, 1);
+
+                                    Date x = calendar3.getTime();
+                                    if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
+                                        Log.d("test date", " true");
+                                        specificTimetable= new TimetableResult();
+                                        specificTimetable.setLesson_id(tmp.getLesson_id());
+
+                                        Lesson aLesson = new Lesson();
+                                        aLesson.setSubject_area(tmp.getSubject_area());
+                                        aLesson.setCatalog_number(tmp.getCatalog_number());
+                                        aLesson.setStart_time(tmp2.getStartTime());
+                                        aLesson.setEnd_time(tmp2.getEndTime());
+                                        specificTimetable.setLesson(aLesson);
+
+                                        LessonDate aLessonDate = new LessonDate();
+                                        aLessonDate.setLesson_id(tmp.getLesson_id());
+                                        aLessonDate.setLdate(tmp2.getLesson_date());
+                                        specificTimetable.setLesson_date(aLessonDate);
+
+                                        LessonBeacon aLessonBeacon = new LessonBeacon();
+                                        aLessonBeacon.setUuid(tmp.getUuid());
+                                        specificTimetable.setLessonBeacon(aLessonBeacon);
+
+                                        Lecturer aLecturer = new Lecturer();
+                                        aLecturer.setId(tmp.getTeacher_id());
+                                        aLecturer.setName(tmp.getTeacher_name());
+                                        aLecturer.setAcad(tmp.getTeacher_acad());
+                                        aLecturer.setEmail(tmp.getTeacher_email());
+                                        UserBeacon aLecturerBeacon = new UserBeacon();
+                                        aLecturerBeacon.setMajor(tmp.getTeacher_major());
+                                        aLecturerBeacon.setMinor(tmp.getTeacher_minor());
+                                        aLecturer.setBeacon(aLecturerBeacon);
+                                        specificTimetable.setLecturers(aLecturer);
+
+                                        Venue aVenue = new Venue();
+                                        aVenue.setAddress(tmp.getLocation());
+                                        specificTimetable.setVenue(aVenue);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+//
+//                                if (true) {
+//
+//
+//                                }
+
+
+                            }
+                        }
+
+
+//                        String text = "";
+//                        for (Subject tmp : subjectList) {
+//                            for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()) {
+//                                text += tmp.getSubject_area() + " | " + tmp.getCatalog_number() + " | " + tmp.getUuid() + " | " + tmp.getLesson_id() + " | " + tmp.getLocation() + " |xxx| "
+//                                        + tmp2.getLesson_date_id() + " | " + tmp2.getLesson_date() + " | " + tmp2.getStartTime() + " | " + tmp2.getEndTime() + " ";
+//                            }
+//
+//                            for (Student tmp3 : tmp.getStudent_list()) {
+//                                text += " ** " + tmp3.getName() + " | " + tmp3.getBeacon_major() + " | " + tmp3.getBeacon_minor() + " ??? ";
+//                            }
+//
+//                        }
+
 //                        if (!checkInternetOn()) {
 //                            Preferences.notify(getBaseContext(), "Attendance taking", "Please check your internet connection.");
 //                        } else {
@@ -202,26 +298,19 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                     }
                 });
 
-                if (lesson != null) {
+                if (specificTimetable != null) {
 //                    Region region = new Region("AllStudent", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), null, null);
-//
-////                    String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-////                    String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-//
-//
-//                    String teacherMajor = "555";
-//                    String teacherMinor = "333";
-//
-//
-//                    Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-//
-//                    regionList.add(region);
-//                    regionList.add(region2);
+
+                    if (!specificTimetable.getLecturers().getBeacon().getMajor().equals("")) {
+                        String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
+                        String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
+                        Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+                        regionList.add(region2);
+                    }
+
                 }
 
                 regionBootstrap = new RegionBootstrap(tmp, regionList);
-
-
 
 
                 Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
