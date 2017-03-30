@@ -21,10 +21,13 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+
     <application
         android:name=".BeaconScanActivation"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -37,6 +40,7 @@
 
         <activity
             android:name=".SplashActivity"
+            android:launchMode="singleTask"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +48,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!--<activity-alias android:label="@string/app_name"-->
+            <!--android:icon="@drawable/icon"-->
+            <!--android:name=".SplashActivity-Checkmark"-->
+            <!--android:enabled="false"-->
+            <!--android:targetActivity=".SplashActivity">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity-alias>-->
+
+        <!--<activity-alias android:label="@string/app_name"-->
+            <!--android:icon="@drawable/icon_xmark"-->
+            <!--android:name=".SplashActivity-Xmark"-->
+            <!--android:enabled="false"-->
+            <!--android:targetActivity=".SplashActivity">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity-alias>-->
+
         <activity android:name=".LogInActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".NavigationActivity" />

@@ -2,9 +2,11 @@ package com.example.sonata.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -147,6 +149,7 @@ public class TimeTableFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
                     Toast.makeText(getActivity().getBaseContext(), data.get(i).getLesson().getCatalog_number(), Toast.LENGTH_SHORT).show();
 
                 }
