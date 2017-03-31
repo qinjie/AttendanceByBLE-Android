@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -313,13 +314,19 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                     }
                 });
 
+                PersistableBundle bundle = new PersistableBundle();
+
                 if (specificTimetable != null) {
 //                    Region region = new Region("AllStudent", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), null, null);
                     if (specificTimetable.getLecturers() != null) {
                         if (specificTimetable.getLecturers().getBeacon() != null) {
                             String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
                             String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-                            Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+                            Region region2 = new Region("Teacher - " + specificTimetable.getLesson().getSubject_area(), Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+                            bundle.putString("subject-uuid", specificTimetable.getLessonBeacon().getUuid());
+                            bundle.putString("teacher-major", "696");
+                            bundle.putString("teacher-minor", "333");
+
                             if (!regionList.contains(region2)) {
                                 regionList.add(region2);
                             }
@@ -331,7 +338,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                         if (!aStudent.getBeacon().getMajor().equals("")) {
                             String studentMajor = aStudent.getBeacon().getMajor();
                             String studentMinor = aStudent.getBeacon().getMinor();
-                            Region region = new Region(aStudent.getName(), Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(studentMajor), Identifier.parse(studentMinor));
+                            Region region = new Region(aStudent.getName() + " - " + specificTimetable.getLesson().getSubject_area(), Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(studentMajor), Identifier.parse(studentMinor));
                             if (!regionList.contains(region)) {
                                 regionList.add(region);
                             }
@@ -345,14 +352,19 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
                 startService(startServiceIntent);
 
+
                 ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
-                JobInfo builder = new JobInfo.Builder(1, serviceName)
-                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                        .setPeriodic(30000)
-                        .build();
+                JobInfo.Builder builder = new JobInfo.Builder(1, serviceName);
+                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+                builder.setPeriodic(30000);
+                builder.setExtras(bundle);
+                builder.build();
+
+
                 JobScheduler jobScheduler =
                         (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                jobScheduler.schedule(builder);
+//                jobScheduler.
+                jobScheduler.schedule(builder.build());
 
             } else {
                 if (regionList != null && regionList.size() > 0) {
