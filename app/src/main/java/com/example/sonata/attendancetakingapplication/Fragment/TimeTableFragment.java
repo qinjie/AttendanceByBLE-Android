@@ -2,16 +2,19 @@ package com.example.sonata.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
+import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +41,14 @@ import com.example.sonata.attendancetakingapplication.R;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
+
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Identifier;
+import org.altbeacon.beacon.MonitorNotifier;
+import org.altbeacon.beacon.Region;
+import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -291,7 +302,7 @@ public class TimeTableFragment extends Fragment {
                             aLessonBeacon.setUuid(tmp.getUuid());
                             aTimetableResult.setLessonBeacon(aLessonBeacon);
 
-                            Lecturer aLecturer= new Lecturer();
+                            Lecturer aLecturer = new Lecturer();
                             aLecturer.setId(tmp.getTeacher_id());
                             aLecturer.setName(tmp.getTeacher_name());
                             aLecturer.setAcad(tmp.getTeacher_acad());
@@ -317,7 +328,26 @@ public class TimeTableFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+//        SharedPreferences pref = getActivity().getSharedPreferences("ATK_BLE_Preferences", Context.MODE_PRIVATE);
+//        String studentMajor = pref.getString("major", "");
+//        String studentMinor = pref.getString("minor", "");
+//
+//        for (TimetableResult tmp : timetableList) {
+//            PersistableBundle bundle = new PersistableBundle();
+//
+//            bundle.putString("subject-uuid", tmp.getLessonBeacon().getUuid());
+//            bundle.putString("student-major", studentMajor);
+//            bundle.putString("student-minor", studentMinor);
+//
+//
+//        }
+
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -326,6 +356,10 @@ public class TimeTableFragment extends Fragment {
         myView = inflater.inflate(R.layout.fragment_time_table, container, false);
 
         loadTimetable();
+
+
+
+
 
         return myView;
     }
@@ -336,6 +370,50 @@ public class TimeTableFragment extends Fragment {
 //            mListener.onFragmentInteraction(uri);
 //        }
     }
+
+
+//    @Override
+//    public void onBeaconServiceConnect() {
+//        beaconManager.addMonitorNotifier(new MonitorNotifier() {
+//            @Override
+//            public void didEnterRegion(Region region) {
+//                Log.i("yoloooooo", region.getId2() + " | " + region.getId3() + " hahahahha");
+//            }
+//
+//            @Override
+//            public void didExitRegion(Region region) {
+//                Log.i(TAG, "I no longer see an beacon");
+//            }
+//
+//            @Override
+//            public void didDetermineStateForRegion(int state, Region region) {
+//                Log.i(TAG, "I have just switched from seeing/not seeing beacons: " + state);
+//            }
+//        });
+//
+//        try {
+//
+//            for (TimetableResult tmp : timetableList) {
+//                beaconManager.startMonitoringBeaconsInRegion(new Region( tmp.getLessonBeacon().getUuid(),  Identifier.parse("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), Identifier.parse("24890"), Identifier.parse("6699")));
+//            }
+//        } catch (RemoteException e) {
+//        }
+//    }
+//
+//    @Override
+//    public Context getApplicationContext() {
+//        return null;
+//    }
+//
+//    @Override
+//    public void unbindService(ServiceConnection serviceConnection) {
+//
+//    }
+//
+//    @Override
+//    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
+//        return false;
+//    }
 
 
 //    @Override

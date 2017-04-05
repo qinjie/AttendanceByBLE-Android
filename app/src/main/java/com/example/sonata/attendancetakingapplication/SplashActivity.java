@@ -1,5 +1,6 @@
 package com.example.sonata.attendancetakingapplication;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
@@ -16,6 +19,13 @@ import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
 import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.example.sonata.attendancetakingapplication.Utils.ConnectivityUtils;
+
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.Identifier;
+import org.altbeacon.beacon.MonitorNotifier;
+import org.altbeacon.beacon.Region;
+import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
 import java.util.List;
 
@@ -25,9 +35,14 @@ import retrofit2.Response;
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity{
 
 //    private final static int REQUEST_ENABLE_BT = 1;
+
+//    protected static final String TAG = "MonitoringActivity";
+//    public static BeaconManager beaconManager;
+//    private BackgroundPowerSaver backgroundPowerSaver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,50 +61,13 @@ public class SplashActivity extends AppCompatActivity {
             startAuthenticatedArea();
         }
 
+//        beaconManager = BeaconManager.getInstanceForApplication(this);
+//        // To detect proprietary beacons, you must add a line like below corresponding to your beacon
+//        // type.  Do a web search for "setBeaconLayout" to get the proper expression.
+//        // beaconManager.getBeaconParsers().add(new BeaconParser().
+//        //        setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
+//        beaconManager.bind(this);
 
-
-
-    }
-
-
-    private void shortcutAdd(String name, int number) {
-        // Intent to be send, when shortcut is pressed by user ("launched")
-        Intent shortcutIntent = new Intent(getApplicationContext(), SplashActivity.class);
-//        shortcutIntent.setAction(Constants.ACTION_PLAY);
-
-        // Create bitmap with number in it -> very default. You probably want to give it a more stylish look
-        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        Paint paint = new Paint();
-        paint.setColor(0xFF808080); // gray
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(50);
-        new Canvas(bitmap).drawText(""+number, 50, 50, paint);
-        ((ImageView) findViewById(R.id.icon)).setImageBitmap(bitmap);
-
-        // Decorate the shortcut
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
-
-        // Inform launcher to create shortcut
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        getApplicationContext().sendBroadcast(addIntent);
-    }
-
-    private void shortcutDel(String name) {
-        // Intent to be send, when shortcut is pressed by user ("launched")
-        Intent shortcutIntent = new Intent(getApplicationContext(), SplashActivity.class);
-//        shortcutIntent.setAction(Constants.ACTION_PLAY);
-
-        // Decorate the shortcut
-        Intent delIntent = new Intent();
-        delIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        delIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
-
-        // Inform launcher to remove shortcut
-        delIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-        getApplicationContext().sendBroadcast(delIntent);
     }
 
     private void obtainedAuCode() {
@@ -124,11 +102,6 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-//    private void requestTurnOnBluetooth()
-//    {
-//        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//        startActivityForResult(intent, REQUEST_ENABLE_BT);
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -156,4 +129,31 @@ public class SplashActivity extends AppCompatActivity {
         startActivityForResult(intent, 0);
         finish();
     }
+
+
+//    @Override
+//    public void onBeaconServiceConnect() {
+//        beaconManager.addMonitorNotifier(new MonitorNotifier() {
+//            @Override
+//            public void didEnterRegion(Region region) {
+//                Log.i("yoloooooo", region.getId2() + " | " + region.getId3() + " hahahahha");
+//            }
+//
+//            @Override
+//            public void didExitRegion(Region region) {
+//                Log.i(TAG, "I no longer see an beacon");
+//            }
+//
+//            @Override
+//            public void didDetermineStateForRegion(int state, Region region) {
+//                Log.i(TAG, "I have just switched from seeing/not seeing beacons: " + state);
+//            }
+//        });
+//
+//        try {
+//            beaconManager.startMonitoringBeaconsInRegion(new Region( "test",  Identifier.parse("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), Identifier.parse("24890"), Identifier.parse("6699")));
+//        } catch (RemoteException e) {
+//        }
+//    }
+
 }

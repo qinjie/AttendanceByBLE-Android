@@ -6,18 +6,17 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Fragment.AttendanceHistoryFragment;
 import com.example.sonata.attendancetakingapplication.Fragment.TimeTableFragment;
@@ -26,36 +25,18 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
-import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
-import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 import static com.example.sonata.attendancetakingapplication.Preferences.getActivity;
 
-public class NavigationActivity extends AppCompatActivity {
+public class NavigationActivity extends AppCompatActivity{
 
-    private static final String TAG = NavigationActivity.class.getSimpleName();
 
     private Context context;
-
-//    private static final String VENUE_NAME = "MonitoringVenueBeacon";
-//    private static final String VENUE_UUID = "B9407F30-F5F8-466E-AFF9-25556B57FE6D";
-//
-//    private static final String LESSON_NAME = "RangingLessonBeacon";
-//    private static final String LESSON_UUID = "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6";
-//
-//    private static final String STUDENT_MAJOR = "1";
-//    private static final String STUDENT_MINOR = "2";
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     BluetoothAdapter bluetoothAdapter;
 
-
-//    Intent mServiceIntent;
-
-//    private BeaconConsumingService mSensorService;
-
-//    private static final String REGION_NAME = "TestBeacon";
-//    private static final String REGION_UUID = "2F234454-CF6D-4A0F-ADF2-LPF4911BA9FFA6";
+    Alarm alarm = new Alarm();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,67 +49,25 @@ public class NavigationActivity extends AppCompatActivity {
 
         Preferences.setActivity(this);
 
-
-        //TODO Request venue and lesson information from server
-//        ServerApi client = ServiceGenerator.createService(ServerApi.class);
-//        LoginInfo up = new LoginInfo(username, password, this);
-//        Call<LoginResult> call = client.login(up);
-//        call.enqueue(new ServerCallBack<LoginResult>() {
-//            @Override
-//            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
-//                try {
-//                    Preferences.dismissLoading();
-//                    int messageCode = response.code();
-//                    if (messageCode == 200) // SUCCESS
-//                    {
-//                        if (response.body().getDevice_hash().equals(Preferences.getMac(getBaseContext()))) {
-//                            Preferences.setStudentInfo(response.body());
-//                            startNavigation();
-//                            onLoginSuccess();
-//                        } else {
-//                            requestRegisterNewDevice();
-//                        }
-//                    } else {
-//                        onLoginFailed();
-//
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<LoginResult> call, Throwable t) {
-//                onLoginFailed();
-//            }
-//        });
-
-
-        //TODO Save data to local
-//        Preferences.saveDataToLocal(VENUE_NAME, VENUE_UUID,
-//                LESSON_NAME, LESSON_UUID,
-//                STUDENT_MAJOR, STUDENT_MINOR);
-
-//        mSensorService = new BeaconConsumingService();
-//        mServiceIntent = new Intent(context, mSensorService.getClass());
-//        if (!isMyServiceRunning(mSensorService.getClass())) {
-//            startService(mServiceIntent);
-//            if (!isMyServiceRunning(mSensorService.getClass())) {
-//                Preferences.notify(context, "Service", "Fail to start Sensor Service!");
-//            }
-//            else
-//            {
-//                Preferences.notify(context, "Service", "Sensor Service started successfully!");
-//            }
-//        }
-//        else
-//        {
-//            Preferences.notify(context, "Service", "Sensor Service started successfully!");
-//        }
-
         checkPermissions();
 
+
+    }
+
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+    }
+
+
+    @Override
+    protected void onStart() {
+        alarm.setAlarm(this);
+        Toast.makeText(this, "create alarm",Toast.LENGTH_SHORT).show();
+        super.onStart();
     }
 
     @Override
@@ -148,19 +87,9 @@ public class NavigationActivity extends AppCompatActivity {
         //-- Stop service so that it will restart
 //        stopService(mServiceIntent);
         super.onDestroy();
+
     }
 
-//    private boolean isMyServiceRunning(Class<?> serviceClass) {
-//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//            if (serviceClass.getName().equals(service.service.getClassName())) {
-//                Log.i("isMyServiceRunning?", true + "");
-//                return true;
-//            }
-//        }
-//        Log.i("isMyServiceRunning?", false + "");
-//        return false;
-//    }
 
     private void setLayoutContent() {
         try {
@@ -302,7 +231,7 @@ public class NavigationActivity extends AppCompatActivity {
         switch (requestCode) {
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "coarse location permission granted");
+//                    Log.d(TAG, "coarse location permission granted");
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Functionality limited");

@@ -25,6 +25,9 @@ public class BeaconJobScheduler extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
         mJobAsyncTask = new JobAsyncTask();
         mJobAsyncTask.execute(jobParameters);
+        //return false the OS will auto kill job, if return true we have to decide to stop by yourself
+        // by calling jobScheduler.cancelAll()
+        // method onStopJob will be called
         return false;
     }
 
@@ -73,7 +76,7 @@ public class BeaconJobScheduler extends JobService {
 
         @Override
         protected void onPostExecute(JobParameters jobParameters) {
-            jobFinished(jobParameters, false);
+            jobFinished(jobParameters, true);
         }
     }
 }

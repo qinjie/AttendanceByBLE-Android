@@ -1,6 +1,8 @@
 package com.example.sonata.attendancetakingapplication;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -225,6 +227,10 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     Calendar calendar3 = Calendar.getInstance();
                                     calendar3.setTime(nowTime);
 
+
+
+
+
                                     Date x = calendar3.getTime();
                                     if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
                                         specificTimetable = new TimetableResult();
@@ -280,6 +286,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                             }
                                         }
 
+
                                         specificTimetable.setStudentList(studentList);
                                     }
                                 } catch (Exception e) {
@@ -289,27 +296,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
 
                         }
-
-
-//                        String text = "";
-//                        for (Subject tmp : subjectList) {
-//                            for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()) {
-//                                text += tmp.getSubject_area() + " | " + tmp.getCatalog_number() + " | " + tmp.getUuid() + " | " + tmp.getLesson_id() + " | " + tmp.getLocation() + " |xxx| "
-//                                        + tmp2.getLesson_date_id() + " | " + tmp2.getLesson_date() + " | " + tmp2.getStartTime() + " | " + tmp2.getEndTime() + " ";
-//                            }
-//
-//                            for (Student tmp3 : tmp.getStudent_list()) {
-//                                text += " ** " + tmp3.getName() + " | " + tmp3.getBeacon_major() + " | " + tmp3.getBeacon_minor() + " ??? ";
-//                            }
-//
-//                        }
-
-//                        if (!checkInternetOn()) {
-//                            Preferences.notify(getBaseContext(), "Attendance taking", "Please check your internet connection.");
-//                        } else {
-//                            Preferences.notify(getBaseContext(), "Attendance taking", "Server is busy. Please try again later.");
-//
-//                        }
 
                     }
                 });
@@ -323,9 +309,10 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                             String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
                             String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
                             Region region2 = new Region("Teacher - " + specificTimetable.getLesson().getSubject_area(), Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+
                             bundle.putString("subject-uuid", specificTimetable.getLessonBeacon().getUuid());
-                            bundle.putString("teacher-major", "696");
-                            bundle.putString("teacher-minor", "333");
+                            bundle.putString("teacher-major", "52689");
+                            bundle.putString("teacher-minor", "51570");
 
                             if (!regionList.contains(region2)) {
                                 regionList.add(region2);
@@ -352,19 +339,21 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
                 startService(startServiceIntent);
 
+                if (bundle.getString("subject-uuid") != null) {
 
-                ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
-                JobInfo.Builder builder = new JobInfo.Builder(1, serviceName);
-                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-                builder.setPeriodic(30000);
-                builder.setExtras(bundle);
-                builder.build();
+                    ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
+                    JobInfo.Builder builder = new JobInfo.Builder(1, serviceName);
+                    builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+                    builder.setOverrideDeadline(2000);
+//                    builder.setPeriodic(30000);
+                    builder.setExtras(bundle);
 
+                    JobScheduler jobScheduler =
+                            (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                    jobScheduler.cancelAll();
+                    jobScheduler.schedule(builder.build());
+                }
 
-                JobScheduler jobScheduler =
-                        (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//                jobScheduler.
-                jobScheduler.schedule(builder.build());
 
             } else {
                 if (regionList != null && regionList.size() > 0) {
@@ -399,6 +388,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
         }
     };
+
 
     void startRepeatingTask() {
         mStatusChecker.run();
