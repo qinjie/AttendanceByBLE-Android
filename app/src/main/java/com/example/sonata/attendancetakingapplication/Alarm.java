@@ -8,10 +8,6 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.widget.Toast;
 
-import org.altbeacon.beacon.BeaconManager;
-
-import static com.example.sonata.attendancetakingapplication.Preferences.getActivity;
-
 /**
  * Created by hoanglong on 04-Apr-17.
  */
@@ -25,7 +21,6 @@ public class Alarm extends BroadcastReceiver {
         wl.acquire();
 
         // Put here YOUR code.
-
 
         Toast.makeText(context, "Alarm !!!!!!!!!! " , Toast.LENGTH_SHORT).show(); // For example
 

@@ -303,7 +303,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                 PersistableBundle bundle = new PersistableBundle();
 
                 if (specificTimetable != null) {
-//                    Region region = new Region("AllStudent", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), null, null);
                     if (specificTimetable.getLecturers() != null) {
                         if (specificTimetable.getLecturers().getBeacon() != null) {
                             String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
