@@ -50,10 +50,11 @@ public class BeaconJobScheduler extends JobService {
         @Override
         protected JobParameters doInBackground(JobParameters... params) {
             if(params[0].getExtras().getString("subject-uuid") != null){
+
                 final Beacon.Builder beaconBuilder = new Beacon.Builder();
                 beaconBuilder.setId1(params[0].getExtras().getString("subject-uuid"));
-                beaconBuilder.setId2(params[0].getExtras().getString("teacher-major"));
-                beaconBuilder.setId3(params[0].getExtras().getString("teacher-minor"));
+                beaconBuilder.setId2(params[0].getExtras().getString("user-major"));
+                beaconBuilder.setId3(params[0].getExtras().getString("user-minor"));
                 beaconBuilder.setManufacturer(0x015D);
                 //Estimo company code
                 //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
@@ -62,6 +63,8 @@ public class BeaconJobScheduler extends JobService {
                 BeaconParser beaconParser = new BeaconParser()
                         .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
                 final BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
+//                beaconTransmitter.stopAdvertising();
+
                 beaconTransmitter.startAdvertising(beaconBuilder.build());
 
                 //Wait for 10 seconds to finish transmit
