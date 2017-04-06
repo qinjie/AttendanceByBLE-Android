@@ -36,7 +36,7 @@ public class NavigationActivity extends AppCompatActivity{
 
     BluetoothAdapter bluetoothAdapter;
 
-    Alarm alarm = new Alarm();
+//    Alarm alarm = new Alarm();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +65,8 @@ public class NavigationActivity extends AppCompatActivity{
 
     @Override
     protected void onStart() {
-        alarm.setAlarm(this);
-        Toast.makeText(this, "create alarm",Toast.LENGTH_SHORT).show();
+//        alarm.setAlarm(this);
+//        Toast.makeText(this, "create alarm",Toast.LENGTH_SHORT).show();
         super.onStart();
     }
 

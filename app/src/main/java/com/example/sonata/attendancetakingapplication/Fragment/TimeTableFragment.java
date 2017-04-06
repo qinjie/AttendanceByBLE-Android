@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
+import com.example.sonata.attendancetakingapplication.BeaconScanActivation;
 import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.Lecturer;
@@ -159,6 +160,7 @@ public class TimeTableFragment extends Fragment {
     }
 
     private void loadTimetable() {
+        final BeaconScanActivation tmp = new BeaconScanActivation();
         Preferences.showLoading(context, "Timetable", "Loading data from server...");
         try {
             SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
@@ -250,7 +252,7 @@ public class TimeTableFragment extends Fragment {
                     }
                     Preferences.dismissLoading();
 
-
+                     BeaconScanActivation.timetableList= timetableList;
                 }
 
                 @Override
@@ -310,14 +312,16 @@ public class TimeTableFragment extends Fragment {
                     }
                     initTimetableList();
 
+                    BeaconScanActivation.timetableList= timetableList;
+
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-    }
 
+    }
 
 
     @Override

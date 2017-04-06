@@ -1,8 +1,6 @@
 package com.example.sonata.attendancetakingapplication;
 
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -69,6 +67,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
     ArrayList<Region> regionList = new ArrayList();
     TimetableResult specificTimetable = null;
+    public static List<TimetableResult> timetableList;
+
 
     final BootstrapNotifier tmp = this;
     private Handler mHandler;
@@ -228,9 +228,6 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     calendar3.setTime(nowTime);
 
 
-
-
-
                                     Date x = calendar3.getTime();
                                     if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
                                         specificTimetable = new TimetableResult();
@@ -333,6 +330,11 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
                 }
 
+
+                if (timetableList != null) {
+                    Log.d("testinggg", timetableList.size() + " zzzzz");
+                }
+
                 regionBootstrap = new RegionBootstrap(tmp, regionList);
 
                 Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
@@ -405,5 +407,10 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
             return true;
         }
 
+    }
+
+
+    public void setTimetableList(List<TimetableResult> list) {
+        timetableList = list;
     }
 }
