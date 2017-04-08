@@ -78,6 +78,9 @@
         <activity android:name=".NavigationActivity" />
         <activity android:name=".ChangePasswordActivity" />
         <activity android:name=".TestActivity"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="fb2362b8d50c1272da41f488ad21dfdc6d4cb7dc" />
     </application>
 
 </manifest>

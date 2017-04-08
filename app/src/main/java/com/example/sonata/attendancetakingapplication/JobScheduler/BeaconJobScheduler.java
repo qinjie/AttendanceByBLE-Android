@@ -68,7 +68,9 @@ public class BeaconJobScheduler extends JobService {
                 beaconTransmitter.startAdvertising(beaconBuilder.build());
 
                 //Wait for 10 seconds to finish transmit
+//                SystemClock.sleep(30000);
                 SystemClock.sleep(5000);
+
                 beaconTransmitter.stopAdvertising();
             }
 
