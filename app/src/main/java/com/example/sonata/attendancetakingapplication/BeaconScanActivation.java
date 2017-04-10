@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -146,18 +147,19 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
 
     //this will re-run after every 10 seconds
-//    private int mInterval = 43200000;
-    private int mInterval = 30000;
+    private int mInterval = 43200000;
+//    private int mInterval = 30000;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
 
-            SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+            final SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
 
             String isLogin = pref.getString("isLogin", "false");
 
             if (isLogin.equals("true")) {
+                mInterval = 43200000;
 
                 String auCode = pref.getString("authorizationCode", null);
                 final String studentId = pref.getString("student_id", null);
@@ -316,95 +318,134 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 //
 //                }
 
-
-                if (timetableList != null) {
-                    ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
-
-                    String userMajor = pref.getString("major", "");
-                    String userMinor = pref.getString("minor", "");
-
-                    if (!userMajor.equals("") || !userMinor.equals("")) {
-
-                        JobScheduler jobScheduler =
-                                (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                        jobScheduler.cancelAll();
-
-                        for (TimetableResult aSubject_time : timetableList) {
-
-                            try {
-                                String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getStart_time();
-
-                                Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
-
-                                Calendar calendar1 = Calendar.getInstance();
-                                calendar1.setTime(time);
-
-                                Date timeNow = new Date();
-                                Calendar calendar2 = Calendar.getInstance();
-                                calendar2.setTime(timeNow);
-
-                                if (calendar2.getTime().before(calendar1.getTime())) {
-                                    long timeInterval = time.getTime() - timeNow.getTime();
-
-                                    PersistableBundle bundle1 = new PersistableBundle();
-                                    bundle1.putString("subject-uuid", aSubject_time.getLessonBeacon().getUuid());
-                                    bundle1.putString("user-major", userMajor);
-                                    bundle1.putString("user-minor", userMinor);
-
-                                    JobInfo.Builder builder = new JobInfo.Builder(1, serviceName);
-                                    builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-                                    builder.setOverrideDeadline(2000);
-                                    builder.setMinimumLatency(timeInterval);
-                                    builder.setExtras(bundle1);
-
-                                    jobScheduler.schedule(builder.build());
+//                ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
+//                JobScheduler jobScheduler =
+//                        (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//                jobScheduler.cancelAll();
+//                PersistableBundle bundle1 = new PersistableBundle();
+//                bundle1.putString("subject-uuid","b9407f30-f5f8-466e-aff9-25556b57fe6d");
+//                bundle1.putString("user-major", "6699");
+//                bundle1.putString("user-minor", "8888");
+//                bundle1.putString("user-less","hihi");
+//
+//                JobInfo.Builder builder = new JobInfo.Builder(163, serviceName);
+//                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//                builder.setMinimumLatency(5000);
+//                builder.setExtras(bundle1);
+//
+//                jobScheduler.schedule(builder.build());
+//
+//
+//                PersistableBundle bundle = new PersistableBundle();
+//                bundle.putString("subject-uuid","b9407f30-f5f8-466e-aff9-25556b57fe6d");
+//                bundle.putString("user-major", "1111");
+//                bundle.putString("user-minor", "2222");
+//                bundle.putString("user-less","haha");
+//                JobInfo.Builder builder1 = new JobInfo.Builder(1663, serviceName);
+//                builder1.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//                builder1.setMinimumLatency(20000);
+//                builder1.setExtras(bundle);
+//
+//                jobScheduler.schedule(builder1.build());
 
 
-                                    if (aSubject_time.getLecturers() != null) {
-                                        if (aSubject_time.getLecturers().getBeacon() != null) {
-                                            String teacherMajor = aSubject_time.getLecturers().getBeacon().getMajor();
-                                            String teacherMinor = aSubject_time.getLecturers().getBeacon().getMinor();
-                                            Region region2 = new Region(aSubject_time.getLecturers().getName() + ";" +
-                                                    aSubject_time.getLesson().getSubject_area() + ";" +
-                                                    aSubject_time.getLesson_date().getLdate(),
-                                                    Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
-                                                    Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-                                            if (!regionList.contains(region2)) {
-                                                regionList.add(region2);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (timetableList != null) {
+                            ComponentName serviceName = new ComponentName(getBaseContext(), BeaconJobScheduler.class);
+
+                            String userMajor = pref.getString("major", "");
+                            String userMinor = pref.getString("minor", "");
+
+                            if (!userMajor.equals("") || !userMinor.equals("")) {
+
+                                JobScheduler jobScheduler =
+                                        (JobScheduler) getBaseContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                                jobScheduler.cancelAll();
+
+                                for (TimetableResult aSubject_time : timetableList) {
+
+                                    try {
+                                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getStart_time();
+                                        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+                                        Calendar calendar1 = Calendar.getInstance();
+                                        calendar1.setTime(time);
+
+                                        Date timeNow = new Date();
+                                        Calendar calendar2 = Calendar.getInstance();
+                                        calendar2.setTime(timeNow);
+
+                                        if (calendar2.getTime().before(calendar1.getTime())) {
+                                            long timeInterval = time.getTime() - timeNow.getTime();
+
+                                            //random time for 15 min of lesson
+                                            int min = 10000;
+                                            int max = 900000;
+                                            Random r = new Random();
+                                            long randomTime = r.nextInt(max - min) + min;
+                                            timeInterval = timeInterval + randomTime;
+
+                                            PersistableBundle bundle1 = new PersistableBundle();
+                                            bundle1.putString("subject-uuid", aSubject_time.getLessonBeacon().getUuid());
+                                            bundle1.putString("user-major", userMajor);
+                                            bundle1.putString("user-minor", userMinor);
+                                            bundle1.putString("user-less", aSubject_time.getLesson().getFacility() + " " + aSubject_time.getLesson().getCatalog_number() + " " + aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getStart_time());
+
+                                            JobInfo.Builder builder = new JobInfo.Builder(Integer.parseInt(aSubject_time.getLesson_date().getId()), serviceName);
+                                            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+                                            builder.setMinimumLatency(timeInterval);
+                                            builder.setExtras(bundle1);
+
+                                            jobScheduler.schedule(builder.build());
+
+
+                                            if (aSubject_time.getLecturers() != null) {
+                                                if (aSubject_time.getLecturers().getBeacon() != null) {
+                                                    String teacherMajor = aSubject_time.getLecturers().getBeacon().getMajor();
+                                                    String teacherMinor = aSubject_time.getLecturers().getBeacon().getMinor();
+                                                    Region region2 = new Region(aSubject_time.getLecturers().getName() + ";" +
+                                                            aSubject_time.getLesson().getSubject_area() + ";" +
+                                                            aSubject_time.getLesson_date().getLdate(),
+                                                            Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
+                                                            Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
+                                                    if (!regionList.contains(region2)) {
+                                                        regionList.add(region2);
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
-                                    
-                                    for (StudentInfo aStudent : aSubject_time.getStudentList()) {
-                                        if (!aStudent.getBeacon().getMajor().equals("")) {
-                                            String studentMajor = aStudent.getBeacon().getMajor();
-                                            String studentMinor = aStudent.getBeacon().getMinor();
-                                            Region region = new Region(aStudent.getName() + " - " +
-                                                    aSubject_time.getLesson().getSubject_area(),
-                                                    Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
-                                                    Identifier.parse(studentMajor), Identifier.parse(studentMinor));
-                                            if (!regionList.contains(region)) {
-                                                regionList.add(region);
+
+                                            for (StudentInfo aStudent : aSubject_time.getStudentList()) {
+                                                if (!aStudent.getBeacon().getMajor().equals("")) {
+                                                    String studentMajor = aStudent.getBeacon().getMajor();
+                                                    String studentMinor = aStudent.getBeacon().getMinor();
+                                                    Region region = new Region(aStudent.getName() + " - " +
+                                                            aSubject_time.getLesson().getSubject_area(),
+                                                            Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
+                                                            Identifier.parse(studentMajor), Identifier.parse(studentMinor));
+                                                    if (!regionList.contains(region)) {
+                                                        regionList.add(region);
+                                                    }
+                                                }
                                             }
+
                                         }
+
+
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
                                     }
-
-
                                 }
-
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
                             }
+
                         }
+
+                        Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
+                        startService(startServiceIntent);
+
+                        regionBootstrap = new RegionBootstrap(tmp, regionList);
                     }
-
-                }
-
-                Intent startServiceIntent = new Intent(getBaseContext(), BeaconJobScheduler.class);
-                startService(startServiceIntent);
-
-                regionBootstrap = new RegionBootstrap(tmp, regionList);
+                }, 10000);
 
 
             } else {
@@ -417,6 +458,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                         }
                     }
                 }
+                mInterval = 30000;
 
             }
 
@@ -425,7 +467,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     };
 
 
-    void startRepeatingTask() {
+    public void startRepeatingTask() {
         mStatusChecker.run();
     }
 

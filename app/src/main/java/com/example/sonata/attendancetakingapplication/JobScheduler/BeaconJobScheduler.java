@@ -28,7 +28,7 @@ public class BeaconJobScheduler extends JobService {
         //return false the OS will auto kill job, if return true we have to decide to stop by yourself
         // by calling jobScheduler.cancelAll()
         // method onStopJob will be called
-        return false;
+        return true;
     }
 
     @Override
@@ -54,7 +54,9 @@ public class BeaconJobScheduler extends JobService {
                 final Beacon.Builder beaconBuilder = new Beacon.Builder();
                 beaconBuilder.setId1(params[0].getExtras().getString("subject-uuid"));
                 beaconBuilder.setId2(params[0].getExtras().getString("user-major"));
-                beaconBuilder.setId3(params[0].getExtras().getString("user-minor"));
+//                beaconBuilder.setId3(params[0].getExtras().getString("user-minor"));
+                beaconBuilder.setId3("666");
+
                 beaconBuilder.setManufacturer(0x015D);
                 //Estimo company code
                 //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
