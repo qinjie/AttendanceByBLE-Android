@@ -12,12 +12,19 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.os.RemoteException;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.sonata.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
 import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.OrmLite.DatabaseManager;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
@@ -36,6 +43,9 @@ import java.util.List;
 import java.util.Random;
 
 import io.fabric.sdk.android.Fabric;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
@@ -72,8 +82,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
         mBeaconmanager.setBackgroundMode(true);
         backgroundPowerSaver = new BackgroundPowerSaver(getBaseContext());
 
-        mBeaconmanager.setBackgroundBetweenScanPeriod(25000l);
-        mBeaconmanager.setBackgroundScanPeriod(20000l);
+        mBeaconmanager.setBackgroundBetweenScanPeriod(120000l);
+        mBeaconmanager.setBackgroundScanPeriod(5000l);
 
         DatabaseManager.init(getBaseContext());
 
@@ -83,36 +93,64 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
     @Override
     public void didDetermineStateForRegion(int status, Region region) {
-        SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-        String studentId = pref.getString("student_id", null);
+        final SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
 
         String isLogin = pref.getString("isLogin", "false");
-        if (isLogin.equals("true")) {
-//            if (specificTimetable != null) {
-//                if (specificTimetable.getLecturers() != null) {
-////                Log.i("Activation-determine", region.getUniqueId() + ": " + status);
-//                    if (specificTimetable.getLecturers().getBeacon() != null) {
-//
-//                        String teacherMajor = specificTimetable.getLecturers().getBeacon().getMajor();
-//                        String teacherMinor = specificTimetable.getLecturers().getBeacon().getMinor();
-//
-//                        Region region2 = new Region("Teacher", Identifier.parse(specificTimetable.getLessonBeacon().getUuid()), Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
-//
-//                        if (region.equals(region2) && status == 1) {
-//                            SharedPreferences.Editor editor = pref.edit();
-//                            editor.putString("hasTeacher", "true");
-//                            editor.apply();
-//                        }
-//
-//                        String hasTeacher = pref.getString("hasTeacher", "");
-//                        if (hasTeacher.equals("true") && status == 1 && (!region.equals(region2))) {
-//                            Log.i("Presenttttttt", region.getUniqueId() + " : " + status);
-//                            Preferences.studentNotify(getBaseContext(), "Attendance", "Student Present", Integer.parseInt(studentId));
-//                        }
-//                    }
-////
-//                }
-//            }
+
+        if (isLogin.equals("true") && regionList != null) {
+            if (status == 1) {
+                try {
+                    final String auCode = pref.getString("authorizationCode", null);
+                    final String studentId = pref.getString("student_id", null);
+
+                    String[] studentId_lessonDateId = region.getUniqueId().split(";");
+                    if (studentId_lessonDateId.length > 0) {
+                        String detectedStudentId = studentId_lessonDateId[0];
+                        String lessonDateId = studentId_lessonDateId[1];
+
+                        if (timetableList != null) {
+                            JsonParser parser = new JsonParser();
+                            JsonObject obj = parser.parse("{" +
+                                    "\"data\": " +
+                                    "[" +
+                                    "{" +
+                                    "\"lesson_date_id\":\"" + lessonDateId + "\"," +
+                                    "\"student_id_1\":\"" + studentId + "\"," +
+                                    "\"student_id_2\":\"" + detectedStudentId + "\"" +
+                                    "}" +
+                                    "]" +
+                                    "}").getAsJsonObject();
+
+
+                            ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+                            Call<ResponseBody> call = client.takeAttendance(obj);
+                            call.enqueue(new ServerCallBack<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.body().equals("Attendance taking successfully")) {
+                                        Toast.makeText(getBaseContext(), "Attendance success", Toast.LENGTH_SHORT).show();
+                                        Log.d("test attendance", "success");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    super.onFailure(call, t);
+                                    Log.d("test attendance", "failed");
+                                }
+                            });
+
+
+                        }
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
         }
     }
 
@@ -147,22 +185,22 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
 
     //this will re-run after every 10 seconds
-    private int mInterval = 43200000;
-//    private int mInterval = 30000;
+    // private int mInterval = 43200000;
+    private int mInterval = 30000;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
+            Toast.makeText(getBaseContext(), "ahihi", Toast.LENGTH_SHORT);
 
             final SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
 
             String isLogin = pref.getString("isLogin", "false");
 
             if (isLogin.equals("true")) {
-                mInterval = 43200000;
-
-                String auCode = pref.getString("authorizationCode", null);
-                final String studentId = pref.getString("student_id", null);
+                //TODO
+                //for test
+//                mInterval = 43200000;
 
 //                Date aDate = new Date();
 //                SimpleDateFormat curFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -367,7 +405,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 for (TimetableResult aSubject_time : timetableList) {
 
                                     try {
-                                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getStart_time();
+                                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
                                         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
                                         Calendar calendar1 = Calendar.getInstance();
                                         calendar1.setTime(time);
@@ -379,7 +417,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                         if (calendar2.getTime().before(calendar1.getTime())) {
                                             long timeInterval = time.getTime() - timeNow.getTime();
 
-                                            //random time for 15 min of lesson
+                                            //random time in 15 min time interval
                                             int min = 10000;
                                             int max = 900000;
                                             Random r = new Random();
@@ -390,8 +428,9 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                             bundle1.putString("subject-uuid", aSubject_time.getLessonBeacon().getUuid());
                                             bundle1.putString("user-major", userMajor);
                                             bundle1.putString("user-minor", userMinor);
-                                            bundle1.putString("user-less", aSubject_time.getLesson().getFacility() + " " + aSubject_time.getLesson().getCatalog_number() + " " + aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getStart_time());
+                                            bundle1.putString("user-lesson", aSubject_time.getLesson().getFacility() + " " + aSubject_time.getLesson().getCatalog_number() + " " + aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getStart_time());
 
+                                            //schedule for first time broadcast - first 15 min of lesson
                                             JobInfo.Builder builder = new JobInfo.Builder(Integer.parseInt(aSubject_time.getLesson_date().getId()), serviceName);
                                             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
                                             builder.setMinimumLatency(timeInterval);
@@ -399,14 +438,24 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
                                             jobScheduler.schedule(builder.build());
 
+                                            //schedule for second time broadcast - 30 min later
+                                            Random r2 = new Random();
+                                            long randomTime2 = r2.nextInt(max - min) + min;
+                                            timeInterval = timeInterval + 900000 * 2 + randomTime2;
+                                            JobInfo.Builder builder2 = new JobInfo.Builder(Integer.parseInt(aSubject_time.getLesson_date().getId()) + 666, serviceName);
+                                            builder2.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+                                            builder2.setMinimumLatency(timeInterval);
+                                            builder2.setExtras(bundle1);
 
+                                            jobScheduler.schedule(builder2.build());
+
+                                            //adding region to monitor
                                             if (aSubject_time.getLecturers() != null) {
                                                 if (aSubject_time.getLecturers().getBeacon() != null) {
                                                     String teacherMajor = aSubject_time.getLecturers().getBeacon().getMajor();
                                                     String teacherMinor = aSubject_time.getLecturers().getBeacon().getMinor();
-                                                    Region region2 = new Region(aSubject_time.getLecturers().getName() + ";" +
-                                                            aSubject_time.getLesson().getSubject_area() + ";" +
-                                                            aSubject_time.getLesson_date().getLdate(),
+                                                    Region region2 = new Region(aSubject_time.getLecturers().getId() + ";" +
+                                                            aSubject_time.getLesson_date().getId()+";teacher",
                                                             Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
                                                             Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
                                                     if (!regionList.contains(region2)) {
@@ -419,8 +468,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                                 if (!aStudent.getBeacon().getMajor().equals("")) {
                                                     String studentMajor = aStudent.getBeacon().getMajor();
                                                     String studentMinor = aStudent.getBeacon().getMinor();
-                                                    Region region = new Region(aStudent.getName() + " - " +
-                                                            aSubject_time.getLesson().getSubject_area(),
+                                                    Region region = new Region(aStudent.getId() + ";" +
+                                                            aSubject_time.getLesson_date().getId()+";student",
                                                             Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
                                                             Identifier.parse(studentMajor), Identifier.parse(studentMinor));
                                                     if (!regionList.contains(region)) {
@@ -458,10 +507,11 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                         }
                     }
                 }
+
+                regionList.clear();
                 mInterval = 30000;
 
             }
-
             mHandler.postDelayed(mStatusChecker, mInterval);
         }
     };

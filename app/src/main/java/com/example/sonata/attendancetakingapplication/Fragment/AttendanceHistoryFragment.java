@@ -136,7 +136,7 @@ public class AttendanceHistoryFragment extends Fragment {
                     Preferences.dismissLoading();
 
 
-                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity()).create();
+                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity().getBaseContext()).create();
                     alertDialog.setTitle("This function needs internet connection");
                     alertDialog.setMessage("Please turn on internet to get latest update about you attendance history.");
                     alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",

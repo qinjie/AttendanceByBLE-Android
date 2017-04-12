@@ -54,8 +54,8 @@ public class BeaconJobScheduler extends JobService {
                 final Beacon.Builder beaconBuilder = new Beacon.Builder();
                 beaconBuilder.setId1(params[0].getExtras().getString("subject-uuid"));
                 beaconBuilder.setId2(params[0].getExtras().getString("user-major"));
-//                beaconBuilder.setId3(params[0].getExtras().getString("user-minor"));
-                beaconBuilder.setId3("666");
+                beaconBuilder.setId3(params[0].getExtras().getString("user-minor"));
+//                beaconBuilder.setId3("666");
 
                 beaconBuilder.setManufacturer(0x015D);
                 //Estimo company code
@@ -69,9 +69,9 @@ public class BeaconJobScheduler extends JobService {
 
                 beaconTransmitter.startAdvertising(beaconBuilder.build());
 
-                //Wait for 10 seconds to finish transmit
+                //Wait for 30 seconds to finish transmit
 //                SystemClock.sleep(30000);
-                SystemClock.sleep(5000);
+                SystemClock.sleep(30000);
 
                 beaconTransmitter.stopAdvertising();
             }
