@@ -54,6 +54,6 @@ public interface ServerApi {
     Call<ResponseBody> pushStudentArrayList(@Body JsonObject toUp);
 
     @POST("beacon-attendance-student/student-attendance")
-    Call<ResponseBody> takeAttendance(@Body JsonObject obj);
+    Call<String> takeAttendance(@Body JsonObject obj);
 
 }

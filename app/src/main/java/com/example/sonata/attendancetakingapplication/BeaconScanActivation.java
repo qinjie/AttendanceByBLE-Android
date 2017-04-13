@@ -82,7 +82,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
         mBeaconmanager.setBackgroundMode(true);
         backgroundPowerSaver = new BackgroundPowerSaver(getBaseContext());
 
-        mBeaconmanager.setBackgroundBetweenScanPeriod(120000l);
+        mBeaconmanager.setBackgroundBetweenScanPeriod(30000l);
         mBeaconmanager.setBackgroundScanPeriod(5000l);
 
         DatabaseManager.init(getBaseContext());
@@ -123,10 +123,10 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
 
                             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
-                            Call<ResponseBody> call = client.takeAttendance(obj);
-                            call.enqueue(new ServerCallBack<ResponseBody>() {
+                            Call<String> call = client.takeAttendance(obj);
+                            call.enqueue(new ServerCallBack<String>() {
                                 @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                public void onResponse(Call<String> call, Response<String> response) {
                                     if (response.body().equals("Attendance taking successfully")) {
                                         Toast.makeText(getBaseContext(), "Taking attendance success", Toast.LENGTH_SHORT).show();
                                         Preferences.studentNotify(getBaseContext(), "Taking attendance success", "You attendance has been recorded. Enjoy your class.", Integer.parseInt(studentId));
@@ -135,7 +135,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 }
 
                                 @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                public void onFailure(Call<String> call, Throwable t) {
                                     super.onFailure(call, t);
                                     Log.d("test attendance", "failed");
                                 }
