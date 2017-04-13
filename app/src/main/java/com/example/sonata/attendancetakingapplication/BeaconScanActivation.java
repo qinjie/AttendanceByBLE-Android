@@ -184,9 +184,9 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     }
 
 
-    //this will re-run after every 10 seconds
-    // private int mInterval = 43200000;
-    private int mInterval = 30000;
+    //this will re-run after every 12 hours
+     private int mInterval = 43200000;
+//    private int mInterval = 30000;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
@@ -199,8 +199,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
             if (isLogin.equals("true")) {
                 //TODO
-                //for test
-//                mInterval = 43200000;
+                mInterval = 43200000;
 
 //                Date aDate = new Date();
 //                SimpleDateFormat curFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
