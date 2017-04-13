@@ -128,7 +128,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     if (response.body().equals("Attendance taking successfully")) {
-                                        Toast.makeText(getBaseContext(), "Attendance success", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getBaseContext(), "Taking attendance success", Toast.LENGTH_SHORT).show();
+                                        Preferences.studentNotify(getBaseContext(), "Taking attendance success", "You attendance has been recorded. Enjoy your class.", Integer.parseInt(studentId));
                                         Log.d("test attendance", "success");
                                     }
                                 }
