@@ -151,6 +151,7 @@ public class Preferences {
         SharedPreferences.Editor editor = pref.edit();
 
         editor.putString("isLogin", "true");
+        editor.putString("isStudent", "true");
         editor.putString("student_id", _studentInfo.getId());
         editor.putString("student_name", _studentInfo.getName());
         editor.putString("student_acad", _studentInfo.getAcad());

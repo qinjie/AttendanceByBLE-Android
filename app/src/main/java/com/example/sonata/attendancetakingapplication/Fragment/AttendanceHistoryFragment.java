@@ -136,22 +136,41 @@ public class AttendanceHistoryFragment extends Fragment {
                     Preferences.dismissLoading();
 
 
-                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity().getBaseContext()).create();
-                    alertDialog.setTitle("This function needs internet connection");
-                    alertDialog.setMessage("Please turn on internet to get latest update about you attendance history.");
-                    alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+//                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity().getBaseContext()).create();
+//                    alertDialog.setTitle("This function needs internet connection");
+//                    alertDialog.setMessage("Please turn on internet to get latest update about you attendance history.");
+//                    alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//
+//                                    Intent intent = new Intent(getActivity().getBaseContext(), NavigationActivity.class);
+//                                    startActivity(intent);
+//                                    getActivity().finish();
+//
+//
+//                                }
+//                            });
+//                    alertDialog.show();
+
+
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getBaseContext());
+                    builder.setTitle("This function needs internet connection");
+                    builder.setMessage("Please turn on internet to get latest update about you attendance history.");
+
+                    builder.setPositiveButton("OK",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+                                @Override
+                                public void onClick(final DialogInterface dialog, final int i) {
                                     dialog.dismiss();
 
                                     Intent intent = new Intent(getActivity().getBaseContext(), NavigationActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();
-
-
                                 }
                             });
-                    alertDialog.show();
+                    builder.create().show();
 
                 }
             });

@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Random;
 
 import io.fabric.sdk.android.Fabric;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -129,7 +128,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 public void onResponse(Call<String> call, Response<String> response) {
                                     if (response.body().equals("Attendance taking successfully")) {
                                         Toast.makeText(getBaseContext(), "Taking attendance success", Toast.LENGTH_SHORT).show();
-                                        Preferences.studentNotify(getBaseContext(), "Taking attendance success", "You attendance has been recorded. Enjoy your class.", Integer.parseInt(studentId));
+                                        Preferences.studentNotify(getBaseContext(), "Taking attendance success", "Your attendance has been recorded. Enjoy your class.", Integer.parseInt(studentId));
                                         Log.d("test attendance", "success");
                                     }
                                 }
@@ -186,13 +185,12 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
 
     //this will re-run after every 12 hours
-     private int mInterval = 43200000;
+    private int mInterval = 43200000;
 //    private int mInterval = 30000;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
-            Toast.makeText(getBaseContext(), "ahihi", Toast.LENGTH_SHORT);
 
             final SharedPreferences pref = getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
 
@@ -455,7 +453,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                                     String teacherMajor = aSubject_time.getLecturers().getBeacon().getMajor();
                                                     String teacherMinor = aSubject_time.getLecturers().getBeacon().getMinor();
                                                     Region region2 = new Region(aSubject_time.getLecturers().getId() + ";" +
-                                                            aSubject_time.getLesson_date().getId()+";teacher",
+                                                            aSubject_time.getLesson_date().getId() + ";teacher",
                                                             Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
                                                             Identifier.parse(teacherMajor), Identifier.parse(teacherMinor));
                                                     if (!regionList.contains(region2)) {
@@ -469,7 +467,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                                     String studentMajor = aStudent.getBeacon().getMajor();
                                                     String studentMinor = aStudent.getBeacon().getMinor();
                                                     Region region = new Region(aStudent.getId() + ";" +
-                                                            aSubject_time.getLesson_date().getId()+";student",
+                                                            aSubject_time.getLesson_date().getId() + ";student",
                                                             Identifier.parse(aSubject_time.getLessonBeacon().getUuid()),
                                                             Identifier.parse(studentMajor), Identifier.parse(studentMinor));
                                                     if (!regionList.contains(region)) {

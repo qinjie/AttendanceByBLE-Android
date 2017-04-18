@@ -36,7 +36,6 @@ public class NavigationActivity extends AppCompatActivity{
 
     BluetoothAdapter bluetoothAdapter;
 
-//    Alarm alarm = new Alarm();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
