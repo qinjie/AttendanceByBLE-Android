@@ -2,6 +2,7 @@ package com.example.sonata.attendancetakingapplication.JobScheduler;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -12,6 +13,9 @@ import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.BeaconTransmitter;
 
 import java.util.Arrays;
+
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 
 /**
  * Created by hoanglong on 27-Mar-17.
@@ -55,25 +59,28 @@ public class BeaconJobScheduler extends JobService {
                 beaconBuilder.setId1(params[0].getExtras().getString("subject-uuid"));
                 beaconBuilder.setId2(params[0].getExtras().getString("user-major"));
                 beaconBuilder.setId3(params[0].getExtras().getString("user-minor"));
-//                beaconBuilder.setId3("666");
 
-                beaconBuilder.setManufacturer(0x015D);
-                //Estimo company code
+                //Estimote company code
                 //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+                beaconBuilder.setManufacturer(0x015D);
                 beaconBuilder.setTxPower(-59);
                 beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
                 BeaconParser beaconParser = new BeaconParser()
                         .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
                 final BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
-//                beaconTransmitter.stopAdvertising();
 
                 beaconTransmitter.startAdvertising(beaconBuilder.build());
 
-                //Wait for 30 seconds to finish transmit
-//                SystemClock.sleep(30000);
-                SystemClock.sleep(30000);
+                SharedPreferences pref = getBaseContext().getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("isActivateBeacon", "true");
+                editor.apply();
 
+                //Wait for 30 seconds to finish transmit
+                SystemClock.sleep(30000);
                 beaconTransmitter.stopAdvertising();
+                editor.putString("isActivateBeacon", "false");
+                editor.apply();
             }
 
 

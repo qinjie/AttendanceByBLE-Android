@@ -4,20 +4,36 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.sonata.attendancetakingapplication.ChangePasswordActivity;
+import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.BeaconTransmitter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+import static com.example.sonata.attendancetakingapplication.BeaconScanActivation.timetableList;
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 
@@ -28,12 +44,6 @@ public class UserSettingFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-//    private OnFragmentInteractionListener mListener;
-
     private Activity context;
 
     private View inflateView;
@@ -43,6 +53,13 @@ public class UserSettingFragment extends Fragment {
 
     @BindView(R.id.user_profile_short_bio)
     TextView userBio;
+
+    @BindView(R.id.btnActivateBeacon)
+    ToggleButton btnActivateBeacon;
+
+    private Handler mHandler;
+    public static BeaconTransmitter beaconTransmitter;
+    public static Beacon.Builder beaconBuilder;
 
 
     public UserSettingFragment() {
@@ -71,12 +88,11 @@ public class UserSettingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            if (getArguments() != null) {
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-            }
+//            if (getArguments() != null) {
+//                mParam1 = getArguments().getString(ARG_PARAM1);
+//                mParam2 = getArguments().getString(ARG_PARAM2);
+//            }
             context = this.getActivity();
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,20 +135,223 @@ public class UserSettingFragment extends Fragment {
             String studentName = pref.getString("student_name", "");
             userName.setText(studentName);
 
-            String studentID = pref.getString("student_id","");
+            String studentID = pref.getString("student_id", "");
             userBio.setText(studentID);
         }
 
         setUserSettingLayout();
 
+
+        mHandler = new Handler();
+
+//        String userMajor = pref.getString("major", "");
+//        String userMinor = pref.getString("minor", "");
+//
+//        if (timetableList != null) {
+//            if (!userMajor.equals("") || !userMinor.equals("")) {
+//                for (TimetableResult aSubject_time : timetableList) {
+//                    try {
+//                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+//                        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+//                        Calendar calendar1 = Calendar.getInstance();
+//                        calendar1.setTime(time);
+//
+//                        Date timeNow = new Date();
+//                        Calendar calendar2 = Calendar.getInstance();
+//                        calendar2.setTime(timeNow);
+//
+//                        if (calendar2.getTime().before(calendar1.getTime())) {
+//
+//                            beaconBuilder = new Beacon.Builder();
+//                            beaconBuilder.setId1(aSubject_time.getLessonBeacon().getUuid());
+//                            beaconBuilder.setId2(userMajor);
+//                            beaconBuilder.setId3(userMinor);
+//
+//                            //Estimote company code
+//                            //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+//                            beaconBuilder.setManufacturer(0x015D);
+//                            beaconBuilder.setTxPower(-59);
+//                            beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
+//                            BeaconParser beaconParser = new BeaconParser()
+//                                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+//                            beaconTransmitter = new BeaconTransmitter(getActivity().getBaseContext(), beaconParser);
+//                            break;
+//
+//                        }
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+
+        String isBeaconActivated = pref.getString("isActivateBeacon", "");
+        if (isBeaconActivated.equals("true")) {
+            btnActivateBeacon.setChecked(true);
+            btnActivateBeacon.setEnabled(false);
+
+        } else {
+            btnActivateBeacon.setChecked(false);
+            btnActivateBeacon.setEnabled(true);
+
+        }
+
         return inflateView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
+
+    @OnClick(R.id.btnActivateBeacon)
+    public void turnOnOffBeacon() {
+
+
+//        String userMajor = pref.getString("major", "");
+//        String userMinor = pref.getString("minor", "");
+//
+//
+//        if (timetableList != null) {
+//
+//            if (!userMajor.equals("") || !userMinor.equals("")) {
+//
+//                for (TimetableResult aSubject_time : timetableList) {
+//
+//                    try {
+//                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+//                        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+//                        Calendar calendar1 = Calendar.getInstance();
+//                        calendar1.setTime(time);
+//
+//                        Date timeNow = new Date();
+//                        Calendar calendar2 = Calendar.getInstance();
+//                        calendar2.setTime(timeNow);
+//
+//                        if (calendar2.getTime().before(calendar1.getTime())) {
+//
+//                            //random time in 15 min time interval
+//                            int min = 10000;
+//                            int max = 900000;
+//                            Random r = new Random();
+//                            long randomTime = r.nextInt(max - min) + min;
+//
+//
+//                            final Beacon.Builder beaconBuilder = new Beacon.Builder();
+//                            beaconBuilder.setId1(aSubject_time.getLessonBeacon().getUuid());
+//                            beaconBuilder.setId2(userMajor);
+//                            beaconBuilder.setId3(userMinor);
+//
+//                            //Estimote company code
+//                            //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+//                            beaconBuilder.setManufacturer(0x015D);
+//                            beaconBuilder.setTxPower(-59);
+//                            beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
+//                            BeaconParser beaconParser = new BeaconParser()
+//                                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+//                            final BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getActivity().getBaseContext(), beaconParser);
+//
+//
+//
+////                            else{
+////                                Toast.makeText(context, "Attendance progress has been cancelled.", Toast.LENGTH_SHORT).show();
+////                                beaconTransmitter.stopAdvertising();
+////                                btnActivateBeacon.setChecked(false);
+////                            }
+//
+//                            break;
+//
+//                        }
+//
+//
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
 //        }
+
+
+        final SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+
+        String userMajor = pref.getString("major", "");
+        String userMinor = pref.getString("minor", "");
+
+        if (timetableList != null) {
+            if (!userMajor.equals("") || !userMinor.equals("")) {
+                for (TimetableResult aSubject_time : timetableList) {
+                    try {
+                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+                        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTime(time);
+
+                        Date timeNow = new Date();
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar2.setTime(timeNow);
+
+                        if (calendar2.getTime().before(calendar1.getTime())) {
+
+                            beaconBuilder = new Beacon.Builder();
+                            beaconBuilder.setId1(aSubject_time.getLessonBeacon().getUuid());
+                            beaconBuilder.setId2(userMajor);
+                            beaconBuilder.setId3(userMinor);
+
+                            //Estimote company code
+                            //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+                            beaconBuilder.setManufacturer(0x015D);
+                            beaconBuilder.setTxPower(-59);
+                            beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
+                            BeaconParser beaconParser = new BeaconParser()
+                                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+                            beaconTransmitter = new BeaconTransmitter(getActivity().getBaseContext(), beaconParser);
+                            break;
+
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        //random time in 15 min time interval
+        int min = 10000;
+        int max = 900000;
+        Random r = new Random();
+        long randomTime = r.nextInt(max - min) + min;
+
+        if (btnActivateBeacon.isChecked() && beaconTransmitter != null && beaconBuilder != null) {
+
+            final SharedPreferences.Editor editor = pref.edit();
+            editor.putString("isActivateBeacon", "true");
+            editor.apply();
+
+
+            Toast.makeText(context, "Please stay in this page at least next 15 minutes to get attendance.", Toast.LENGTH_SHORT).show();
+            btnActivateBeacon.setEnabled(false);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    beaconTransmitter.startAdvertising(beaconBuilder.build());
+                    Toast.makeText(context, "Attvvv.", Toast.LENGTH_SHORT).show();
+                }
+            }, 10000);
+
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "Attendance has been recorded.", Toast.LENGTH_SHORT).show();
+                    beaconTransmitter.stopAdvertising();
+                    btnActivateBeacon.setChecked(false);
+                    btnActivateBeacon.setEnabled(true);
+                    editor.putString("isActivateBeacon", "false");
+                    editor.apply();
+                }
+            }, 30000);
+
+        }
+
+
     }
+
 
 }

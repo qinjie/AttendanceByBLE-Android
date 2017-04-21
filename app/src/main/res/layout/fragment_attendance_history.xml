@@ -40,6 +40,16 @@
                 android:textSize="16sp"
                 />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Late is counted as absent"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/md_red_A700"
+                android:gravity="center_vertical"
+                android:textSize="10sp"
+                />
+
         </LinearLayout>
 
         <TextView

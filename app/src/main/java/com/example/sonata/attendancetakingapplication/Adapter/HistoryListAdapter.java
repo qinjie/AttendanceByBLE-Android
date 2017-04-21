@@ -2,17 +2,13 @@ package com.example.sonata.attendancetakingapplication.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.sonata.attendancetakingapplication.Model.HistoricalResult;
-import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
-import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
 
 import java.util.List;
@@ -44,17 +40,16 @@ public class HistoryListAdapter extends ArrayAdapter<HistoricalResult> {
         View row = convertView;
         HistoryListAdapter.ViewHolder holder = null;
 
-        if(row == null)
-        {
+        if (row == null) {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = mInflater.inflate(layoutResourceId, parent, false);
             holder = new HistoryListAdapter.ViewHolder();
             holder.tvLessonName = (TextView) row.findViewById(R.id.subject_name);
             holder.tvAbsentSlots = (TextView) row.findViewById(R.id.absent_slots);
             holder.tvAttendanceRate = (TextView) row.findViewById(R.id.absent_rate);
+            holder.tvAttendanceNumber = (TextView) row.findViewById(R.id.attendance_number);
             row.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) row.getTag();
         }
 
@@ -63,29 +58,24 @@ public class HistoryListAdapter extends ArrayAdapter<HistoricalResult> {
         holder.tvLessonName.setText(record.getLesson_name());
 
         int totalSlot = Integer.valueOf(record.getTotal());
-        int limitSlot = totalSlot/5;
+        int limitSlot = totalSlot / 5;
 
         int absentedSlot = Integer.valueOf(record.getAbsented());
         int presentedSlot = Integer.valueOf(record.getPresented());
+        int lateSlot = Integer.valueOf(record.getLate());
         int remainingSlot = limitSlot - absentedSlot;
 
-        int attendedPercent = (int) ((float) 100*presentedSlot/totalSlot);
+        int attendedPercent = (int) ((float) 100 * presentedSlot / totalSlot);
 
 
-        if (remainingSlot <= 0)
-        {
+        if (remainingSlot <= 0) {
             holder.tvAbsentSlots.setText("You were absent " + absentedSlot + " times of this class");
             holder.tvAttendanceRate.setTextColor(Color.RED);
-        }
-        else
-        {
+        } else {
             holder.tvAbsentSlots.setText("You can only miss this class " + remainingSlot + " times");
-            if (attendedPercent <= 90)
-            {
+            if (attendedPercent <= 90) {
                 holder.tvAttendanceRate.setTextColor(holder.tvAttendanceRate.getResources().getColor(R.color.orange));
-            }
-            else
-            {
+            } else {
                 holder.tvAttendanceRate.setTextColor(holder.tvAttendanceRate.getResources().getColor(R.color.green));
             }
         }
@@ -93,14 +83,16 @@ public class HistoryListAdapter extends ArrayAdapter<HistoricalResult> {
 
         holder.tvAttendanceRate.setText(attendedPercent + "%");
 
+        holder.tvAttendanceNumber.setText("Absent: " + absentedSlot + " | Late: " + lateSlot);
+
         return row;
     }
 
-    static class ViewHolder
-    {
+    static class ViewHolder {
         TextView tvLessonName;
         TextView tvAbsentSlots;
         TextView tvAttendanceRate;
+        TextView tvAttendanceNumber;
     }
 
 }

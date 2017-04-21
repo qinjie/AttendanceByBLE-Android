@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -25,6 +26,8 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
 import static com.example.sonata.attendancetakingapplication.Preferences.getActivity;
 
 public class NavigationActivity extends AppCompatActivity{
@@ -49,6 +52,12 @@ public class NavigationActivity extends AppCompatActivity{
         Preferences.setActivity(this);
 
         checkPermissions();
+
+        SharedPreferences pref = getActivity().getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("isActivateBeacon", "false");
+        editor.apply();
+
 
 
     }
