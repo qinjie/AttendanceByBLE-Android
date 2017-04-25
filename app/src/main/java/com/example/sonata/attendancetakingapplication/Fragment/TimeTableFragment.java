@@ -5,9 +5,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -19,10 +17,10 @@ import android.widget.Toast;
 
 import com.example.sonata.attendancetakingapplication.Adapter.TimetableListAdapter;
 import com.example.sonata.attendancetakingapplication.BeaconScanActivation;
-import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.Lecturer;
 import com.example.sonata.attendancetakingapplication.Model.Lesson;
+import com.example.sonata.attendancetakingapplication.Model.LessonBeacon;
 import com.example.sonata.attendancetakingapplication.Model.LessonDate;
 import com.example.sonata.attendancetakingapplication.Model.StudentInfo;
 import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
@@ -53,13 +51,6 @@ public class TimeTableFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private Handler handler;
-    private Thread mThread;
-
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -77,15 +68,6 @@ public class TimeTableFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TimeTableFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static TimeTableFragment newInstance(String param1, String param2) {
         TimeTableFragment fragment = new TimeTableFragment();
         Bundle args = new Bundle();
@@ -98,15 +80,9 @@ public class TimeTableFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         context = this.getActivity();
         calendar = Calendar.getInstance();
-
-
     }
 
     public void onResume() {
@@ -139,11 +115,9 @@ public class TimeTableFragment extends Fragment {
                 addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_2);
             }
 
-
             TimetableListAdapter adapter = new TimetableListAdapter(context, R.layout.item_subject, R.layout.item_week_day, data, itemType);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -160,7 +134,6 @@ public class TimeTableFragment extends Fragment {
     }
 
     private void loadTimetable() {
-        final BeaconScanActivation tmp = new BeaconScanActivation();
         Preferences.showLoading(context, "Timetable", "Loading data from server...");
         try {
             SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
@@ -196,6 +169,8 @@ public class TimeTableFragment extends Fragment {
 
                             //clear old data
                             DatabaseManager.getInstance().deleteAllSubject();
+
+                            //add to DB
                             for (int i = 0; i < timetableList.size(); i++) {
                                 Subject aSubject = new Subject();
                                 aSubject.setLesson_id(timetableList.get(i).getLesson_id());
@@ -246,13 +221,12 @@ public class TimeTableFragment extends Fragment {
                             }
                         }
 
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     Preferences.dismissLoading();
 
-                     BeaconScanActivation.timetableList= timetableList;
+                    BeaconScanActivation.timetableList = timetableList;
                 }
 
                 @Override
@@ -269,6 +243,7 @@ public class TimeTableFragment extends Fragment {
 
                     List<Subject> listSubject = DatabaseManager.getInstance().getAllSubjects();
 
+                    //Get data from DB
                     for (Subject tmp : listSubject) {
                         for (SubjectDateTime tmp2 : tmp.getSubject_Datetime()) {
 
@@ -283,6 +258,7 @@ public class TimeTableFragment extends Fragment {
                             aTimetableResult.setLesson(aLesson);
 
                             LessonDate aLessonDate = new LessonDate();
+                            aLessonDate.setId(tmp2.getLesson_date_id());
                             aLessonDate.setLesson_id(tmp.getLesson_id());
                             aLessonDate.setLdate(tmp2.getLesson_date());
                             aTimetableResult.setLesson_date(aLessonDate);
@@ -306,13 +282,25 @@ public class TimeTableFragment extends Fragment {
                             aVenue.setAddress(tmp.getLocation());
                             aTimetableResult.setVenue(aVenue);
 
+                            List<StudentInfo> aStudentList = new ArrayList();
+                            for (Student tmpStudent : tmp.getStudent_list()) {
+                                StudentInfo aStudentInfo = new StudentInfo();
+                                UserBeacon aStudentBeacon = new UserBeacon();
+                                aStudentBeacon.setMajor(tmpStudent.getBeacon_major());
+                                aStudentBeacon.setMinor(tmpStudent.getBeacon_minor());
+                                aStudentInfo.setBeacon(aStudentBeacon);
+                                aStudentInfo.setId(tmpStudent.getStudent_id());
+                                aStudentInfo.setName(tmpStudent.getName());
+                                aStudentList.add(aStudentInfo);
+                            }
+                            aTimetableResult.setStudentList(aStudentList);
                             timetableList.add(aTimetableResult);
                         }
 
                     }
                     initTimetableList();
 
-                    BeaconScanActivation.timetableList= timetableList;
+                    BeaconScanActivation.timetableList = timetableList;
 
                 }
             });
@@ -335,26 +323,4 @@ public class TimeTableFragment extends Fragment {
         return myView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-    }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

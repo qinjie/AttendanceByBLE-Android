@@ -53,47 +53,22 @@ public class NavigationActivity extends AppCompatActivity{
 
         checkPermissions();
 
-        SharedPreferences pref = getActivity().getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("isActivateBeacon", "false");
-        editor.apply();
-
-
-
-    }
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
     }
 
 
     @Override
     protected void onStart() {
-//        alarm.setAlarm(this);
-//        Toast.makeText(this, "create alarm",Toast.LENGTH_SHORT).show();
         super.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        if (this.getIntent() != null) {
-//            String message = this.getIntent().getStringExtra("message");
-//            if (message != null) {
-////                TextView textView = (TextView) this.findViewById(R.id.textView);
-////                textView.setText(message);
-//            }
-//        }
+
     }
 
     @Override
     protected void onDestroy() {
-        //-- Stop service so that it will restart
-//        stopService(mServiceIntent);
         super.onDestroy();
 
     }
@@ -120,13 +95,6 @@ public class NavigationActivity extends AppCompatActivity{
                             break;
                         case R.id.tab_user:
 
-                            //TODO
-                            //for test
-//                            Intent intent = new Intent(getBaseContext(),TestActivity.class);
-//                            startActivity(intent);
-
-                            //TODO
-                            //bo cmt di, for test
                             fragment = new UserSettingFragment();
                             title = "User setting";
                             getSupportActionBar().setSubtitle(null);
@@ -137,8 +105,6 @@ public class NavigationActivity extends AppCompatActivity{
                             break;
                     }
 
-                    //TODO
-                    //bo cmt di, for test
                     setActionBarTitle(title);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
@@ -187,20 +153,20 @@ public class NavigationActivity extends AppCompatActivity{
         }
     }
 
-    public void returnToDefaultTab(){
-//        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+//    public void returnToDefaultTab(){
+////        BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+////
+////        bottomBar.selectTabAtPosition(0);
 //
-//        bottomBar.selectTabAtPosition(0);
-
-        String title = "Timetable";
-        android.app.Fragment fragment = new TimeTableFragment();
-//        setActionBarTitle(title);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
-    }
+//        String title = "Timetable";
+//        android.app.Fragment fragment = new TimeTableFragment();
+////        setActionBarTitle(title);
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.container, fragment)
+//                .commit();
+//    }
 
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -237,6 +203,7 @@ public class NavigationActivity extends AppCompatActivity{
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
+            //On android 6.0+ we need this permission to run bluetooth scan
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 //                    Log.d(TAG, "coarse location permission granted");

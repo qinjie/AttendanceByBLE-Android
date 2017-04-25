@@ -34,14 +34,10 @@ import retrofit2.Response;
 
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
 import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
+import static com.example.sonata.attendancetakingapplication.Preferences.getActivity;
 
 public class SplashActivity extends Activity{
 
-//    private final static int REQUEST_ENABLE_BT = 1;
-
-//    protected static final String TAG = "MonitoringActivity";
-//    public static BeaconManager beaconManager;
-//    private BackgroundPowerSaver backgroundPowerSaver;
 
 
     @Override
@@ -60,13 +56,6 @@ public class SplashActivity extends Activity{
         } else {
             startAuthenticatedArea();
         }
-
-//        beaconManager = BeaconManager.getInstanceForApplication(this);
-//        // To detect proprietary beacons, you must add a line like below corresponding to your beacon
-//        // type.  Do a web search for "setBeaconLayout" to get the proper expression.
-//        // beaconManager.getBeaconParsers().add(new BeaconParser().
-//        //        setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-//        beaconManager.bind(this);
 
     }
 
@@ -125,35 +114,13 @@ public class SplashActivity extends Activity{
     }
 
     private void startAuthenticatedArea() {
+        SharedPreferences pref = getActivity().getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("isActivateBeacon", "false");
+        editor.apply();
         Intent intent = new Intent(this, NavigationActivity.class);
         startActivityForResult(intent, 0);
         finish();
     }
-
-
-//    @Override
-//    public void onBeaconServiceConnect() {
-//        beaconManager.addMonitorNotifier(new MonitorNotifier() {
-//            @Override
-//            public void didEnterRegion(Region region) {
-//                Log.i("yoloooooo", region.getId2() + " | " + region.getId3() + " hahahahha");
-//            }
-//
-//            @Override
-//            public void didExitRegion(Region region) {
-//                Log.i(TAG, "I no longer see an beacon");
-//            }
-//
-//            @Override
-//            public void didDetermineStateForRegion(int state, Region region) {
-//                Log.i(TAG, "I have just switched from seeing/not seeing beacons: " + state);
-//            }
-//        });
-//
-//        try {
-//            beaconManager.startMonitoringBeaconsInRegion(new Region( "test",  Identifier.parse("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), Identifier.parse("24890"), Identifier.parse("6699")));
-//        } catch (RemoteException e) {
-//        }
-//    }
 
 }

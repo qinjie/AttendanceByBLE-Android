@@ -295,7 +295,6 @@ public class LogInActivity extends AppCompatActivity {
         call.enqueue(new ServerCallBack<LoginResult>() {
             @Override
             public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
-//                try {
                 Preferences.setActivity(act);
                 Preferences.dismissLoading();
                 int messageCode = response.code();
@@ -312,12 +311,6 @@ public class LogInActivity extends AppCompatActivity {
                 } else {
                     onLoginFailed();
                 }
-//                } catch (Exception e) {
-//                    Preferences.setStudentInfo(response.body());
-//                    requestRegisterNewDevice();
-//                    e.printStackTrace();
-//
-//                }
             }
 
             @Override

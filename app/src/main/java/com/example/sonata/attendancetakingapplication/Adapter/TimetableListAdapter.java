@@ -63,6 +63,7 @@ public class TimetableListAdapter extends ArrayAdapter<TimetableResult>{
         if (row == null) {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             switch (itemType) {
+                //Bind layout for Display weekday
                 case Preferences.LIST_ITEM_TYPE_1:
                     row = mInflater.inflate(layoutSeparatorId, parent, false);
                     separatorHolder = new SeparatorHolder();
@@ -71,6 +72,7 @@ public class TimetableListAdapter extends ArrayAdapter<TimetableResult>{
                     row.setFocusable(false);
                     break;
 
+                //Bind layout for Display subject
                 case Preferences.LIST_ITEM_TYPE_2:
                     row = mInflater.inflate(layoutResourceId, parent, false);
                     subjectHolder = new SubjectHolder();
@@ -96,10 +98,12 @@ public class TimetableListAdapter extends ArrayAdapter<TimetableResult>{
         try {
             TimetableResult subject = data.get(position);
             switch (itemType) {
+                //Put data into layout for display weekday
                 case Preferences.LIST_ITEM_TYPE_1:
                     separatorHolder.tvWeekDay.setText(subject.getLesson_date().getDate());
                     break;
 
+                //Put data into layout for display Subject
                 case Preferences.LIST_ITEM_TYPE_2:
                     subjectHolder.tvStartTime.setText(subject.getLesson().getStart_time());
                     subjectHolder.tvEndTime.setText(subject.getLesson().getEnd_time());

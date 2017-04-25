@@ -40,6 +40,7 @@ public class HistoryListAdapter extends ArrayAdapter<HistoricalResult> {
         View row = convertView;
         HistoryListAdapter.ViewHolder holder = null;
 
+        //Bind layout for displaying
         if (row == null) {
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = mInflater.inflate(layoutResourceId, parent, false);
@@ -69,9 +70,11 @@ public class HistoryListAdapter extends ArrayAdapter<HistoricalResult> {
 
 
         if (remainingSlot <= 0) {
+            //display for subject if student have more than maximum absent slot
             holder.tvAbsentSlots.setText("You were absent " + absentedSlot + " times of this class");
             holder.tvAttendanceRate.setTextColor(Color.RED);
         } else {
+            //display for subject if student still not reach maximum absent slot
             holder.tvAbsentSlots.setText("You can only miss this class " + remainingSlot + " times");
             if (attendedPercent <= 90) {
                 holder.tvAttendanceRate.setTextColor(holder.tvAttendanceRate.getResources().getColor(R.color.orange));
@@ -79,7 +82,6 @@ public class HistoryListAdapter extends ArrayAdapter<HistoricalResult> {
                 holder.tvAttendanceRate.setTextColor(holder.tvAttendanceRate.getResources().getColor(R.color.green));
             }
         }
-
 
         holder.tvAttendanceRate.setText(attendedPercent + "%");
 

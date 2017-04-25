@@ -185,11 +185,11 @@ public class Preferences {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context);
 
-        builder.setSmallIcon(R.drawable.ic_launcher)
+        builder.setSmallIcon(R.drawable.checklist)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.ic_launcher))
+                        R.drawable.icon))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true);
 
@@ -217,11 +217,11 @@ public class Preferences {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context);
 
-        builder.setSmallIcon(R.drawable.ic_launcher)
+        builder.setSmallIcon(R.drawable.checklist)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.ic_launcher))
+                        R.drawable.icon))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true);
 
@@ -249,11 +249,11 @@ public class Preferences {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context);
 
-        builder.setSmallIcon(R.drawable.ic_launcher)
+        builder.setSmallIcon(R.drawable.checklist)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.ic_launcher))
+                        R.drawable.icon))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(content))
@@ -277,59 +277,6 @@ public class Preferences {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, builder.build());
     }
-
-
-//    public static void saveDataToLocal(String Venue_Beacon_Name, String Venue_Beacon_UUID,
-//                                       String Lesson_Beacon_Name, String Lesson_Beacon_UUID,
-//                                       String Student_Beacon_Major, String Student_Beacon_Minor) {
-//        SharedPreferences pref = activity.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        SharedPreferences.Editor editor = pref.edit();
-//
-//        editor.putString("Venue_Beacon_Name", Venue_Beacon_Name);
-//        editor.putString("Venue_Beacon_UUID", Venue_Beacon_UUID);
-//        editor.putString("Lesson_Beacon_Name", Lesson_Beacon_Name);
-//        editor.putString("Lesson_Beacon_UUID", Lesson_Beacon_UUID);
-//        editor.putString("Student_Beacon_Major", Student_Beacon_Major);
-//        editor.putString("Student_Beacon_Minor", Student_Beacon_Minor);
-//
-//        editor.apply();
-//    }
-
-//    public static String getVenueBeaconName(Context context) {
-//        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        String Venue_Beacon_Name = pref.getString("Venue_Beacon_Name", null);
-//        return Venue_Beacon_Name;
-//    }
-//
-//    public static String getVenueBeaconUUID(Context context) {
-//        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        String Venue_Beacon_UUID = pref.getString("Venue_Beacon_UUID", null);
-//        return Venue_Beacon_UUID;
-//    }
-//
-//    public static String getLessonBeaconName(Context context) {
-//        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        String Lesson_Beacon_Name = pref.getString("Lesson_Beacon_Name", null);
-//        return Lesson_Beacon_Name;
-//    }
-//
-//    public static String getLessonBeaconUUID(Context context) {
-//        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        String Lesson_Beacon_UUID = pref.getString("Lesson_Beacon_UUID", null);
-//        return Lesson_Beacon_UUID;
-//    }
-//
-//    public static String getStudentBeaconMajor(Context context) {
-//        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        String Student_Beacon_Major = pref.getString("Student_Beacon_Major", null);
-//        return Student_Beacon_Major;
-//    }
-//
-//    public static String getStudentBeaconMinor(Context context) {
-//        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
-//        String Student_Beacon_Minor = pref.getString("Student_Beacon_Minor", null);
-//        return Student_Beacon_Minor;
-//    }
 
     public static void setActivity(Activity act) {
         activity = act;

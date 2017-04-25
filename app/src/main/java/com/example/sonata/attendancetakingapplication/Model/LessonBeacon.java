@@ -1,4 +1,4 @@
-package com.example.sonata.attendancetakingapplication;
+package com.example.sonata.attendancetakingapplication.Model;
 
 import com.example.sonata.attendancetakingapplication.Model.Venue;
 import com.google.gson.annotations.Expose;

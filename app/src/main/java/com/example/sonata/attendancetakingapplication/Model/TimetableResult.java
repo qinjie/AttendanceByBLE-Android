@@ -1,10 +1,8 @@
 package com.example.sonata.attendancetakingapplication.Model;
 
-import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Calendar;
 import java.util.List;
 
 /**

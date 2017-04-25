@@ -56,4 +56,7 @@ public interface ServerApi {
     @POST("beacon-attendance-student/student-attendance")
     Call<String> takeAttendance(@Body JsonObject obj);
 
+    @POST("timetable/get-status")
+    Call<String> checkAttendanceStatus(@Body JsonObject obj);
+
 }
