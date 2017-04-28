@@ -52,6 +52,7 @@ public class Lesson {
     @Expose
     private String end_time;
 
+
     public String getModule_id() {
         return module_id;
     }
@@ -119,4 +120,25 @@ public class Lesson {
     public void setEnd_time(String end_time) {
         this.end_time = end_time;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getSemester() {
+        return semester;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
 }

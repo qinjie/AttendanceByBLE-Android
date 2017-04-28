@@ -2,6 +2,7 @@ package com.example.sonata.attendancetakingapplication.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.internal.Streams;
 
 /**
  * Created by Sonata on 11/17/2016.
@@ -30,8 +31,15 @@ public class LoginResult {
 
     @SerializedName("minor")
     @Expose
-
     private String minor;
+
+    @SerializedName("status")
+    @Expose
+    private String status;
+
+    @SerializedName("device_hash")
+    @Expose
+    private String device_hash;
 
     public String getId() {
         return id;
@@ -79,5 +87,21 @@ public class LoginResult {
 
     public void setMinor(String minor) {
         this.minor = minor;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDevice_hash() {
+        return device_hash;
+    }
+
+    public void setDevice_hash(String device_hash) {
+        this.device_hash = device_hash;
     }
 }

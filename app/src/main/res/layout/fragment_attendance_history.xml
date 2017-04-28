@@ -4,11 +4,80 @@
     android:layout_height="match_parent"
     tools:context="com.example.sonata.attendancetakingapplication.Fragment.AttendanceHistoryFragment">
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/absent_rate_label"
+        android:weightSum="10"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subject name"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/bb_darkBackgroundColor"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+               />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Attendance status"
+                android:layout_marginStart="12dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Late is counted as absent"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/md_red_A700"
+                android:gravity="center_vertical"
+                android:textSize="10sp"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Attendance \npercentage"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_below="@id/absent_rate_label"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
     <ListView
         android:id="@+id/history_list"
+        android:layout_below="@id/divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:dividerHeight="1px"
         android:divider="@color/divider" />
+
+</RelativeLayout>
+
 
 </FrameLayout>

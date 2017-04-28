@@ -1,53 +1,76 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.sonata.attendancetakingapplication.ChangePasswordActivity;
-import com.example.sonata.attendancetakingapplication.NavigationActivity;
+import com.example.sonata.attendancetakingapplication.LogInActivity;
+import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerApi;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServerCallBack;
+import com.example.sonata.attendancetakingapplication.Retrofit.ServiceGenerator;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.BeaconTransmitter;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
 
-import okhttp3.ResponseBody;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link UserSettingFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link UserSettingFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import static com.example.sonata.attendancetakingapplication.BeaconScanActivation.timetableList;
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferencesTag;
+import static com.example.sonata.attendancetakingapplication.Preferences.SharedPreferences_ModeTag;
+
+
 public class UserSettingFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
     private Activity context;
 
     private View inflateView;
+
+    @BindView(R.id.user_profile_name)
+    TextView userName;
+
+    @BindView(R.id.user_profile_short_bio)
+    TextView userBio;
+
+    @BindView(R.id.btnActivateBeacon)
+    ToggleButton btnActivateBeacon;
+
+    private Handler mHandler;
+    public static BeaconTransmitter beaconTransmitter;
+    public static Beacon.Builder beaconBuilder;
+
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -61,7 +84,6 @@ public class UserSettingFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment UserSettingFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static UserSettingFragment newInstance(String param1, String param2) {
         UserSettingFragment fragment = new UserSettingFragment();
         Bundle args = new Bundle();
@@ -74,16 +96,15 @@ public class UserSettingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        try {
+            context = this.getActivity();
 
-        context = this.getActivity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setUserSettingLayout()
-    {
+    public void setUserSettingLayout() {
         TextView signoutTv = (TextView) inflateView.findViewById(R.id.btn_signout);
         signoutTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,47 +129,206 @@ public class UserSettingFragment extends Fragment {
         // Inflate the layout for this fragment
         inflateView = inflater.inflate(R.layout.fragment_user_setting, container, false);
 
+        ButterKnife.bind(this, inflateView);
+
+        SharedPreferences pref = getActivity().getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+
+        String isLogin = pref.getString("isLogin", "false");
+        String isStudent = pref.getString("isStudent", "true");
+
+        if (isLogin.equals("true") && isStudent.equals("true")) {
+            String studentName = pref.getString("student_name", "");
+            userName.setText(studentName);
+
+            userBio.setText("Still not take attendance yet for this class");
+
+            if (timetableList != null) {
+                for (final TimetableResult aSubject_time : timetableList) {
+                    try {
+                        //Get the data of current subject to display attendance status
+                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+                        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTime(time);
+
+                        Date timeNow = new Date();
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar2.setTime(timeNow);
+
+                        if (calendar2.getTime().before(calendar1.getTime())) {
+
+                            final String auCode = pref.getString("authorizationCode", null);
+                            JsonParser parser = new JsonParser();
+                            JsonObject obj = parser.parse("{" +
+                                    "\"lesson_date_id\":\"" + aSubject_time.getLesson_date().getId() + "\"" +
+                                    "}").getAsJsonObject();
+
+                            ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+                            Call<String> call = client.checkAttendanceStatus(obj);
+                            call.enqueue(new ServerCallBack<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+                                    String result = response.body();
+
+                                    if (result != null) {
+                                        if (result.equals("0")) {
+                                            userBio.setText("You're present for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+                                        }
+
+                                        if (result.equals("-1")) {
+                                            userBio.setText("You're absent for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+                                        }
+
+                                        if (result.equals("Not yet")) {
+                                            userBio.setText("Still not take attendance yet for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+                                        } else {
+                                            userBio.setText("You're late for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+
+                                        }
+                                    } else {
+                                        if (response.code() == 401) {
+                                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                            builder.setTitle(R.string.another_login_title);
+                                            builder.setMessage(R.string.another_login_content);
+                                            builder.setPositiveButton("OK",
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                                                            Preferences.clearStudentInfo();
+                                                            Intent intent = new Intent(context, LogInActivity.class);
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+                                            builder.create().show();
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    super.onFailure(call, t);
+                                }
+                            });
+
+                            break;
+
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+        }
+
         setUserSettingLayout();
+
+        mHandler = new Handler();
+
+
+        String isBeaconActivated = pref.getString("isActivateBeacon", "");
+        if (isBeaconActivated.equals("true")) {
+            btnActivateBeacon.setChecked(true);
+            btnActivateBeacon.setEnabled(false);
+
+        } else {
+            btnActivateBeacon.setChecked(false);
+            btnActivateBeacon.setEnabled(true);
+
+        }
 
         return inflateView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+
+    @OnClick(R.id.btnActivateBeacon)
+    public void turnOnOffBeacon() {
+
+        final SharedPreferences pref = context.getSharedPreferences(SharedPreferencesTag, SharedPreferences_ModeTag);
+
+        String userMajor = pref.getString("major", "");
+        String userMinor = pref.getString("minor", "");
+
+        if (timetableList != null) {
+            if (!userMajor.equals("") || !userMinor.equals("")) {
+                for (TimetableResult aSubject_time : timetableList) {
+                    try {
+                        //Get the data of current subject for transmitting beacon signal
+                        String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+                        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTime(time);
+
+                        Date timeNow = new Date();
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar2.setTime(timeNow);
+
+                        if (calendar2.getTime().before(calendar1.getTime())) {
+
+                            beaconBuilder = new Beacon.Builder();
+                            beaconBuilder.setId1(aSubject_time.getLessonBeacon().getUuid());
+                            beaconBuilder.setId2(userMajor);
+                            beaconBuilder.setId3(userMinor);
+
+                            //Estimote company code
+                            //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
+                            beaconBuilder.setManufacturer(0x015D);
+                            beaconBuilder.setTxPower(-59);
+                            beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
+                            BeaconParser beaconParser = new BeaconParser()
+                                    .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
+                            beaconTransmitter = new BeaconTransmitter(getActivity().getBaseContext(), beaconParser);
+                            break;
+
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+//        //random time in 15 min time interval
+//        int min = 10000;
+//        int max = 900000;
+//        Random r = new Random();
+//        long randomTime = r.nextInt(max - min) + min;
+
+        if (btnActivateBeacon.isChecked() && beaconTransmitter != null && beaconBuilder != null) {
+
+            final SharedPreferences.Editor editor = pref.edit();
+            editor.putString("isActivateBeacon", "true");
+            editor.apply();
+
+            //transmit beacon signal in next 1 second
+            Toast.makeText(context, "Please keep app open at least next 15 minutes to get attendance.", Toast.LENGTH_SHORT).show();
+            btnActivateBeacon.setEnabled(false);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    beaconTransmitter.startAdvertising(beaconBuilder.build());
+                }
+            }, 1000);
+
+            //turn off beacon after 10 seconds
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "Transmitting beacon done. Please refresh this page to check new attendance status", Toast.LENGTH_SHORT).show();
+                    beaconTransmitter.stopAdvertising();
+                    btnActivateBeacon.setChecked(false);
+                    btnActivateBeacon.setEnabled(true);
+                    editor.putString("isActivateBeacon", "false");
+                    editor.apply();
+                }
+            }, 10000);
+
         }
+
+
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }
