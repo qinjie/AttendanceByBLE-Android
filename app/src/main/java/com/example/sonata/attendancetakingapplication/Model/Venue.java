@@ -24,6 +24,8 @@ public class Venue {
     @Expose
     private String name;
 
+    private String address;
+
     public String getId() {
         return id;
     }
@@ -50,6 +52,18 @@ public class Venue {
 
     public String getAddress()
     {
-        return name + " Block " + location.substring(0, 2) + " #" + location.substring(3, 8);
+        //if there is internet this will display
+        if(name!=null){
+            address = name + " Block " + location.substring(0, 2) + " #" + location.substring(3, 8);
+        }
+
+        //if there is no internet, address will be null, setAddress first
+        return address;
     }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
 }

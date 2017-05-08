@@ -1,9 +1,11 @@
 package com.example.sonata.attendancetakingapplication.Model;
 
+import com.example.sonata.attendancetakingapplication.LessonBeacon;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Sonata on 11/14/2016.
@@ -37,6 +39,16 @@ public class TimetableResult {
     @SerializedName("venue")
     @Expose
     private Venue venue;
+
+    @SerializedName("beaconLesson")
+    @Expose
+    private LessonBeacon lessonBeacon;
+
+
+    @SerializedName("students")
+    @Expose
+    private List<StudentInfo> studentList;
+
 
     public String getId() {
         return id;
@@ -92,5 +104,21 @@ public class TimetableResult {
 
     public void setVenue(Venue venue) {
         this.venue = venue;
+    }
+
+    public LessonBeacon getLessonBeacon() {
+        return lessonBeacon;
+    }
+
+    public void setLessonBeacon(LessonBeacon lessonBeacon) {
+        this.lessonBeacon = lessonBeacon;
+    }
+
+    public List<StudentInfo> getStudentList() {
+        return studentList;
+    }
+
+    public void setStudentList(List<StudentInfo> studentList) {
+        this.studentList = studentList;
     }
 }

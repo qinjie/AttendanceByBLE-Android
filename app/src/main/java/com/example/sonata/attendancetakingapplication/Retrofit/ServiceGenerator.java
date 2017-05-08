@@ -18,7 +18,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
+//import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -55,11 +55,12 @@ public class ServiceGenerator {
                 }
             });
 
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            // set your desired log level
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
-            httpClient.addInterceptor(logging);
+            // set your desired log level
+//            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+//            httpClient.addInterceptor(logging);
         }
 
         OkHttpClient client = httpClient.build();

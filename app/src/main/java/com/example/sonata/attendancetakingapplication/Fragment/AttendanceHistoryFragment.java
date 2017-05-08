@@ -1,21 +1,21 @@
 package com.example.sonata.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.sonata.attendancetakingapplication.Adapter.HistoryListAdapter;
+import com.example.sonata.attendancetakingapplication.LogInActivity;
 import com.example.sonata.attendancetakingapplication.Model.HistoricalResult;
-import com.example.sonata.attendancetakingapplication.Model.TimetableResult;
 import com.example.sonata.attendancetakingapplication.NavigationActivity;
 import com.example.sonata.attendancetakingapplication.Preferences;
 import com.example.sonata.attendancetakingapplication.R;
@@ -28,32 +28,21 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AttendanceHistoryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AttendanceHistoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AttendanceHistoryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+//    private OnFragmentInteractionListener mListener;
 
     private List<HistoricalResult> historicalList;
 
     private View myView;
     private Activity context;
-
-    public static View.OnClickListener myOnClickListener;
 
     public AttendanceHistoryFragment() {
         // Required empty public constructor
@@ -89,8 +78,7 @@ public class AttendanceHistoryFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    private void initHistoricalList()
-    {
+    private void initHistoricalList() {
         HistoryListAdapter adapter = new HistoryListAdapter(context, R.layout.item_history, historicalList);
         adapter.notifyDataSetChanged();
 
@@ -98,11 +86,9 @@ public class AttendanceHistoryFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    private void loadHistoricalRecords()
-    {
+    private void loadHistoricalRecords() {
         Preferences.showLoading(context, "History", "Loading data from server...");
-        try
-        {
+        try {
             SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
             String auCode = pref.getString("authorizationCode", null);
 
@@ -112,20 +98,77 @@ public class AttendanceHistoryFragment extends Fragment {
             call.enqueue(new ServerCallBack<List<HistoricalResult>>() {
                 @Override
                 public void onResponse(Call<List<HistoricalResult>> call, Response<List<HistoricalResult>> response) {
-                    try{
-                        Preferences.dismissLoading();
+                    try {
 
                         historicalList = response.body();
-                        initHistoricalList();
-                    }
-                    catch(Exception e){
+
+                        if (historicalList == null) {
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle(R.string.another_login_title);
+                            builder.setMessage(R.string.another_login_content);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                                            Preferences.clearStudentInfo();
+                                            Intent intent = new Intent(context, LogInActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+                            builder.create().show();
+                        } else {
+                            initHistoricalList();
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    Preferences.dismissLoading();
+
+                }
+
+                @Override
+                public void onFailure(Call<List<HistoricalResult>> call, Throwable t) {
+                    super.onFailure(call, t);
+                    Preferences.dismissLoading();
+
+//                    android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity().getBaseContext()).create();
+//                    alertDialog.setTitle("This function needs internet connection");
+//                    alertDialog.setMessage("Please turn on internet to get latest update about you attendance history.");
+//                    alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//
+//                                    Intent intent = new Intent(getActivity().getBaseContext(), NavigationActivity.class);
+//                                    startActivity(intent);
+//                                    getActivity().finish();
+//
+//
+//                                }
+//                            });
+//                    alertDialog.show();
+
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getBaseContext());
+                    builder.setTitle("This function needs internet connection");
+                    builder.setMessage("Please turn on internet to get latest update about you attendance history.");
+
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialog, final int i) {
+                                    dialog.dismiss();
+
+                                    Intent intent = new Intent(getActivity().getBaseContext(), NavigationActivity.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+                            });
+                    builder.create().show();
+
                 }
             });
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -141,42 +184,6 @@ public class AttendanceHistoryFragment extends Fragment {
         return myView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

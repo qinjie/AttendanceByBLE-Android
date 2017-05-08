@@ -24,6 +24,11 @@ public class HistoricalResult {
     @Expose
     private String absented;
 
+    @SerializedName("late")
+    @Expose
+    private String late;
+
+
     public String getLesson_name() {
         return lesson_name;
     }
@@ -54,5 +59,13 @@ public class HistoricalResult {
 
     public void setAbsented(String absented) {
         this.absented = absented;
+    }
+
+    public String getLate() {
+        return late;
+    }
+
+    public void setLate(String late) {
+        this.late = late;
     }
 }

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.sonata.attendancetakingapplication.Fragment.UserSettingFragment">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,18 +20,31 @@
                 android:layout_height="200dp"
                 android:src="@drawable/np_logo" />
 
-            <ImageButton
+            <!--<ImageButton-->
+                <!--android:id="@+id/user_profile_photo"-->
+                <!--android:layout_width="120dp"-->
+                <!--android:layout_height="120dp"-->
+                <!--android:layout_below="@+id/header_cover_image"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_marginTop="-60dp"-->
+                <!--android:background="@drawable/profile_circular_border_imageview"-->
+                <!--android:elevation="5dp"-->
+                <!--android:padding="20dp"-->
+                <!--android:scaleType="center"-->
+                <!--android:src="@drawable/profile" />-->
+
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_photo"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_below="@+id/header_cover_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="-60dp"
-                android:background="@drawable/profile_circular_border_imageview"
                 android:elevation="5dp"
-                android:padding="20dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile" />
+                android:src="@drawable/profile"
+                >
+            </de.hdodenhof.circleimageview.CircleImageView>
+
 
             <RelativeLayout
                 android:id="@+id/profile_layout"
@@ -39,7 +53,7 @@
                 android:layout_below="@+id/header_cover_image"
                 android:background="#ebca0707"
                 android:elevation="4dp"
-                android:paddingBottom="24dp">
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/user_profile_name"
@@ -47,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="76dp"
-                    android:text="Tran Hoang Nam"
+                    android:text="Anonymous"
                     android:textColor="#fff"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -58,10 +72,34 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_profile_name"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="12dp"
-                    android:text="Junior Research Assistant"
+                    android:layout_marginTop="8dp"
+                    android:text="Anonymous"
                     android:textColor="#fff"
                     android:textSize="14sp" />
+
+                <!--<Switch-->
+                    <!--android:layout_below="@id/user_profile_short_bio"-->
+                    <!--android:layout_width="100dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textOff="adasd"-->
+                    <!--android:textOn="ccc"-->
+                    <!--android:showText="true"-->
+                    <!--/>-->
+
+                <ToggleButton
+                    android:id="@+id/btnActivateBeacon"
+                    android:layout_below="@id/user_profile_short_bio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/toggle_selector"
+                    android:textColor="@color/white"
+                    android:textOff="Beacon Off"
+                    android:textOn="Beacon On"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="8dp"
+                    android:elevation="10dp"
+                    />
             </RelativeLayout>
 
 
