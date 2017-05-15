@@ -19,7 +19,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "com.example.sonata.attendancetakingapplication"
+        applicationId "edu.np.ece.attendancetakingapplication"
         minSdkVersion 22
         targetSdkVersion 25
         versionCode 1

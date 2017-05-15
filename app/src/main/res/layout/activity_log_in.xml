@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.sonata.attendancetakingapplication.LogInActivity">
+    tools:context="edu.np.ece.attendancetakingapplication.LogInActivity">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Username"
-                    android:text="namth" />
+                    android:text="canhnht" />
             </android.support.design.widget.TextInputLayout>
 
             <!--  Password Label -->

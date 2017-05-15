@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sonata.attendancetakingapplication">
+    package="edu.np.ece.attendancetakingapplication">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 
     <application
@@ -34,8 +34,8 @@
 
         <service
             android:name=".JobScheduler.BeaconJobScheduler"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
 
         <activity
@@ -51,25 +51,25 @@
 
 
         <!--<activity-alias android:label="@string/app_name"-->
-            <!--android:icon="@drawable/icon"-->
-            <!--android:name=".SplashActivity-Checkmark"-->
-            <!--android:enabled="false"-->
-            <!--android:targetActivity=".SplashActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+        <!--android:icon="@drawable/icon"-->
+        <!--android:name=".SplashActivity-Checkmark"-->
+        <!--android:enabled="false"-->
+        <!--android:targetActivity=".SplashActivity">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN" />-->
+        <!--<category android:name="android.intent.category.LAUNCHER" />-->
+        <!--</intent-filter>-->
         <!--</activity-alias>-->
 
         <!--<activity-alias android:label="@string/app_name"-->
-            <!--android:icon="@drawable/icon_xmark"-->
-            <!--android:name=".SplashActivity-Xmark"-->
-            <!--android:enabled="false"-->
-            <!--android:targetActivity=".SplashActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+        <!--android:icon="@drawable/icon_xmark"-->
+        <!--android:name=".SplashActivity-Xmark"-->
+        <!--android:enabled="false"-->
+        <!--android:targetActivity=".SplashActivity">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN" />-->
+        <!--<category android:name="android.intent.category.LAUNCHER" />-->
+        <!--</intent-filter>-->
         <!--</activity-alias>-->
 
         <activity android:name=".LogInActivity" />
