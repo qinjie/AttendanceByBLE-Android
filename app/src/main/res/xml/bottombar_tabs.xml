@@ -4,14 +4,17 @@
     <tab
         id="@+id/tab_schedule"
         icon="@drawable/ic_content"
-        title="Timetable" />
+        title="Timetable"
+        barColorWhenSelected="#00BCD4"/>
     <tab
         id="@+id/tab_history"
         icon="@drawable/ic_recents"
-        title="History" />
+        title="History"
+        barColorWhenSelected="#E91E63"/>
     <tab
         id="@+id/tab_user"
         icon="@drawable/ic_friends"
-        title="Setting" />
+        title="Setting"
+        barColorWhenSelected="#4CAF50"/>
 </tabs>
 </PreferenceScreen>
