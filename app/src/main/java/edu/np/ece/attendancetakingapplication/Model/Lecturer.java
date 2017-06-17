@@ -33,6 +33,22 @@ public class Lecturer {
     @Expose
     private UserBeacon beacon;
 
+    @SerializedName("office")
+    @Expose
+    private String office;
+
+    @SerializedName("phone")
+    @Expose
+    private String phone;
+
+    public  String getOffice(){return office;}
+
+    public  void setOffice(String office){this.office=office;}
+
+    public  String getPhone(){return phone;}
+
+    public  void setPhone(String phone){this.phone=phone;}
+
     public String getId() {
         return id;
     }

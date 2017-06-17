@@ -3,15 +3,24 @@
 <tabs>
     <tab
         id="@+id/tab_schedule"
-        icon="@drawable/ic_content"
-        title="Timetable" />
+        icon="@drawable/ic_date_range_black_24dp"
+        title="Timetable"
+        barColorWhenSelected="#00BCD4"/>
     <tab
         id="@+id/tab_history"
         icon="@drawable/ic_recents"
-        title="History" />
+        title="History"
+        barColorWhenSelected="#E91E63"/>
+
     <tab
         id="@+id/tab_user"
-        icon="@drawable/ic_friends"
-        title="Setting" />
+        icon="@drawable/ic_alarm_on_black_24dp"
+        title="Now"
+        barColorWhenSelected="#4CAF50"/>
+    <tab
+        id="@+id/tab_more"
+        icon="@drawable/ic_more_horiz_black_24dp"
+        title="More"
+        barColorWhenSelected="#FF5722"/>
 </tabs>
 </PreferenceScreen>

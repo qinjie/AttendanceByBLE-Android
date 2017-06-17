@@ -91,14 +91,18 @@ public class NavigationActivity extends AppCompatActivity{
                         case R.id.tab_user:
 
                             fragment = new UserSettingFragment();
-                            title = "User setting";
+                            title = "Lesson Now";
                             getSupportActionBar().setSubtitle(null);
+                            break;
+                        case R.id.tab_more:
+                            title="More";
                             break;
                         default:
                             fragment = new TimeTableFragment();
                             title = "Timetable";
                             break;
                     }
+
 
                     setActionBarTitle(title);
                     FragmentManager fragmentManager = getFragmentManager();
