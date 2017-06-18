@@ -128,6 +128,8 @@ public class TimeTableFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                   // Intent intent = new Intent();
+                   // intent.setClass(getActivity(),DetailsActivity.class);
                     intent.putExtra("Catalog",data.get(i).getLesson().getCatalog_number());
                     intent.putExtra("Area",data.get(i).getLesson().getSubject_area());
                     //lesson full name + lesson credit

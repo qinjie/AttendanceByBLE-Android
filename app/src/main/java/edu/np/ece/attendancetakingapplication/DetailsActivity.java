@@ -1,9 +1,15 @@
 package edu.np.ece.attendancetakingapplication;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+//import android.app.Fragment;
+
+//import android.app.FragmentManager;
+//import android.app.FragmentTransaction;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -14,7 +20,7 @@ import butterknife.BindView;
 import edu.np.ece.attendancetakingapplication.Fragment.LessonDetailsFragment;
 import edu.np.ece.attendancetakingapplication.Fragment.TimeTableFragment;
 
-public class DetailsActivity extends AppCompatActivity {
+public  class DetailsActivity extends FragmentActivity implements LessonDetailsFragment.OnFragmentInteractionListener {
     @BindView(R.id.subjectCatalog_name)
     TextView subjectCatalog_name;
     @BindView(R.id.lesson_name)
@@ -36,10 +42,13 @@ public class DetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if(intent!=null){
-            android.app.Fragment fragment = null;
-            fragment = new LessonDetailsFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction transaction= fragmentManager.beginTransaction();
+           // android.app.Fragment fragment = null;
+            Fragment fragment = new LessonDetailsFragment();
+           // FragmentManager fragmentManager = getFragmentManager();
+            //FragmentTransaction transaction= fragmentManager.beginTransaction();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction= manager.beginTransaction();
+
             Bundle args=new Bundle();
             args.putString("Catalog",intent.getStringExtra("Catalog"));
             args.putString("Area",intent.getStringExtra("Area"));
@@ -62,4 +71,8 @@ public class DetailsActivity extends AppCompatActivity {
         
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
