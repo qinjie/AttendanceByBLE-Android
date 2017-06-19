@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-//import android.app.Fragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,7 +17,7 @@ import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.R;
 
 
-public class LessonDetailsFragment extends Fragment {
+public class HistoryByLessonFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,7 +37,8 @@ public class LessonDetailsFragment extends Fragment {
     private List<TimetableResult> data = new ArrayList<>();
     private List<Integer> itemType = new ArrayList<>();
 
-    public LessonDetailsFragment() {
+
+    public HistoryByLessonFragment() {
         // Required empty public constructor
     }
 
@@ -49,11 +48,11 @@ public class LessonDetailsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LessonDetailsFragment.
+     * @return A new instance of fragment HistoryByLessonFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LessonDetailsFragment newInstance(String param1, String param2) {
-        LessonDetailsFragment fragment = new LessonDetailsFragment();
+    public static HistoryByLessonFragment newInstance(String param1, String param2) {
+        HistoryByLessonFragment fragment = new HistoryByLessonFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -74,35 +73,9 @@ public class LessonDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myView = inflater.inflate(R.layout.fragment_lesson_details, container, false);
-
-        TextView subjectCatalog_name = (TextView)myView.findViewById(R.id.subjectCatalog_name);
-        TextView lesson_name =(TextView)myView.findViewById(R.id.lesson_name);
-        TextView lesson_credit=(TextView)myView.findViewById(R.id.lesson_credit);
-        TextView student_group = (TextView)myView.findViewById(R.id.student_group);
-        TextView lesson_time=(TextView)myView.findViewById(R.id.lesson_time);
-        TextView lesson_venue=(TextView)myView.findViewById(R.id.lesson_venue);
-        TextView teacher_name=(TextView)myView.findViewById(R.id.teacher_name);
-        TextView teacher_phone=(TextView)myView.findViewById(R.id.teacher_phone);
-        TextView teacher_mail=(TextView)myView.findViewById(R.id.teacher_mail);
-        TextView teacher_venue=(TextView)myView.findViewById(R.id.teacher_venue);
-        Bundle arguments = getArguments();
-        if(arguments!=null){
-            subjectCatalog_name.setText(arguments.getString("Area")+" "+arguments.getString("Catalog","error"));
-            student_group.setText(arguments.getString("Group"));
-            lesson_time.setText(arguments.getString("Timestart")+" - "+arguments.getString("Timeend"));
-            lesson_venue.setText(arguments.getString("Venue"));
-            teacher_name.setText(arguments.getString("Teacher_name"));
-            teacher_phone.setText(arguments.getString("Teacher_phone"));
-            teacher_mail.setText(arguments.getString("Teacher_mail"));
-            teacher_venue.setText(arguments.getString("Teacher_venue"));
-
-        }
-
+        myView= inflater.inflate(R.layout.fragment_history_by_lesson, container, false);
         return myView;
     }
-
-
 
 
 

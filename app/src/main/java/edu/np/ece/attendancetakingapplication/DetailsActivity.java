@@ -9,18 +9,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.j256.ormlite.stmt.query.In;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
+import edu.np.ece.attendancetakingapplication.Fragment.HistoryByLessonFragment;
 import edu.np.ece.attendancetakingapplication.Fragment.LessonDetailsFragment;
 import edu.np.ece.attendancetakingapplication.Fragment.TimeTableFragment;
 
-public  class DetailsActivity extends FragmentActivity implements LessonDetailsFragment.OnFragmentInteractionListener {
+public  class DetailsActivity extends FragmentActivity  {
     @BindView(R.id.subjectCatalog_name)
     TextView subjectCatalog_name;
     @BindView(R.id.lesson_name)
@@ -35,18 +44,27 @@ public  class DetailsActivity extends FragmentActivity implements LessonDetailsF
     @BindView(R.id.lesson_venue)
     TextView lesson_venue;
 
+    ViewPager viewPager;
+    List<Fragment> fragmentList;
+    FragmentManager manager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        viewPager=(ViewPager)this.findViewById(R.id.viewPage);
+        fragmentList = new ArrayList<Fragment>();
+
 
         Intent intent = getIntent();
         if(intent!=null){
+
+
            // android.app.Fragment fragment = null;
             Fragment fragment = new LessonDetailsFragment();
            // FragmentManager fragmentManager = getFragmentManager();
             //FragmentTransaction transaction= fragmentManager.beginTransaction();
-            FragmentManager manager = getSupportFragmentManager();
+             manager = getSupportFragmentManager();
             FragmentTransaction transaction= manager.beginTransaction();
 
             Bundle args=new Bundle();
@@ -62,17 +80,23 @@ public  class DetailsActivity extends FragmentActivity implements LessonDetailsF
             args.putString("Teacher_venue",intent.getStringExtra("Teacher_venue"));
             fragment.setArguments(args);
 
-            transaction.replace(R.id.detailcontainer,fragment);
-            transaction.commit();
+        //    transaction.replace(R.id.detailcontainer,fragment);
+        //    transaction.commit();
+            fragmentList.add(fragment);
+            fragmentList.add(new HistoryByLessonFragment());
+            ViewpagerAdapter viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(),fragmentList);
+            viewPager.setAdapter(viewpagerAdapter);
 
-            //subjectCatalog_name.setText();
         }
 
         
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
-    }
+
+
+
+
+
+
 }
