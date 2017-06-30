@@ -4,6 +4,7 @@ package edu.np.ece.attendancetakingapplication;
 
 //import android.app.FragmentManager;
 //import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.ColorRes;
@@ -38,19 +39,6 @@ import edu.np.ece.attendancetakingapplication.Fragment.LessonDetailsFragment;
 import edu.np.ece.attendancetakingapplication.Fragment.TimeTableFragment;
 
 public  class DetailsActivity extends FragmentActivity  {
-    @BindView(R.id.subjectCatalog_name)
-    TextView subjectCatalog_name;
-    @BindView(R.id.lesson_name)
-    TextView lesson_name;
-
-    @BindView(R.id.lesson_credit)
-    TextView lesson_credit;
-    @BindView(R.id.student_group)
-    TextView student_group;
-    @BindView(R.id.lesson_time)
-    TextView lesson_time;
-    @BindView(R.id.lesson_venue)
-    TextView lesson_venue;
 
     ViewPager viewPager;
     List<Fragment> fragmentList;
@@ -92,6 +80,15 @@ public  class DetailsActivity extends FragmentActivity  {
             args.putString("Teacher_phone",intent.getStringExtra("Teacher_phone"));
             args.putString("Teacher_mail",intent.getStringExtra("Teacher_mail"));
             args.putString("Teacher_venue",intent.getStringExtra("Teacher_venue"));
+
+            SharedPreferences valuetrans = getSharedPreferences("valueOfTB",MODE_PRIVATE);
+            SharedPreferences.Editor editor=valuetrans.edit();
+            editor.putString("Catalog",intent.getStringExtra("Catalog"));
+            String timeslot=intent.getStringExtra("Timestart")+" - "+intent.getStringExtra("Timeend");
+            editor.putString("Timeslot",timeslot);
+            editor.putString("Date",intent.getStringExtra("Lesson_date"));
+            editor.commit();
+
             fragment.setArguments(args);
 
         //    transaction.replace(R.id.detailcontainer,fragment);

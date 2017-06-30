@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import edu.np.ece.attendancetakingapplication.Adapter.TimetableListAdapter;
 import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
 import edu.np.ece.attendancetakingapplication.DetailsActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
+import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.Lecturer;
 import edu.np.ece.attendancetakingapplication.Model.Lesson;
 import edu.np.ece.attendancetakingapplication.Model.LessonBeacon;
@@ -31,6 +33,7 @@ import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.Model.UserBeacon;
 import edu.np.ece.attendancetakingapplication.Model.Venue;
 import edu.np.ece.attendancetakingapplication.NavigationActivity;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseHelper;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.OrmLite.Student;
 import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
@@ -67,6 +70,7 @@ public class TimeTableFragment extends Fragment {
     private View myView;
 
     private List<TimetableResult> data = new ArrayList<>();
+
     private List<Integer> itemType = new ArrayList<>();
 
     public TimeTableFragment() {
@@ -141,6 +145,9 @@ public class TimeTableFragment extends Fragment {
                     intent.putExtra("Teacher_phone",data.get(i).getLecturers().getPhone());
                     intent.putExtra("Teacher_mail",data.get(i).getLecturers().getEmail());
                     intent.putExtra("Teacher_venue",data.get(i).getLecturers().getOffice());
+                    intent.putExtra("Lesson_date",data.get(i).getLesson_date().getDate());
+
+
                     startActivity(intent);
 
 
@@ -201,10 +208,9 @@ public class TimeTableFragment extends Fragment {
                                 aSubject.setUuid(timetableList.get(i).getLessonBeacon().getUuid());
                                 aSubject.setTeacher_id(timetableList.get(i).getLecturers().getId());
                                 aSubject.setTeacher_name(timetableList.get(i).getLecturers().getName());
-
+/*
                                 aSubject.setTeacher_office(timetableList.get(i).getLecturers().getOffice());
-                                aSubject.setTeacher_phone(timetableList.get(i).getLecturers().getPhone());
-
+                                aSubject.setTeacher_phone(timetableList.get(i).getLecturers().getPhone());*/
 
                                 aSubject.setTeacher_acad(timetableList.get(i).getLecturers().getAcad());
                                 aSubject.setTeacher_email(timetableList.get(i).getLecturers().getEmail());
@@ -226,6 +232,9 @@ public class TimeTableFragment extends Fragment {
                                 aSubjectDateTime.setSubject(aSubject);
                                 DatabaseManager.getInstance().updateSubjectDateTimeItem(aSubjectDateTime);
 
+
+
+
                                 for (StudentInfo theStudent : timetableList.get(i).getStudentList()) {
                                     Student aStudent = DatabaseManager.getInstance().newStudentItem();
                                     if (theStudent.getBeacon() == null) {
@@ -246,7 +255,10 @@ public class TimeTableFragment extends Fragment {
                                 }
 
                             }
+
+
                         }
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -297,8 +309,8 @@ public class TimeTableFragment extends Fragment {
                             Lecturer aLecturer = new Lecturer();
                             aLecturer.setId(tmp.getTeacher_id());
                             aLecturer.setName(tmp.getTeacher_name());
-                            aLecturer.setOffice(tmp.getTeacher_office());
-                            aLecturer.setPhone(tmp.getTeacher_phone());
+               /*             aLecturer.setOffice(tmp.getTeacher_office());
+                            aLecturer.setPhone(tmp.getTeacher_phone());*/
 
                             aLecturer.setAcad(tmp.getTeacher_acad());
                             aLecturer.setEmail(tmp.getTeacher_email());

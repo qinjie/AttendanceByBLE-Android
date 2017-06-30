@@ -5,9 +5,11 @@
     tools:context="edu.np.ece.attendancetakingapplication.Fragment.HistoryByLessonFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/historybylesson_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Here is for history by date page" />
+        android:divider="@color/divider"
+        android:dividerHeight="1px" />
 
 </FrameLayout>

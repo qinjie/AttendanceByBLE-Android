@@ -212,6 +212,38 @@
             android:layout_marginTop="10dp"
             android:text="TextView" />
 
+        <TextView
+            android:id="@+id/Total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/teacher_venue"
+            android:layout_alignTop="@+id/textView21"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/Present"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/Total"
+            android:layout_alignTop="@+id/textView23"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/Late"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/Present"
+            android:layout_alignTop="@+id/textView25"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/Absent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/Late"
+            android:layout_alignTop="@+id/textView27"
+            android:text="TextView" />
+
 
     </RelativeLayout>
 

@@ -2,6 +2,7 @@ package edu.np.ece.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.R;
 
@@ -36,8 +38,9 @@ public class LessonDetailsFragment extends Fragment {
 
     private View myView;
 
-    private List<TimetableResult> data = new ArrayList<>();
+
     private List<Integer> itemType = new ArrayList<>();
+    //private List<HistoricalResult> data;
 
     public LessonDetailsFragment() {
         // Required empty public constructor
@@ -68,6 +71,7 @@ public class LessonDetailsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+      //  context = getActivity();
     }
 
     @Override
@@ -86,6 +90,12 @@ public class LessonDetailsFragment extends Fragment {
         TextView teacher_phone=(TextView)myView.findViewById(R.id.teacher_phone);
         TextView teacher_mail=(TextView)myView.findViewById(R.id.teacher_mail);
         TextView teacher_venue=(TextView)myView.findViewById(R.id.teacher_venue);
+
+        TextView tvTotal=(TextView)myView.findViewById(R.id.Total);
+        TextView tvPresent=(TextView)myView.findViewById(R.id.Present);
+        TextView tvLate=(TextView)myView.findViewById(R.id.Late);
+        TextView tvAbsent=(TextView)myView.findViewById(R.id.Absent);
+
         Bundle arguments = getArguments();
         if(arguments!=null){
             subjectCatalog_name.setText(arguments.getString("Area")+" "+arguments.getString("Catalog","error"));
@@ -97,7 +107,22 @@ public class LessonDetailsFragment extends Fragment {
             teacher_mail.setText(arguments.getString("Teacher_mail"));
             teacher_venue.setText(arguments.getString("Teacher_venue"));
 
+            /*SharedPreferences getvalue= getActivity().getSharedPreferences("valueOfAttendance",Context.MODE_PRIVATE);
+            String total=String.valueOf(getvalue.getInt("totalSlot",0))+" ("+String.valueOf(getvalue.getInt("attendedPercent",0))+"%)";
+            String present = String.valueOf(getvalue.getInt("presentedSlot",0));
+            String late = String.valueOf(getvalue.getInt("lateSlot",0));
+            String absent = String.valueOf(getvalue.getInt("absentedSlot",0));
+            tvTotal.setText(total);
+            tvPresent.setText(present);
+            tvLate.setText(late);
+            tvAbsent.setText(absent);
+*/
+
+
+
+
         }
+
 
         return myView;
     }

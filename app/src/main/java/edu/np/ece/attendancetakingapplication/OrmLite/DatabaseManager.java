@@ -3,6 +3,10 @@ package edu.np.ece.attendancetakingapplication.OrmLite;
 import android.content.Context;
 import android.database.SQLException;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+
 import java.util.List;
 
 /**
@@ -24,11 +28,15 @@ public class DatabaseManager {
     }
 
     private DatabaseHelper helper;
+
     private DatabaseManager(Context ctx) {
         helper = new DatabaseHelper(ctx);
     }
 
+
+
     private DatabaseHelper getHelper() {
+
         return helper;
     }
 
@@ -36,6 +44,7 @@ public class DatabaseManager {
         List<Subject> Subjects = null;
         try {
             Subjects = getHelper().getSubjectDao().queryForAll();
+
         }
          catch (java.sql.SQLException e) {
             e.printStackTrace();
@@ -43,6 +52,22 @@ public class DatabaseManager {
         return Subjects;
     }
 
+    //条件查询
+    public List<Subject> QueryBuilder(String QueryColumnname,String ObjectValue){
+        List<Subject> Subjects=null;
+        QueryBuilder<Subject,Integer> queryBuilder=getHelper().getSubjectDao().queryBuilder();
+        //create a new query builder object which allows you to build a custom SELECT statement
+        Where<Subject,Integer> where= queryBuilder.where();
+        //声明一个where条件
+        try {
+            where.eq(QueryColumnname,ObjectValue);
+            where.prepare();
+            Subjects=queryBuilder.query();
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return Subjects;
+    }
 
     public void addSubject(Subject l) {
         try {
