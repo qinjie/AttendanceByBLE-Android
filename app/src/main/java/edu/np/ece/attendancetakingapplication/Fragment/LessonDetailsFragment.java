@@ -217,7 +217,7 @@ public class LessonDetailsFragment extends Fragment {
             teacher_phone.setText(arguments.getString("Teacher_phone"));
             teacher_mail.setText(arguments.getString("Teacher_mail"));
             teacher_venue.setText(arguments.getString("Teacher_venue"));
-            
+
 
             loadInfo();
 

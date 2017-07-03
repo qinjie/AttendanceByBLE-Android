@@ -18,7 +18,7 @@ public class Subject extends OrmLiteBaseActivity {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
+    @DatabaseField(columnName = "lesson_id")
     private String lesson_id;
 
     @DatabaseField

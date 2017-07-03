@@ -7,13 +7,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
+import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.R;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import edu.np.ece.attendancetakingapplication.Adapter.HistoryListAdapter;
@@ -36,11 +42,14 @@ public class AttendanceHistoryFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
-    private List<HistoricalResult> historicalList;
-
-    private View myView;
     private Activity context;
+    private Calendar calendar;
+    private List<AttendanceResult> historicalList;
+    private View myView;
+
+    private List<Integer> itemType = new ArrayList<>();
+    private List<AttendanceResult> data = new ArrayList<>();
+
 
     public AttendanceHistoryFragment() {
         // Required empty public constructor
@@ -67,21 +76,52 @@ public class AttendanceHistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        context = this.getActivity();
+        calendar = Calendar.getInstance();
+    }
 
-        context = getActivity();
-        setHasOptionsMenu(true);
+    public void onResume() {
+        super.onResume();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(dateFormat.format(calendar.getTime()));
+    }
+
+    private boolean isOnDifferentDate(AttendanceResult temp1, AttendanceResult temp2) {
+
+        if (temp1.getLesson_date().getLdate().compareToIgnoreCase(temp2.getLesson_date().getLdate()) == 0) {
+
+            return false;
+        }
+        return true;
+    }
+    private void addItem(AttendanceResult subject, Integer type) {
+        data.add(subject);
+        itemType.add(type);
     }
 
     private void initHistoricalList() {
-        HistoryListAdapter adapter = new HistoryListAdapter(context, R.layout.item_history, historicalList);
-        adapter.notifyDataSetChanged();
 
-        ListView listView = (ListView) myView.findViewById(R.id.history_list);
-        listView.setAdapter(adapter);
+        HistoryListAdapter adapter = null;
+        try {
+            final ListView listView = (ListView) myView.findViewById(R.id.history_list);
+
+            for (int i = 0; i < historicalList.size(); i++) {
+                if (i == 0 || isOnDifferentDate(historicalList.get(i), historicalList.get(i - 1))) {
+                    addItem(historicalList.get(i), Preferences.LIST_ITEM_TYPE_1);
+                }
+                addItem(historicalList.get(i), Preferences.LIST_ITEM_TYPE_2);
+            }
+
+            adapter = new HistoryListAdapter(context, R.layout.item_history_subject, R.layout.item_week_day, data, itemType);
+            //item_histroy_subject
+            adapter.notifyDataSetChanged();
+            listView.setAdapter(adapter);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void loadHistoricalRecords() {
@@ -92,10 +132,10 @@ public class AttendanceHistoryFragment extends Fragment {
 
             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
 
-            Call<List<HistoricalResult>> call = client.getHistoricalReports();
-            call.enqueue(new ServerCallBack<List<HistoricalResult>>() {
+            Call<List<AttendanceResult>> call = client.getAttendanceReports();
+            call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
                 @Override
-                public void onResponse(Call<List<HistoricalResult>> call, Response<List<HistoricalResult>> response) {
+                public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
                     try {
 
                         historicalList = response.body();
@@ -125,7 +165,7 @@ public class AttendanceHistoryFragment extends Fragment {
                 }
 
                 @Override
-                public void onFailure(Call<List<HistoricalResult>> call, Throwable t) {
+                public void onFailure(Call<List<AttendanceResult>> call, Throwable t) {
                     super.onFailure(call, t);
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);

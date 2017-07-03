@@ -4,6 +4,7 @@ package edu.np.ece.attendancetakingapplication.Retrofit;
  * Created by Sonata on 10/26/2016.
  */
 
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.LoginInfo;
 import edu.np.ece.attendancetakingapplication.Model.LoginResult;
@@ -33,6 +34,9 @@ public interface ServerApi {
 
     @GET("user/logout")
     Call<ResponseBody> logout();
+
+    @GET("attendance")
+    Call<List<AttendanceResult>> getAttendanceReports();
 
     @POST("user/change-password")
     Call<ResponseBody> changePassword(@Body JsonObject toUp);

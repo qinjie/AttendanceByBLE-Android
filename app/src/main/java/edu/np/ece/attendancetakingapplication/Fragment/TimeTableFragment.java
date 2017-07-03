@@ -117,7 +117,7 @@ public class TimeTableFragment extends Fragment {
         try {
             final ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
 
-            for (int i = 0; i < timetableList.size(); i++) {
+            for (int i = 0; i <timetableList.size(); i++) {
                 if (i == 0 || isOnDifferentDate(timetableList.get(i), timetableList.get(i - 1))) {
                     addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_1);
                 }
