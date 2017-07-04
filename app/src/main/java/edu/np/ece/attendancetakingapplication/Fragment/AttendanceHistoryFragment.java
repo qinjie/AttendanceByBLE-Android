@@ -114,9 +114,10 @@ public class AttendanceHistoryFragment extends Fragment {
             }
 
             adapter = new HistoryListAdapter(context, R.layout.item_history_subject, R.layout.item_week_day, data, itemType);
-            //item_histroy_subject
+
             adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,7 +140,6 @@ public class AttendanceHistoryFragment extends Fragment {
                     try {
 
                         historicalList = response.body();
-
                         if (historicalList == null) {
                             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle(R.string.another_login_title);

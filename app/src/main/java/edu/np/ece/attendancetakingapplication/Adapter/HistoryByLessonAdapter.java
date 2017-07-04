@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.Lesson;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
@@ -31,20 +32,14 @@ import edu.np.ece.attendancetakingapplication.R;
  * Created by MIYA on 23/06/17.
  */
 
-public class HistoryByLessonAdapter extends ArrayAdapter<HistoricalResult> {
+public class HistoryByLessonAdapter extends ArrayAdapter<AttendanceResult> {
     Context context;
     int layoutResourceId;
-    List<HistoricalResult> data;
-    private int totalSlot;
-    private int limitSlot;
-    private int absentedSlot;
-    private int presentedSlot;
-    private int lateSlot;
-    private int remainingSlot;
-    private int attendedPercent;
+    List<AttendanceResult> data;
 
 
-    public HistoryByLessonAdapter(Context context, int layoutResourceId, List<HistoricalResult> data) {
+
+    public HistoryByLessonAdapter(Context context, int layoutResourceId, List<AttendanceResult> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -74,79 +69,48 @@ public class HistoryByLessonAdapter extends ArrayAdapter<HistoricalResult> {
             holder = (HistoryByLessonAdapter.ViewHolder) row.getTag();
         }
 
-
-
         SharedPreferences getName=context.getSharedPreferences("valueOfTB",Context.MODE_PRIVATE); //点击进入后的lesson name
-        //比较historicallist里的data和当前lesson name
+        for (int i =0;i<data.size();i++){
+            String lesson_id=getName.getString("Lesson_id","error-0");
+            String dataLesson_id=data.get(i).getLesson_date().getLesson_id();
+            if (lesson_id.equals(dataLesson_id)){
+                //pass verification and get the wanted value
 
-        for(int i=0;i<data.size();i++){
-            String name=getName.getString("Catalog","error");
-            String dataname=data.get(i).getLesson_name();
+                List<Subject> listSubject = DatabaseManager.getInstance().QueryBuilder("lesson_id",dataLesson_id);
+                List<SubjectDateTime> subjectDateTimeList=listSubject.get(0).getSubject_Datetime();
+                //逻辑还有问题！ 1）同一科目不同时间段的attendance应该都要显示 2）重复显示数据
+                holder.tvLessonDate.setText(data.get(i).getLesson_date().getLdate()+"("+data.get(i).getLesson_date().getDate()+")");
+                holder.tvLesson_timeslot.setText(subjectDateTimeList.get(0).getStartTime()+" - "+subjectDateTimeList.get(0).getEndTime());
+                holder.tvAttendance_time.setText(data.get(i).getRecorded_time());
 
-            if(dataname.equals(name)){
-                //通过验证 获得数据
-                totalSlot = Integer.valueOf(data.get(i).getTotal());
-                limitSlot = totalSlot / 5;
+                String status = data.get(i).getStatus();
+                if(status.equals("0")){
+                    holder.imgAttendance_rate.setImageResource(R.drawable.circle_green_32);
+                }
+                else if(status.equals("-1")){
+                    holder.imgAttendance_rate.setImageResource(R.drawable.circle_red_32);
+                }
+                else {
+                    holder.imgAttendance_rate.setImageResource(R.drawable.circle_orange_32);
+                }
 
-                absentedSlot = Integer.valueOf(data.get(i).getAbsented());
-                presentedSlot = Integer.valueOf(data.get(i).getPresented());
-                lateSlot = Integer.valueOf(data.get(i).getLate());
-                remainingSlot = limitSlot - absentedSlot;
-                attendedPercent = (int) ((float) 100 * presentedSlot / totalSlot);
-                holder.tvLessonDate.setText(data.get(i).getLesson_name());
+
 
                 break;
 
             }
-            else {
-                holder.tvLessonDate.setText("error");
-            }
+            /*else {
+                holder.tvLessonDate.setText("ERROR");
 
+            }*/
 
-        }
-
-
-        /*List<Subject> listSubject = DatabaseManager.getInstance().QueryBuilder("catalog_number",getName.getString("Catalog","error"));
-            //for内置段语句error：list中size大于1的时候 显示数组越界
-        for(int i=0;i<listSubject.size();i++){
-            Subject subject=listSubject.get(i);
-            List <SubjectDateTime> subjectDateTimelist =subject.getSubject_Datetime();//存入了好几个datetimeobject
-            for (int n=0;n<subjectDateTimelist.size();n++) {
-                holder.tvLesson_timeslot.setText(subjectDateTimelist.get(i).getStartTime());
-            }
-        }
-
-        */
-
-       /* SharedPreferences sendValue = context.getSharedPreferences("valueOfAttendance",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor=sendValue.edit(); //send values to detailsFragment to show
-        editor.putInt("totalSlot",totalSlot);
-        editor.putInt("absentedSlot",absentedSlot);
-        editor.putInt("presentedSlot",presentedSlot);
-        editor.putInt("lateSlot",lateSlot);
-        editor.putInt("attendedPercent",attendedPercent);
-        editor.commit();*/
-        //延迟
-
-
-        if (remainingSlot <= 0) {
-            //display for subject if student have more than maximum absent slot
-
-            holder.imgAttendance_rate.setImageResource(R.drawable.circle_red_32);
-        } else {
-            //display for subject if student still not reach maximum absent slot
-
-            if (attendedPercent <= 90) {
-                holder.imgAttendance_rate.setImageResource(R.drawable.circle_orange_32);
-            } else {
-                holder.imgAttendance_rate.setImageResource(R.drawable.circle_green_32);
-            }
         }
 
 
 
 
 
+      //  data.clear();
         return row;
     }
     static class ViewHolder {

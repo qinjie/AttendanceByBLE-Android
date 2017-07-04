@@ -22,6 +22,7 @@ import java.util.List;
 import edu.np.ece.attendancetakingapplication.Adapter.HistoryByLessonAdapter;
 import edu.np.ece.attendancetakingapplication.Adapter.HistoryListAdapter;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.NavigationActivity;
@@ -45,7 +46,7 @@ public class HistoryByLessonFragment extends Fragment {
     private String mParam2;
 
 
-    private List<HistoricalResult> historicalList;
+    private List<AttendanceResult> historicalList;
 
     private View myView;
 
@@ -93,7 +94,9 @@ public class HistoryByLessonFragment extends Fragment {
             final ListView listView = (ListView) myView.findViewById(R.id.historybylesson_list);
 
             listView.setAdapter(adapter);
+          //  int i = listView.getCount();
             adapter.notifyDataSetChanged();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,10 +109,10 @@ public class HistoryByLessonFragment extends Fragment {
 
             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
 
-            Call<List<HistoricalResult>> call = client.getHistoricalReports();
-            call.enqueue(new ServerCallBack<List<HistoricalResult>>() {
+            Call<List<AttendanceResult>> call = client.getAttendanceReports();
+            call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
                 @Override
-                public void onResponse(Call<List<HistoricalResult>> call, Response<List<HistoricalResult>> response) {
+                public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
                     try {
 
                         historicalList = response.body();
@@ -140,7 +143,7 @@ public class HistoryByLessonFragment extends Fragment {
                 }
 
                 @Override
-                public void onFailure(Call<List<HistoricalResult>> call, Throwable t) {
+                public void onFailure(Call<List<AttendanceResult>> call, Throwable t) {
                     super.onFailure(call, t);
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

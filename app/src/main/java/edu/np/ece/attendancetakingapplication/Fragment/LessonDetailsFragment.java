@@ -137,7 +137,7 @@ public class LessonDetailsFragment extends Fragment {
                                      lateSlot = Integer.valueOf(historicalList.get(i).getLate());
 
                                      now=absentedSlot+presentedSlot+lateSlot;
-                                     attendedPercent = (int) ((float) 100 * presentedSlot / totalSlot);
+                                     attendedPercent = (int) ((float) 100 * presentedSlot / now);
                                     TextView tvTotal=(TextView)myView.findViewById(R.id.Total);
                                     TextView tvPresent=(TextView)myView.findViewById(R.id.Present);
                                     TextView tvLate=(TextView)myView.findViewById(R.id.Late);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
@@ -44,21 +45,21 @@
         android:layout_marginRight="10dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_toEndOf="@+id/separator">
+        android:layout_toEndOf="@+id/separator"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/history_subject_area"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="1AMPR"
-            android:textSize="18dip"
-            android:layout_marginTop="4dp"
             android:layout_marginLeft="20dp"
-            android:textColor="@color/bb_darkBackgroundColor"/>
+            android:layout_marginTop="4dp"
+            android:text="1AMPR"
+            android:textColor="@color/bb_darkBackgroundColor"
+            android:textSize="18dip" />
 
         <TextView
             android:id="@+id/history_class"
@@ -81,5 +82,14 @@
         android:layout_marginStart="120dp"
         android:layout_toEndOf="@+id/separator"
         android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/imgAttendance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/history_attendance"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        app:srcCompat="@drawable/circle_green_32" />
 
 </RelativeLayout>

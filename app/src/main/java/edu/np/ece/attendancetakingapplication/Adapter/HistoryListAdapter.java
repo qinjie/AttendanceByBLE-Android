@@ -6,13 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.Lesson;
+import edu.np.ece.attendancetakingapplication.Model.LessonDate;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
@@ -55,7 +60,19 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
         return Preferences.LIST_ITEM_TYPE_COUNT;
     }
 
+    public List<LessonDate> ChangeOrderOfDate(){
+        List<LessonDate> dateTimeDecrease=null;
+        for(int i =0; i<data.size();i++){
+            dateTimeDecrease=new ArrayList<>();
+            dateTimeDecrease.add(i,data.get(i).getLesson_date());
 
+
+        }
+
+
+        Collections.reverse(dateTimeDecrease);
+        return dateTimeDecrease;
+    }
 
 
     @Override
@@ -88,6 +105,7 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                     subjectHolder.tvSubjectArea = (TextView) row.findViewById(R.id.history_subject_area);
                     subjectHolder.tvClass = (TextView) row.findViewById(R.id.history_class);
                     subjectHolder.tvAttendance=(TextView)row.findViewById(R.id.history_attendance);
+                    subjectHolder.imgAttendance=(ImageView)row.findViewById(R.id.imgAttendance);
                     row.setTag(subjectHolder);
                     break;
             }
@@ -107,14 +125,17 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
             AttendanceResult subject = data.get(position);
 
             String lessonId =subject.getLesson_date().getLesson_id();
-            List<Subject> listSubject = DatabaseManager.getInstance().QueryBuilder("lesson_id",lessonId);
-            List<SubjectDateTime> subjectDateTimeList=listSubject.get(0).getSubject_Datetime();
+            List<Subject> listSubject=new ArrayList<>();
+            listSubject = DatabaseManager.getInstance().QueryBuilder("lesson_id",lessonId);
+            List<SubjectDateTime> subjectDateTimeList=new ArrayList<>();
+            subjectDateTimeList=listSubject.get(0).getSubject_Datetime();
             switch (itemType) {
                 //Put data into layout for display weekday
                 case Preferences.LIST_ITEM_TYPE_1:
-
+                    //show latest day at the top 时间顺序 从新到旧
+                    //List<LessonDate> dateTimeDecrease =ChangeOrderOfDate();
                     separatorHolder.tvWeekDay.setText(subject.getLesson_date().getLdate()+" ("+subject.getLesson_date().getDate()+")");
-
+                  //  separatorHolder.tvWeekDay.setText(dateTimeDecrease.get(position).getLdate()+" ("+dateTimeDecrease.get(position).getDate()+")");
                     break;
 
                 //Put data into layout for display Subject
@@ -125,6 +146,20 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                             + listSubject.get(0).getCatalog_number());
 
                     subjectHolder.tvAttendance.setText(subject.getRecorded_time());
+                    String status= subject.getStatus();
+                    if(status.equals("0")){
+
+                        subjectHolder.imgAttendance.setImageResource(R.drawable.circle_green_32);
+                    }
+                    else if(status.equals("-1")){
+
+                        subjectHolder.imgAttendance.setImageResource(R.drawable.circle_red_32);
+                    }
+                    else{
+
+                        subjectHolder.imgAttendance.setImageResource(R.drawable.circle_orange_32);
+                    }
+
                     break;
             }
 
@@ -141,6 +176,7 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
         TextView tvSubjectArea;
         TextView tvClass;
         TextView tvAttendance;
+        ImageView imgAttendance;
     }
     static class SeparatorHolder {
         TextView tvWeekDay;
