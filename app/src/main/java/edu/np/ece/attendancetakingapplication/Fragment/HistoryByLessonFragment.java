@@ -26,6 +26,9 @@ import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.NavigationActivity;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
+import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
+import edu.np.ece.attendancetakingapplication.OrmLite.SubjectDateTime;
 import edu.np.ece.attendancetakingapplication.Preferences;
 import edu.np.ece.attendancetakingapplication.R;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
@@ -49,9 +52,12 @@ public class HistoryByLessonFragment extends Fragment {
     private List<AttendanceResult> historicalList;
 
     private View myView;
-
-
-
+    private List<Subject> subjectResultList=new ArrayList<>();
+    private List<SubjectDateTime> subjectDateTimeResult=new ArrayList<>();
+    private ArrayList<String> statusList =new ArrayList<>();
+    private ArrayList<String> recordedTimeList=new ArrayList<>();
+    private ArrayList<String> LDateList=new ArrayList<>();
+    private ArrayList<String> Date=new ArrayList<>();
 
     public HistoryByLessonFragment() {
         // Required empty public constructor
@@ -86,10 +92,43 @@ public class HistoryByLessonFragment extends Fragment {
 
 
 
+
     private void initHistorytableList(){
         try {
+            //做判断save information
+            SharedPreferences getName=getActivity().getSharedPreferences("valueOfTB",Context.MODE_PRIVATE); //点击进入后的lesson name
+            for (int i =0;i<historicalList.size();i++){ //判断datalist里有多少个 和 所点击的lesson相符的
+                String lesson_id=getName.getString("Lesson_id","error-0");
+                String dataLesson_id=historicalList.get(i).getLesson_date().getLesson_id();
+                if (lesson_id.equals(dataLesson_id)){
+                    //pass verification and get the wanted value
 
-            HistoryByLessonAdapter adapter = new HistoryByLessonAdapter(getActivity(), R.layout.item_history_by_lesson, historicalList);
+                    List<Subject> listSubject = DatabaseManager.getInstance().QueryBuilder("lesson_id",dataLesson_id); //lessonid只能找到具体某一时间段的一节课
+                    //所以每次这个list里只有一个结果
+
+                    subjectResultList.add(listSubject.get(0)); //有多少个历史结果，存多少遍
+                    List<SubjectDateTime> subjectDateTimeList=listSubject.get(0).getSubject_Datetime();
+
+                    subjectDateTimeResult.add(subjectDateTimeList.get(0));
+                    String recordTime=historicalList.get(i).getRecorded_time();
+                    recordedTimeList.add(recordTime);
+
+                    String ldate=historicalList.get(i).getLesson_date().getLdate();
+                    LDateList.add(ldate);
+                    String date=historicalList.get(i).getLesson_date().getDate();
+                    Date.add(date);
+                    String status=historicalList.get(i).getStatus();
+                    statusList.add(status);
+
+
+
+
+                }
+
+            }
+
+
+            HistoryByLessonAdapter adapter = new HistoryByLessonAdapter(getActivity(), R.layout.item_history_by_lesson, subjectResultList,subjectDateTimeResult,recordedTimeList,LDateList,Date,statusList);
 
             final ListView listView = (ListView) myView.findViewById(R.id.historybylesson_list);
 

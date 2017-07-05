@@ -32,18 +32,28 @@ import edu.np.ece.attendancetakingapplication.R;
  * Created by MIYA on 23/06/17.
  */
 
-public class HistoryByLessonAdapter extends ArrayAdapter<AttendanceResult> {
+public class HistoryByLessonAdapter extends ArrayAdapter<Subject> {
     Context context;
     int layoutResourceId;
-    List<AttendanceResult> data;
+    List<Subject> data;
+    List<SubjectDateTime> subjectDateTimes;
+    List<String> recordedTime;
+    List<String> ldate;
+    List<String> date;
+    List<String> status;
 
 
-
-    public HistoryByLessonAdapter(Context context, int layoutResourceId, List<AttendanceResult> data) {
+    public HistoryByLessonAdapter(Context context, int layoutResourceId, List<Subject> data,List<SubjectDateTime> subjectDateTimes,List<String> recordedTime,List<String> ldate,List<String> date,List<String> status) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.subjectDateTimes=subjectDateTimes;
+        this.recordedTime=recordedTime;
+        this.ldate=ldate;
+        this.date=date;
+        this.status=status;
+
     }
     @Override
     public int getCount() {
@@ -69,22 +79,43 @@ public class HistoryByLessonAdapter extends ArrayAdapter<AttendanceResult> {
             holder = (HistoryByLessonAdapter.ViewHolder) row.getTag();
         }
 
-        SharedPreferences getName=context.getSharedPreferences("valueOfTB",Context.MODE_PRIVATE); //点击进入后的lesson name
-        for (int i =0;i<data.size();i++){
+        try {
+            holder.tvLessonDate.setText(ldate.get(position)+" ("+date.get(position)+")");
+            holder.tvAttendance_time.setText(recordedTime.get(position));
+            holder.tvLesson_timeslot.setText(subjectDateTimes.get(position).getStartTime()+" - "+subjectDateTimes.get(position).getEndTime());
+            String state= status.get(position);
+            if(state.equals("0")){
+                holder.imgAttendance_rate.setImageResource(R.drawable.circle_green_32);
+            }
+            else if(state.equals("-1")){
+                holder.imgAttendance_rate.setImageResource(R.drawable.circle_red_32);
+            }
+            else {
+                holder.imgAttendance_rate.setImageResource(R.drawable.circle_orange_32);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+        /* SharedPreferences getName=context.getSharedPreferences("valueOfTB",Context.MODE_PRIVATE); //点击进入后的lesson name
+       for (int i =0;i<data.size();i++){ //判断datalist里有多少个 和 所点击的lesson相符的
             String lesson_id=getName.getString("Lesson_id","error-0");
             String dataLesson_id=data.get(i).getLesson_date().getLesson_id();
             if (lesson_id.equals(dataLesson_id)){
                 //pass verification and get the wanted value
-
+                int count = 0;
                 List<Subject> listSubject = DatabaseManager.getInstance().QueryBuilder("lesson_id",dataLesson_id);
-                List<SubjectDateTime> subjectDateTimeList=listSubject.get(0).getSubject_Datetime();
+                List<SubjectDateTime> subjectDateTimeList=listSubject.get(count).getSubject_Datetime();
                 //逻辑还有问题！ 1）同一科目不同时间段的attendance应该都要显示 2）重复显示数据
                 holder.tvLessonDate.setText(data.get(i).getLesson_date().getLdate()+"("+data.get(i).getLesson_date().getDate()+")");
-                holder.tvLesson_timeslot.setText(subjectDateTimeList.get(0).getStartTime()+" - "+subjectDateTimeList.get(0).getEndTime());
+                holder.tvLesson_timeslot.setText(subjectDateTimeList.get(count).getStartTime()+" - "+subjectDateTimeList.get(count).getEndTime());
                 holder.tvAttendance_time.setText(data.get(i).getRecorded_time());
 
                 String status = data.get(i).getStatus();
-                if(status.equals("0")){
+               *//* if(status.equals("0")){
                     holder.imgAttendance_rate.setImageResource(R.drawable.circle_green_32);
                 }
                 else if(status.equals("-1")){
@@ -92,25 +123,22 @@ public class HistoryByLessonAdapter extends ArrayAdapter<AttendanceResult> {
                 }
                 else {
                     holder.imgAttendance_rate.setImageResource(R.drawable.circle_orange_32);
-                }
+                }*//*
 
 
-
-                break;
+                count++;
+                //break;
 
             }
-            /*else {
-                holder.tvLessonDate.setText("ERROR");
 
-            }*/
+         //   break;
 
         }
+*/
 
 
 
 
-
-      //  data.clear();
         return row;
     }
     static class ViewHolder {
