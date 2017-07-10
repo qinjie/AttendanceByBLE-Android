@@ -208,9 +208,10 @@ public class TimeTableFragment extends Fragment {
                                 aSubject.setUuid(timetableList.get(i).getLessonBeacon().getUuid());
                                 aSubject.setTeacher_id(timetableList.get(i).getLecturers().getId());
                                 aSubject.setTeacher_name(timetableList.get(i).getLecturers().getName());
-/*
+
+                                aSubject.setClass_section(timetableList.get(i).getLesson().getClass_section());
                                 aSubject.setTeacher_office(timetableList.get(i).getLecturers().getOffice());
-                                aSubject.setTeacher_phone(timetableList.get(i).getLecturers().getPhone());*/
+                                aSubject.setTeacher_phone(timetableList.get(i).getLecturers().getPhone());
 
                                 aSubject.setTeacher_acad(timetableList.get(i).getLecturers().getAcad());
                                 aSubject.setTeacher_email(timetableList.get(i).getLecturers().getEmail());
@@ -223,6 +224,11 @@ public class TimeTableFragment extends Fragment {
                                     aSubject.setTeacher_minor(timetableList.get(i).getLecturers().getBeacon().getMinor());
                                 }
                                 DatabaseManager.getInstance().addSubject(aSubject);
+
+
+                                /*List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",timetableList.get(i).getLesson_id());
+                                String group= subjectList.get(0).getClass_section();*/
+
 
                                 SubjectDateTime aSubjectDateTime = DatabaseManager.getInstance().newSubjectDateTimeItem();
                                 aSubjectDateTime.setLesson_date_id(timetableList.get(i).getLesson_date().getId());
@@ -309,8 +315,9 @@ public class TimeTableFragment extends Fragment {
                             Lecturer aLecturer = new Lecturer();
                             aLecturer.setId(tmp.getTeacher_id());
                             aLecturer.setName(tmp.getTeacher_name());
-               /*             aLecturer.setOffice(tmp.getTeacher_office());
-                            aLecturer.setPhone(tmp.getTeacher_phone());*/
+
+                            aLecturer.setOffice(tmp.getTeacher_office());
+                            aLecturer.setPhone(tmp.getTeacher_phone());
 
                             aLecturer.setAcad(tmp.getTeacher_acad());
                             aLecturer.setEmail(tmp.getTeacher_email());

@@ -45,12 +45,15 @@ public class Subject extends OrmLiteBaseActivity {
     @DatabaseField
     private String teacher_email;
 
- /*   @DatabaseField(columnName = "teacher_office")
+    @DatabaseField(columnName = "teacher_office")
     private  String teacher_office;
 
     @DatabaseField(columnName = "teacher_phone")
     private  String teacher_phone;
-*/
+
+    @DatabaseField(columnName = "class_section")
+    private String class_section;
+
     @DatabaseField
     private String teacher_major;
 
@@ -138,7 +141,6 @@ public class Subject extends OrmLiteBaseActivity {
     public String getTeacher_name() {
         return teacher_name;
     }
-/*
     public void  setTeacher_office(String teacher_office){this.teacher_office=teacher_office;}
 
     public String  getTeacher_office(){
@@ -150,7 +152,12 @@ public class Subject extends OrmLiteBaseActivity {
 
     public String  getTeacher_phone(){
         return teacher_phone;
-    }*/
+    }
+
+    public void setClass_section(String class_section){this.class_section=class_section;}
+    public String getClass_section(){
+        return class_section;
+    }
 
 
     public void setTeacher_name(String teacher_name) {

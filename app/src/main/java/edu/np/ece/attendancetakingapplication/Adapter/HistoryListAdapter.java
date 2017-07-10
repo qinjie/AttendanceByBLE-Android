@@ -146,6 +146,7 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                             + listSubject.get(0).getCatalog_number());
 
                     subjectHolder.tvAttendance.setText(subject.getRecorded_time());
+                    subjectHolder.tvClass.setText(listSubject.get(0).getClass_section());
                     String status= subject.getStatus();
                     if(status.equals("0")){
 
