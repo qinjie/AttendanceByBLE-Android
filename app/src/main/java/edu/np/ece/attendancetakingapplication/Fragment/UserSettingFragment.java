@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +37,9 @@ import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
 import edu.np.ece.attendancetakingapplication.ChangePasswordActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
+import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
+import edu.np.ece.attendancetakingapplication.OrmLite.SubjectDateTime;
 import edu.np.ece.attendancetakingapplication.Preferences;
 import edu.np.ece.attendancetakingapplication.R;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
@@ -54,6 +59,9 @@ public class UserSettingFragment extends Fragment {
 
     private View inflateView;
 
+    @BindView(R.id.tvModule)
+    TextView Module;
+
     @BindView(R.id.user_profile_name)
     TextView userName;
 
@@ -62,6 +70,15 @@ public class UserSettingFragment extends Fragment {
 
     @BindView(R.id.btnActivateBeacon)
     ToggleButton btnActivateBeacon;
+
+    @BindView(R.id.tvClass)
+    TextView Class;
+
+    @BindView(R.id.tvTime)
+    TextView Time;
+
+    @BindView(R.id.tvVenue)
+    TextView Venue;
 
     private Handler mHandler;
     public static BeaconTransmitter beaconTransmitter;
@@ -138,21 +155,71 @@ public class UserSettingFragment extends Fragment {
 
             userBio.setText("Still not take attendance yet for this class");
 
+
+
             if (BeaconScanActivation.timetableList != null) {
+
                 for (final TimetableResult aSubject_time : BeaconScanActivation.timetableList) {
                     try {
                         //Get the data of current subject to display attendance status
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+                        String aID = aSubject_time.getLesson_id();
+                        List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",aID);
+                        List<SubjectDateTime> subjectDateTimeList = subjectList.get(0).getSubject_Datetime();
+
+                        String sTime = aSubject_time.getLesson_date().getLdate()+" "+aSubject_time.getLesson().getStart_time();
+
+
+
+                        String aModuleSec = subjectList.get(0).getSubject_area();
+                        String aModule = subjectList.get(0).getCatalog_number();
+                        Module.setText(aModuleSec + " " + aModule);//显示Module
+
+
+                        String aClass = aSubject_time.getLesson().getClass_section();
+                        Class.setText(aClass);//显示Class
+
+
+                        String cStartTime = aSubject_time.getLesson().getStart_time();
+                        String cEndTime = aSubject_time.getLesson().getEnd_time();
+                        Time.setText(cStartTime+ " - " + cEndTime);//显示时间
+
+                        String cVenue = aSubject_time.getLesson().getFacility() ;
+                        Venue.setText("#" + cVenue);//显示教室地点
+
+
+
                         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
                         Calendar calendar1 = Calendar.getInstance();
                         calendar1.setTime(time);
 
+                        Date time2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(sTime);
+                        Calendar calendar3 = Calendar.getInstance();
+                        calendar3.setTime(time2);
+
                         Date timeNow = new Date();
                         Calendar calendar2 = Calendar.getInstance();
                         calendar2.setTime(timeNow);
+                        long diff =time2.getTime() - timeNow.getTime();
+                        long min = diff/(1000*60);
 
-                        if (calendar2.getTime().before(calendar1.getTime())) {
+                        String minn = String.valueOf(min);
+                        int m = Integer.parseInt(minn);
 
+                        //Log.e("test",minn);
+
+//                        if(min > 5 ){
+//                            userName.setText("Not yet time. \n Please try at 5 min before the class");
+//                        }
+
+                       if(calendar2.getTime().before(calendar1.getTime()) && m < 5){
+//                        if(m < 7) {
+//                          btnActivateBeacon.setVisibility(View.VISIBLE);
+//
+//                        }
+//                else{        //if(m < 5){
+                           Log.e("test",minn);
+                            btnActivateBeacon.setVisibility(View.VISIBLE);
                             final String auCode = pref.getString("authorizationCode", null);
                             JsonParser parser = new JsonParser();
                             JsonObject obj = parser.parse("{" +
@@ -210,6 +277,10 @@ public class UserSettingFragment extends Fragment {
                             break;
 
                         }
+                        else{
+                            btnActivateBeacon.setVisibility(View.INVISIBLE);
+                        }
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -241,6 +312,7 @@ public class UserSettingFragment extends Fragment {
 
     @OnClick(R.id.btnActivateBeacon)
     public void turnOnOffBeacon() {
+       // btnActivateBeacon.setBackground(R.drawable.bluetooth_checked);
 
         final SharedPreferences pref = context.getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
