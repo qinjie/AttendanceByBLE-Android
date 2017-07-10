@@ -147,9 +147,9 @@ public class TimeTableFragment extends Fragment {
                     intent.putExtra("Teacher_venue",data.get(i).getLecturers().getOffice());
                     intent.putExtra("Lesson_date",data.get(i).getLesson_date().getDate());
                     intent.putExtra("Lesson_id",data.get(i).getLesson_id());
-                  /*
+
                     intent.putExtra("lesson_name",data.get(i).getLesson().getLesson_name());
-                    intent.putExtra("credit_unit",data.get(i).getLesson().getCredit_unit());*/
+                    intent.putExtra("credit_unit",data.get(i).getLesson().getCredit_unit());
 
                     startActivity(intent);
 
@@ -216,6 +216,9 @@ public class TimeTableFragment extends Fragment {
                                 aSubject.setTeacher_office(timetableList.get(i).getLecturers().getOffice());
                                 aSubject.setTeacher_phone(timetableList.get(i).getLecturers().getPhone());
 
+                                aSubject.setLesson_name(timetableList.get(i).getLesson().getLesson_name());
+                                aSubject.setCredit_unit(timetableList.get(i).getLesson().getCredit_unit());
+
                                 aSubject.setTeacher_acad(timetableList.get(i).getLecturers().getAcad());
                                 aSubject.setTeacher_email(timetableList.get(i).getLecturers().getEmail());
 
@@ -229,8 +232,8 @@ public class TimeTableFragment extends Fragment {
                                 DatabaseManager.getInstance().addSubject(aSubject);
 
 
-                                /*List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",timetableList.get(i).getLesson_id());
-                                String group= subjectList.get(0).getClass_section();*/
+                                List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",timetableList.get(i).getLesson_id());
+                                String group= subjectList.get(0).getClass_section();
 
 
                                 SubjectDateTime aSubjectDateTime = DatabaseManager.getInstance().newSubjectDateTimeItem();

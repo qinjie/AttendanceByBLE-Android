@@ -60,6 +60,11 @@ public class Subject extends OrmLiteBaseActivity {
     @DatabaseField
     private String teacher_minor;
 
+    @DatabaseField(columnName = "lesson_name")
+    private String lesson_name;
+
+    @DatabaseField(columnName = "credit_unit")
+    private  String credit_unit;
 
     @ForeignCollectionField
     private ForeignCollection<SubjectDateTime> subject_datetime;
@@ -158,6 +163,12 @@ public class Subject extends OrmLiteBaseActivity {
     public String getClass_section(){
         return class_section;
     }
+
+    public void setLesson_name(String lesson_name){this.lesson_name=lesson_name;}
+    public String getLesson_name(){return lesson_name;}
+
+    public void setCredit_unit(String credit_unit){this.credit_unit=credit_unit;}
+    public String getCredit_unit(){return credit_unit;}
 
 
     public void setTeacher_name(String teacher_name) {

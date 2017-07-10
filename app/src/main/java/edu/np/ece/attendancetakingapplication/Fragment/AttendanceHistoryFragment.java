@@ -144,6 +144,8 @@ public class AttendanceHistoryFragment extends Fragment {
                     intent.putExtra("Lesson_date",subjectDateTimeList.get(0).getLesson_date());
                     intent.putExtra("Lesson_id",data.get(position).getLesson_date().getLesson_id());
 
+                    intent.putExtra("lesson_name",subjectList.get(0).getLesson_name());
+                    intent.putExtra("credit_unit",subjectList.get(0).getCredit_unit());
 
 
                     startActivity(intent);

@@ -80,6 +80,8 @@ public  class DetailsActivity extends FragmentActivity  {
             args.putString("Teacher_phone",intent.getStringExtra("Teacher_phone"));
             args.putString("Teacher_mail",intent.getStringExtra("Teacher_mail"));
             args.putString("Teacher_venue",intent.getStringExtra("Teacher_venue"));
+            args.putString("credit_unit",intent.getStringExtra("credit_unit"));
+            args.putString("lesson_name",intent.getStringExtra("lesson_name"));
 
             SharedPreferences valuetrans = getSharedPreferences("valueOfTB",MODE_PRIVATE);
             SharedPreferences.Editor editor=valuetrans.edit();
