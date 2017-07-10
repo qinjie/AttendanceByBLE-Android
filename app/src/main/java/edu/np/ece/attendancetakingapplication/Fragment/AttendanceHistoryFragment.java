@@ -143,6 +143,9 @@ public class AttendanceHistoryFragment extends Fragment {
                     intent.putExtra("Teacher_venue",subjectList.get(0).getTeacher_office());
                     intent.putExtra("Lesson_date",subjectDateTimeList.get(0).getLesson_date());
                     intent.putExtra("Lesson_id",data.get(position).getLesson_date().getLesson_id());
+
+
+
                     startActivity(intent);
                     Toast.makeText(getActivity(),data.get(position).getLesson_date().getLesson_id(),Toast.LENGTH_SHORT).show();
                 }

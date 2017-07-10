@@ -159,7 +159,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/teacher_venue"
             android:layout_marginTop="22dp"
-            android:text="Attendance Statics"
+            android:text="Attendance Statistics"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp" />
 

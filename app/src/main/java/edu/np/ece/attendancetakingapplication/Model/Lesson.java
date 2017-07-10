@@ -52,6 +52,14 @@ public class Lesson {
     @Expose
     private String end_time;
 
+    @SerializedName("lesson_name")
+    @Expose
+    private String lesson_name;
+
+    @SerializedName("credit_unit")
+    @Expose
+    private String credit_unit;
+
 
     public String getModule_id() {
         return module_id;
@@ -120,6 +128,16 @@ public class Lesson {
     public void setEnd_time(String end_time) {
         this.end_time = end_time;
     }
+
+
+    public String getLesson_name(){return lesson_name;}
+
+    public void setLesson_name(String lesson_name){this.lesson_name=lesson_name;}
+
+    public String getCredit_unit(){return credit_unit;}
+
+    public void setCredit_unit(String credit_unit){this.credit_unit=credit_unit;}
+
 
     public String getId() {
         return id;

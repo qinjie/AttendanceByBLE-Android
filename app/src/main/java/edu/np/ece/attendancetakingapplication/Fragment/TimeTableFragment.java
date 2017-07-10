@@ -147,6 +147,9 @@ public class TimeTableFragment extends Fragment {
                     intent.putExtra("Teacher_venue",data.get(i).getLecturers().getOffice());
                     intent.putExtra("Lesson_date",data.get(i).getLesson_date().getDate());
                     intent.putExtra("Lesson_id",data.get(i).getLesson_id());
+                  /*
+                    intent.putExtra("lesson_name",data.get(i).getLesson().getLesson_name());
+                    intent.putExtra("credit_unit",data.get(i).getLesson().getCredit_unit());*/
 
                     startActivity(intent);
 
