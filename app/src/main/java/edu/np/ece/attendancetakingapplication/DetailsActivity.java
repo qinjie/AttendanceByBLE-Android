@@ -83,10 +83,7 @@ public  class DetailsActivity extends FragmentActivity  {
 
             SharedPreferences valuetrans = getSharedPreferences("valueOfTB",MODE_PRIVATE);
             SharedPreferences.Editor editor=valuetrans.edit();
-            /*editor.putString("Catalog",intent.getStringExtra("Catalog"));
-            String timeslot=intent.getStringExtra("Timestart")+" - "+intent.getStringExtra("Timeend");
-            editor.putString("Timeslot",timeslot);
-            editor.putString("Date",intent.getStringExtra("Lesson_date"));*/
+            editor.putString("Catalog",intent.getStringExtra("Catalog"));
             editor.putString("Lesson_id",intent.getStringExtra("Lesson_id"));
             editor.commit();
 
