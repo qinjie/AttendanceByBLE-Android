@@ -2,12 +2,16 @@ package edu.np.ece.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +21,9 @@ import android.widget.Toast;
 
 import edu.np.ece.attendancetakingapplication.Adapter.TimetableListAdapter;
 import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
+import edu.np.ece.attendancetakingapplication.DetailsActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
+import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.Lecturer;
 import edu.np.ece.attendancetakingapplication.Model.Lesson;
 import edu.np.ece.attendancetakingapplication.Model.LessonBeacon;
@@ -26,6 +32,8 @@ import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.Model.UserBeacon;
 import edu.np.ece.attendancetakingapplication.Model.Venue;
+import edu.np.ece.attendancetakingapplication.NavigationActivity;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseHelper;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.OrmLite.Student;
 import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
@@ -62,6 +70,7 @@ public class TimeTableFragment extends Fragment {
     private View myView;
 
     private List<TimetableResult> data = new ArrayList<>();
+
     private List<Integer> itemType = new ArrayList<>();
 
     public TimeTableFragment() {
@@ -108,7 +117,7 @@ public class TimeTableFragment extends Fragment {
         try {
             final ListView listView = (ListView) myView.findViewById(R.id.timetable_list);
 
-            for (int i = 0; i < timetableList.size(); i++) {
+            for (int i = 0; i <timetableList.size(); i++) {
                 if (i == 0 || isOnDifferentDate(timetableList.get(i), timetableList.get(i - 1))) {
                     addItem(timetableList.get(i), Preferences.LIST_ITEM_TYPE_1);
                 }
@@ -122,6 +131,25 @@ public class TimeTableFragment extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                   // Intent intent = new Intent();
+                   // intent.setClass(getActivity(),DetailsActivity.class);
+                    intent.putExtra("Catalog",data.get(i).getLesson().getCatalog_number());
+                    intent.putExtra("Area",data.get(i).getLesson().getSubject_area());
+                    //lesson full name + lesson credit
+                    intent.putExtra("Group",data.get(i).getLesson().getClass_section());
+                    intent.putExtra("Timestart",data.get(i).getLesson().getStart_time());
+                    intent.putExtra("Timeend",data.get(i).getLesson().getEnd_time());
+                    intent.putExtra("Venue",data.get(i).getVenue().getAddress());
+                    intent.putExtra("Teacher_name",data.get(i).getLecturers().getName());
+                    intent.putExtra("Teacher_phone",data.get(i).getLecturers().getPhone());
+                    intent.putExtra("Teacher_mail",data.get(i).getLecturers().getEmail());
+                    intent.putExtra("Teacher_venue",data.get(i).getLecturers().getOffice());
+                    intent.putExtra("Lesson_date",data.get(i).getLesson_date().getDate());
+                    intent.putExtra("Lesson_id",data.get(i).getLesson_id());
+
+                    startActivity(intent);
+
 
                     Toast.makeText(getActivity().getBaseContext(), data.get(i).getLesson().getCatalog_number(), Toast.LENGTH_SHORT).show();
 
@@ -180,8 +208,13 @@ public class TimeTableFragment extends Fragment {
                                 aSubject.setUuid(timetableList.get(i).getLessonBeacon().getUuid());
                                 aSubject.setTeacher_id(timetableList.get(i).getLecturers().getId());
                                 aSubject.setTeacher_name(timetableList.get(i).getLecturers().getName());
+/*
+                                aSubject.setTeacher_office(timetableList.get(i).getLecturers().getOffice());
+                                aSubject.setTeacher_phone(timetableList.get(i).getLecturers().getPhone());*/
+
                                 aSubject.setTeacher_acad(timetableList.get(i).getLecturers().getAcad());
                                 aSubject.setTeacher_email(timetableList.get(i).getLecturers().getEmail());
+
                                 if (timetableList.get(i).getLecturers().getBeacon() == null) {
                                     aSubject.setTeacher_major("");
                                     aSubject.setTeacher_minor("");
@@ -198,6 +231,9 @@ public class TimeTableFragment extends Fragment {
                                 aSubjectDateTime.setLesson_date(timetableList.get(i).getLesson_date().getLdate());
                                 aSubjectDateTime.setSubject(aSubject);
                                 DatabaseManager.getInstance().updateSubjectDateTimeItem(aSubjectDateTime);
+
+
+
 
                                 for (StudentInfo theStudent : timetableList.get(i).getStudentList()) {
                                     Student aStudent = DatabaseManager.getInstance().newStudentItem();
@@ -219,7 +255,10 @@ public class TimeTableFragment extends Fragment {
                                 }
 
                             }
+
+
                         }
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -270,8 +309,12 @@ public class TimeTableFragment extends Fragment {
                             Lecturer aLecturer = new Lecturer();
                             aLecturer.setId(tmp.getTeacher_id());
                             aLecturer.setName(tmp.getTeacher_name());
+               /*             aLecturer.setOffice(tmp.getTeacher_office());
+                            aLecturer.setPhone(tmp.getTeacher_phone());*/
+
                             aLecturer.setAcad(tmp.getTeacher_acad());
                             aLecturer.setEmail(tmp.getTeacher_email());
+
                             UserBeacon aLecturerBeacon = new UserBeacon();
                             aLecturerBeacon.setMajor(tmp.getTeacher_major());
                             aLecturerBeacon.setMinor(tmp.getTeacher_minor());
