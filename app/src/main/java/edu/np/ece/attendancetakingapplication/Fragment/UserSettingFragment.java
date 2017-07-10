@@ -25,6 +25,7 @@ import org.altbeacon.beacon.BeaconTransmitter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +35,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
-import edu.np.ece.attendancetakingapplication.ChangePasswordActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
@@ -54,6 +54,8 @@ public class UserSettingFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private  ArrayList<String> datas = new ArrayList<String>();
 
     private Activity context;
 
@@ -117,7 +119,7 @@ public class UserSettingFragment extends Fragment {
         }
     }
 
-    public void setUserSettingLayout() {
+/*    public void setUserSettingLayout() {
         TextView signoutTv = (TextView) inflateView.findViewById(R.id.btn_signout);
         signoutTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +136,7 @@ public class UserSettingFragment extends Fragment {
                 startActivity(intent);
             }
         });
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -173,19 +175,27 @@ public class UserSettingFragment extends Fragment {
 
                         String aModuleSec = subjectList.get(0).getSubject_area();
                         String aModule = subjectList.get(0).getCatalog_number();
+                        datas.add(aModuleSec+" "+ aModule) ;
                         Module.setText(aModuleSec + " " + aModule);//显示Module
 
 
                         String aClass = aSubject_time.getLesson().getClass_section();
+                        datas.add(aClass);
                         Class.setText(aClass);//显示Class
 
 
-                        String cStartTime = aSubject_time.getLesson().getStart_time();
-                        String cEndTime = aSubject_time.getLesson().getEnd_time();
+//                        String cStartTime = aSubject_time.getLesson().getStart_time();
+//                        String cEndTime = aSubject_time.getLesson().getEnd_time();
+                        String cStartTime = subjectDateTimeList.get(0).getStartTime();
+                        String cEndTime = subjectDateTimeList.get(0).getEndTime();
                         Time.setText(cStartTime+ " - " + cEndTime);//显示时间
+                        datas.add(cStartTime+ " - " + cEndTime);
 
-                        String cVenue = aSubject_time.getLesson().getFacility() ;
+//                        String cVenue = aSubject_time.getLesson().getFacility() ;
+                        String cVenue = subjectList.get(0).getLocation();
                         Venue.setText("#" + cVenue);//显示教室地点
+                        datas.add(cVenue);
+
 
 
 
@@ -212,12 +222,13 @@ public class UserSettingFragment extends Fragment {
 //                            userName.setText("Not yet time. \n Please try at 5 min before the class");
 //                        }
 
-                       if(calendar2.getTime().before(calendar1.getTime()) && m < 5){
+                       if(calendar2.getTime().before(calendar1.getTime()) ){
 //                        if(m < 7) {
 //                          btnActivateBeacon.setVisibility(View.VISIBLE);
 //
 //                        }
 //                else{        //if(m < 5){
+                           datas.clear();
                            Log.e("test",minn);
                             btnActivateBeacon.setVisibility(View.VISIBLE);
                             final String auCode = pref.getString("authorizationCode", null);
@@ -273,13 +284,22 @@ public class UserSettingFragment extends Fragment {
                                     super.onFailure(call, t);
                                 }
                             });
-
+                            if(m<5){
+                                btnActivateBeacon.setVisibility(View.VISIBLE);
+                            }
+//                            else{
+//                                btnActivateBeacon.setVisibility(View.INVISIBLE);
+//                            }
                             break;
 
                         }
-                        else{
-                            btnActivateBeacon.setVisibility(View.INVISIBLE);
-                        }
+//                        else{
+//                           Module.setText(datas.get(0));
+//                           Class.setText(datas.get(1));
+//                           Time.setText(datas.get(2));
+//                           Venue.setText(datas.get(3));
+//                            btnActivateBeacon.setVisibility(View.INVISIBLE);
+//                        }
 
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -290,7 +310,7 @@ public class UserSettingFragment extends Fragment {
 
         }
 
-        setUserSettingLayout();
+//        setUserSettingLayout();
 
         mHandler = new Handler();
 
@@ -313,7 +333,7 @@ public class UserSettingFragment extends Fragment {
     @OnClick(R.id.btnActivateBeacon)
     public void turnOnOffBeacon() {
        // btnActivateBeacon.setBackground(R.drawable.bluetooth_checked);
-
+        btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth_checked);
         final SharedPreferences pref = context.getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
         String userMajor = pref.getString("major", "");

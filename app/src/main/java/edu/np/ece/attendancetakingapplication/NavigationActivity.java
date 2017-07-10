@@ -1,6 +1,7 @@
 package edu.np.ece.attendancetakingapplication;
 
 import android.Manifest;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -16,14 +17,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
-import edu.np.ece.attendancetakingapplication.Fragment.AttendanceHistoryFragment;
-import edu.np.ece.attendancetakingapplication.Fragment.TimeTableFragment;
-import edu.np.ece.attendancetakingapplication.Fragment.UserSettingFragment;
-
-import edu.np.ece.attendancetakingapplication.R;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
+
+import edu.np.ece.attendancetakingapplication.Fragment.AttendanceHistoryFragment;
+import edu.np.ece.attendancetakingapplication.Fragment.InfoFragment;
+import edu.np.ece.attendancetakingapplication.Fragment.TimeTableFragment;
+import edu.np.ece.attendancetakingapplication.Fragment.UserSettingFragment;
 
 public class NavigationActivity extends AppCompatActivity{
 
@@ -76,7 +77,7 @@ public class NavigationActivity extends AppCompatActivity{
             bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
                 @Override
                 public void onTabSelected(@IdRes int tabId) {
-                    android.app.Fragment fragment = null;
+                    Fragment fragment = null;
                     String title = "";
                     switch (tabId) {
                         case R.id.tab_schedule:
@@ -95,7 +96,9 @@ public class NavigationActivity extends AppCompatActivity{
                             getSupportActionBar().setSubtitle(null);
                             break;
                         case R.id.tab_more:
-                            title="More";
+                            fragment = new InfoFragment();
+                            title="User Info";
+                            getSupportActionBar().setSubtitle(null);
                             break;
                         default:
                             fragment = new TimeTableFragment();
@@ -128,8 +131,13 @@ public class NavigationActivity extends AppCompatActivity{
                             getSupportActionBar().setSubtitle(null);
                             break;
                         case R.id.tab_user:
-                            title = "User setting";
+                            title = "Now Class";
                             fragment = new UserSettingFragment();
+                            getSupportActionBar().setSubtitle(null);
+                            break;
+                        case R.id.tab_more:
+                            title = "User Info";
+                            fragment = new InfoFragment();
                             getSupportActionBar().setSubtitle(null);
                             break;
                         default:

@@ -1,0 +1,149 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.np.ece.attendancetakingapplication.Fragment.InfoFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvName"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvEmail"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="50dp"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/adcd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPhone"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="Acad"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvAcad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textSize="15sp"
+                android:layout_alignTop="@+id/adcd"
+                android:layout_toEndOf="@+id/tvAd" />
+
+            <TextView
+                android:id="@+id/tvAd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/adcd"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="80dp"
+                android:text="Advisor"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textSize="14sp" />
+
+            <RelativeLayout
+                android:id="@+id/advsiorlayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvAd"
+                android:layout_marginStart="52dp"
+                android:layout_toEndOf="@+id/tvAcad">
+
+                <TextView
+                    android:id="@+id/tvAdvisorName"
+                    android:text="Heng Kai Xin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@android:style/TextAppearance.Holo"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvAdvisorPhone"
+                    android:text="64607123"
+                    android:autoLink="all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvAdvisorName"
+                    android:textAppearance="@android:style/TextAppearance.Holo"
+                    android:layout_marginTop="10dp"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvAdvisorEmail"
+                    android:text="hkx@np.edu.sg"
+                    android:autoLink="all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvAdvisorPhone"
+                    android:textAppearance="@android:style/TextAppearance.Holo"
+                    android:layout_marginTop="10dp"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:text="BLK 7 Level 3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvAdvisorEmail"
+                    android:textAppearance="@android:style/TextAppearance.Holo"
+                    android:layout_marginTop="10dp"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/btChange_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/advsiorlayout"
+                android:layout_marginTop="80dp"
+                android:text="Change Password"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:clickable="true"
+                android:background="#fff"
+                android:textSize="23sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btSignout"
+                android:layout_below="@+id/btChange_password"
+                android:background="#fff"
+                android:text="Sign Out"
+                android:layout_marginTop="5dp"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:clickable="true"
+                android:textSize="23sp"/>
+        </RelativeLayout>
+    </ScrollView>
+
+</FrameLayout>
