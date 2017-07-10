@@ -11,10 +11,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import edu.np.ece.attendancetakingapplication.DetailsActivity;
 import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
+import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
+import edu.np.ece.attendancetakingapplication.OrmLite.SubjectDateTime;
 import edu.np.ece.attendancetakingapplication.R;
 
 import java.text.SimpleDateFormat;
@@ -117,6 +123,30 @@ public class AttendanceHistoryFragment extends Fragment {
 
             adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    List<Subject> subjectList= DatabaseManager.getInstance().QueryBuilder("lesson_id",data.get(position).getLesson_date().getLesson_id());
+                    List<SubjectDateTime> subjectDateTimeList=subjectList.get(0).getSubject_Datetime();
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+
+                    intent.putExtra("Catalog",subjectList.get(0).getCatalog_number());
+                    intent.putExtra("Area",subjectList.get(0).getSubject_area());
+                    //lesson full name + lesson credit
+                    intent.putExtra("Group",subjectList.get(0).getClass_section());
+                    intent.putExtra("Timestart",subjectDateTimeList.get(0).getStartTime());
+                    intent.putExtra("Timeend",subjectDateTimeList.get(0).getEndTime());
+                    intent.putExtra("Venue",subjectList.get(0).getLocation());
+                    intent.putExtra("Teacher_name",subjectList.get(0).getTeacher_name());
+                    intent.putExtra("Teacher_phone",subjectList.get(0).getTeacher_phone());
+                    intent.putExtra("Teacher_mail",subjectList.get(0).getTeacher_email());
+                    intent.putExtra("Teacher_venue",subjectList.get(0).getTeacher_office());
+                    intent.putExtra("Lesson_date",subjectDateTimeList.get(0).getLesson_date());
+                    intent.putExtra("Lesson_id",data.get(position).getLesson_date().getLesson_id());
+                    startActivity(intent);
+                    Toast.makeText(getActivity(),data.get(position).getLesson_date().getLesson_id(),Toast.LENGTH_SHORT).show();
+                }
+            });
 
 
         } catch (Exception e) {
