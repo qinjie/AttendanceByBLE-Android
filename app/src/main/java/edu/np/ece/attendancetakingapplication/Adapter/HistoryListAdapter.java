@@ -153,7 +153,7 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                         subjectHolder.imgAttendance.setImageResource(R.drawable.circle_green_32);
                     }
                     else if(status.equals("-1")){
-
+                        subjectHolder.tvAttendance.setText("");
                         subjectHolder.imgAttendance.setImageResource(R.drawable.circle_red_32);
                     }
                     else{

@@ -90,9 +90,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="TextView"
+            android:layout_alignTop="@+id/textView3"
             android:layout_marginLeft="170dp"
-            android:layout_alignTop="@+id/textView3" />
+            android:text="Text View" />
 
         <TextView
             android:id="@+id/lesson_credit"
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/textView1"
-            android:layout_alignEnd="@+id/lesson_credit"
+            android:layout_alignStart="@+id/lesson_credit"
             android:text="TextView" />
 
         <TextView
