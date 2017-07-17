@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvTime"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="76dp"
+                    android:layout_marginTop="40dp"
                     android:layout_gravity="center"
                     android:text="Anonymous"
                     android:textSize="24sp"
@@ -119,17 +119,18 @@
                 <!--/>-->
 
             <ImageButton
-                android:layout_width="140dp"
-                android:layout_height="180dp"
                 android:id="@+id/btnActivateBeacon"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_weight="0.72"
+
+                android:layout_width="340dp"
+                android:layout_height="320dp"
                 android:layout_below="@id/tvInfo"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/ic_bluetooth_black_48dp"
-                android:elevation="10dp"
-                />
+                android:layout_gravity="center"
+
+                android:layout_weight="0.72"
+
+                android:background="@drawable/bluetooth6"
+                android:elevation="10dp" />
        <!--     <ToggleButton
                 android:id="@+id/btnActivateBeacon"
                 android:layout_width="141dp"

@@ -1,6 +1,7 @@
 package edu.np.ece.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
@@ -66,6 +67,8 @@ public class UserSettingFragment extends Fragment {
 
     private View inflateView;
 
+    private List<AttendanceResult> record;
+
     @BindView(R.id.tvModule)
     TextView Module;
 
@@ -90,10 +93,12 @@ public class UserSettingFragment extends Fragment {
     @BindView(tvInfo)
     TextView Info;
 
+
     private Handler mHandler;
     public static BeaconTransmitter beaconTransmitter;
     public static Beacon.Builder beaconBuilder;
-
+    private String aID;
+    private String aDate;
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -175,7 +180,7 @@ public class UserSettingFragment extends Fragment {
                     try {
                         //Get the data of current subject to display attendance status
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
-                        String aID = aSubject_time.getLesson_id();
+                         aID = aSubject_time.getLesson_id();
                         List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",aID);
                         List<SubjectDateTime> subjectDateTimeList = subjectList.get(0).getSubject_Datetime();
 
@@ -206,6 +211,8 @@ public class UserSettingFragment extends Fragment {
                         Venue.setText("#" + cVenue);//显示教室地点
                         datas.add(cVenue);
 
+                        aDate = aSubject_time.getLesson_date().getLdate();
+
 
 
 
@@ -233,6 +240,8 @@ public class UserSettingFragment extends Fragment {
 //                        }
 
                        if(calendar2.getTime().before(calendar1.getTime()) ){
+
+
 //                        if(m < 7) {
 //                          btnActivateBeacon.setVisibility(View.VISIBLE);
 //
@@ -248,15 +257,59 @@ public class UserSettingFragment extends Fragment {
                                     "}").getAsJsonObject();
 
                             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
-                            Call<String> call = client.checkAttendanceStatus(obj);
+                           Call<List<AttendanceResult>> call = client.getAttendanceReports();
+                           call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
+                               @Override
+                               public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
+                                   try {
+                                       record = response.body();
+                                       if (record == null) {
+                                           final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                           builder.setTitle(R.string.another_login_title);
+                                           builder.setMessage(R.string.another_login_content);
+                                           builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                               @Override
+                                               public void onClick(final DialogInterface dialog, final int i) {
+                                                   Preferences.clearStudentInfo();
+                                                   Intent intent = new Intent(getActivity(), LogInActivity.class);
+                                                   startActivity(intent);
+                                               }
+                                           });
+                                           builder.create().show();
+                                       }
+                                       else{
+                                           for (int i = 0; i<record.size();i++){
+                                               String lessonId = record.get(i).getLesson_date().getLesson_id();
+                                               String lessonTime = record.get(i).getLesson_date().getLdate();
+                                               if(aID.equals(lessonId)&&aDate.equals(lessonTime)){
+                                                   String record_time = record.get(i).getRecorded_time();
+                                                   Info.setText(record_time);
+                                                   break;
+                                               }
+                                               else{
+                                                   userBio.setText("");
+                                               }
+
+                                           }
+                                       }
+                                   }
+                                   catch(Exception e){
+                                       e.printStackTrace();
+                                   }
+                               }
+                           });
+/*                            Call<String> call = client.checkAttendanceStatus(obj);
                             call.enqueue(new ServerCallBack<String>() {
                                 @Override
                                 public void onResponse(Call<String> call, Response<String> response) {
-                                    String result = response.body();
-
+                                    String result = response.body();;
+                                    SharedPreferences getRecord = getActivity().getSharedPreferences("Record", Context.MODE_PRIVATE);
+                                    String r = getRecord.getString("Record_Time",null);
                                     if (result != null) {
                                         if (result.equals("0")) {
-                                            userBio.setText("You're present for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+
+
+                                            userBio.setText(r);
                                         }
 
                                         if (result.equals("-1")) {
@@ -266,7 +319,7 @@ public class UserSettingFragment extends Fragment {
                                         if (result.equals("Not yet")) {
                                             userBio.setText("Still not take attendance yet for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
                                         } else {
-                                            userBio.setText("You're late for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+                                            userBio.setText(r);
 
                                         }
                                     } else {
@@ -289,11 +342,14 @@ public class UserSettingFragment extends Fragment {
 
                                 }
 
+
+
+
                                 @Override
                                 public void onFailure(Call<String> call, Throwable t) {
                                     super.onFailure(call, t);
                                 }
-                            });
+                            });*/
                             if(m<5){
                                 btnActivateBeacon.setVisibility(View.VISIBLE);
                                 Info.setText("Waiting for beacons from another students.");
@@ -432,7 +488,7 @@ public class UserSettingFragment extends Fragment {
                     beaconTransmitter.stopAdvertising();
                     //btnActivateBeacon.setChecked(false);
                     btnActivateBeacon.setEnabled(true);
-                    btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
+                    btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6);
                     editor.putString("isActivateBeacon", "false");
                     editor.apply();
                 }
@@ -464,7 +520,7 @@ public class UserSettingFragment extends Fragment {
 
         @Override
         public void onFinish() {
-            Info.setText("");
+            Info.setText("Broadcast finished");
         }
 
     }

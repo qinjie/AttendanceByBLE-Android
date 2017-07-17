@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.os.RemoteException;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Random;
 
 import edu.np.ece.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
@@ -62,13 +64,21 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     ArrayList<Region> regionList = new ArrayList();
     public static List<TimetableResult> timetableList;
 
+     public String record_time;
+
     final BootstrapNotifier tmp = this;
     private Handler mHandler;
+
+    FragmentManager manager;
+
+
+    private List<AttendanceResult> record;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+
 
 
 
@@ -128,6 +138,11 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     if (response.body().equals("Attendance taking successfully")) {
 
                                         Toast.makeText(getBaseContext(), "Taking attendance success", Toast.LENGTH_SHORT).show();
+/*                                        String r = getRecordTime();
+                                        SharedPreferences sendRecord = getSharedPreferences("Record",MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sendRecord.edit();
+                                        editor.putString("Record_Time",r);
+                                        editor.apply();*/
                                         Preferences.studentNotify(getBaseContext(), "Taking attendance success", "Your attendance has been recorded. Enjoy your class.", Integer.parseInt(studentId));
                                         Log.d("test attendance", "success");
                                     }
@@ -168,6 +183,54 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     public void didExitRegion(Region region) {
 
     }
+
+/*    private String getRecordTime(){
+
+        SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
+        final String auCode = pref.getString("authorizationCode", null);
+        ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
+        Call<List<AttendanceResult>> call = client.getAttendanceReports();
+        call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
+            @Override
+            public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
+                try {
+                    record = response.body();
+                    if (record == null) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle(R.string.another_login_title);
+                        builder.setMessage(R.string.another_login_content);
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, final int i) {
+                                Preferences.clearStudentInfo();
+                                Intent intent = new Intent(getActivity(), LogInActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                        builder.create().show();
+                    }
+                    else{
+                        for (int i = 0; i<record.size();i++){
+                            String lessonId = record.get(i).getLesson_date().getLesson_id();
+                            if(timetableList.get(i).getLesson_id().equals(lessonId)){
+                                 record_time = record.get(i).getRecorded_time();
+
+                                break;
+                            }
+                            else{
+
+                            }
+
+                        }
+                    }
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        return record_time;
+    }*/
 
 
     //this will re-run after every 12 hours
