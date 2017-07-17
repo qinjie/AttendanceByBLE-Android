@@ -6,15 +6,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -48,6 +49,8 @@ import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static edu.np.ece.attendancetakingapplication.R.id.tvInfo;
+
 
 public class UserSettingFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -56,6 +59,8 @@ public class UserSettingFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private  ArrayList<String> datas = new ArrayList<String>();
+
+    private TimeCount time;
 
     private Activity context;
 
@@ -71,7 +76,7 @@ public class UserSettingFragment extends Fragment {
     TextView userBio;
 
     @BindView(R.id.btnActivateBeacon)
-    ToggleButton btnActivateBeacon;
+    ImageButton btnActivateBeacon;
 
     @BindView(R.id.tvClass)
     TextView Class;
@@ -81,6 +86,9 @@ public class UserSettingFragment extends Fragment {
 
     @BindView(R.id.tvVenue)
     TextView Venue;
+
+    @BindView(tvInfo)
+    TextView Info;
 
     private Handler mHandler;
     public static BeaconTransmitter beaconTransmitter;
@@ -145,6 +153,8 @@ public class UserSettingFragment extends Fragment {
         inflateView = inflater.inflate(R.layout.fragment_user_setting, container, false);
 
         ButterKnife.bind(this, inflateView);
+
+        time = new TimeCount(10000 , 1000);
 
         SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
@@ -230,7 +240,7 @@ public class UserSettingFragment extends Fragment {
 //                else{        //if(m < 5){
                            datas.clear();
                            Log.e("test",minn);
-                            btnActivateBeacon.setVisibility(View.VISIBLE);
+                            //btnActivateBeacon.setVisibility(View.VISIBLE);
                             final String auCode = pref.getString("authorizationCode", null);
                             JsonParser parser = new JsonParser();
                             JsonObject obj = parser.parse("{" +
@@ -286,13 +296,15 @@ public class UserSettingFragment extends Fragment {
                             });
                             if(m<5){
                                 btnActivateBeacon.setVisibility(View.VISIBLE);
-                                btnActivateBeacon.setChecked(false);
+                                Info.setText("Waiting for beacons from another students.");
+                              //  btnActivateBeacon.setChecked(false);
                                 btnActivateBeacon.setEnabled(true);
                             }
                             else{
                                // btnActivateBeacon.setVisibility(View.INVISIBLE);
-                                btnActivateBeacon.setChecked(false);
+                                //btnActivateBeacon.setChecked(false);
                                 btnActivateBeacon.setEnabled(false);
+                                Info.setText("Not yet time \n try again 5 min before class");
                             }
                             break;
 
@@ -319,17 +331,17 @@ public class UserSettingFragment extends Fragment {
         mHandler = new Handler();
 
 
-        String isBeaconActivated = pref.getString("isActivateBeacon", "");
-        if (isBeaconActivated.equals("true")) {
-            btnActivateBeacon.setChecked(true);
-            btnActivateBeacon.setEnabled(false);
-            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
-
-        } else {
-            btnActivateBeacon.setChecked(false);
-            btnActivateBeacon.setEnabled(true);
-            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
-        }
+//        String isBeaconActivated = pref.getString("isActivateBeacon", "");
+//        if (isBeaconActivated.equals("true")) {
+//           // btnActivateBeacon.setChecked(true);
+//            btnActivateBeacon.setEnabled(false);
+//            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
+//
+//        } else {
+//          //  btnActivateBeacon.setChecked(false);
+//            btnActivateBeacon.setEnabled(true);
+//            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
+//        }
 
         return inflateView;
     }
@@ -395,11 +407,12 @@ public class UserSettingFragment extends Fragment {
 //        Random r = new Random();
 //        long randomTime = r.nextInt(max - min) + min;
 
-        if (btnActivateBeacon.isChecked() && beaconTransmitter != null && beaconBuilder != null) {
+        if ( btnActivateBeacon.callOnClick()&&beaconTransmitter != null && beaconBuilder != null) {
 
             final SharedPreferences.Editor editor = pref.edit();
             editor.putString("isActivateBeacon", "true");
             editor.apply();
+            time.start();
 
             //transmit beacon signal in next 1 second
             Toast.makeText(context, "Please keep app open at least next 15 minutes to get attendance.", Toast.LENGTH_SHORT).show();
@@ -417,7 +430,7 @@ public class UserSettingFragment extends Fragment {
                 public void run() {
                     Toast.makeText(context, "Transmitting beacon done. Please refresh this page to check new attendance status", Toast.LENGTH_SHORT).show();
                     beaconTransmitter.stopAdvertising();
-                    btnActivateBeacon.setChecked(false);
+                    //btnActivateBeacon.setChecked(false);
                     btnActivateBeacon.setEnabled(true);
                     btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
                     editor.putString("isActivateBeacon", "false");
@@ -431,4 +444,28 @@ public class UserSettingFragment extends Fragment {
     }
 
 
+    private class TimeCount extends CountDownTimer {
+
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            Info.setText("Broadcasting... \n"+millisUntilFinished / 1000 +" s   ec" );
+        }
+
+        @Override
+        public void onFinish() {
+            Info.setText("");
+        }
+
+    }
 }

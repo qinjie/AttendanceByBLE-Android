@@ -16,13 +16,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import edu.np.ece.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
-import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
-import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
-import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
-import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
-import edu.np.ece.attendancetakingapplication.Retrofit.ServerCallBack;
-import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -42,6 +35,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import edu.np.ece.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
+import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
+import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServerCallBack;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
 import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -52,6 +52,7 @@ import retrofit2.Response;
  */
 
 public class BeaconScanActivation extends Application implements BootstrapNotifier {
+
 
 
     private RegionBootstrap regionBootstrap;
@@ -68,6 +69,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+
+
 
         mBeaconmanager = org.altbeacon.beacon.BeaconManager.getInstanceForApplication(getBaseContext());
         mBeaconmanager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -123,6 +126,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                 @Override
                                 public void onResponse(Call<String> call, Response<String> response) {
                                     if (response.body().equals("Attendance taking successfully")) {
+
                                         Toast.makeText(getBaseContext(), "Taking attendance success", Toast.LENGTH_SHORT).show();
                                         Preferences.studentNotify(getBaseContext(), "Taking attendance success", "Your attendance has been recorded. Enjoy your class.", Integer.parseInt(studentId));
                                         Log.d("test attendance", "success");

@@ -9,9 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="522dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
             android:layout_height="match_parent"
             android:weightSum="1">
 
@@ -98,6 +97,17 @@
                     android:textAlignment="center"
                     android:textColor="@color/md_blue_100"
                     android:textSize="16sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvInfo"
+                    android:layout_gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/user_profile_short_bio"
+                    android:text="Waiting for beacons from another classmates."
+                    android:textAlignment="center"
+                    android:textSize="18sp"/>
+
 
                 <!--<Switch-->
                 <!--android:layout_below="@id/user_profile_short_bio"-->
@@ -108,7 +118,19 @@
                 <!--android:showText="true"-->
                 <!--/>-->
 
-            <ToggleButton
+            <ImageButton
+                android:layout_width="140dp"
+                android:layout_height="180dp"
+                android:id="@+id/btnActivateBeacon"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_weight="0.72"
+                android:layout_below="@id/tvInfo"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/ic_bluetooth_black_48dp"
+                android:elevation="10dp"
+                />
+       <!--     <ToggleButton
                 android:id="@+id/btnActivateBeacon"
                 android:layout_width="141dp"
                 android:layout_height="180dp"
@@ -120,16 +142,16 @@
                 android:background="@drawable/ic_bluetooth_black_48dp"
                 android:elevation="10dp"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white" />-->
           <!--  </RelativeLayout>-->
 
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_layout"
-                android:layout_marginTop="5dp"
-                android:orientation="vertical">
+            <!--<LinearLayout-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/profile_layout"-->
+                <!--android:layout_marginTop="5dp"-->
+                <!--android:orientation="vertical">-->
 
                 <!--<TextView-->
                     <!--android:id="@+id/btn_change_password"-->
@@ -154,9 +176,9 @@
                     <!--android:elevation="4dp"-->
                     <!--android:padding="20dp"-->
                     <!--android:text="Sign Out" />-->
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 
