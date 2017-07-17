@@ -286,10 +286,14 @@ public class UserSettingFragment extends Fragment {
                             });
                             if(m<5){
                                 btnActivateBeacon.setVisibility(View.VISIBLE);
+                                btnActivateBeacon.setChecked(false);
+                                btnActivateBeacon.setEnabled(true);
                             }
-//                            else{
-//                                btnActivateBeacon.setVisibility(View.INVISIBLE);
-//                            }
+                            else{
+                               // btnActivateBeacon.setVisibility(View.INVISIBLE);
+                                btnActivateBeacon.setChecked(false);
+                                btnActivateBeacon.setEnabled(false);
+                            }
                             break;
 
                         }
@@ -319,11 +323,12 @@ public class UserSettingFragment extends Fragment {
         if (isBeaconActivated.equals("true")) {
             btnActivateBeacon.setChecked(true);
             btnActivateBeacon.setEnabled(false);
+            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
 
         } else {
             btnActivateBeacon.setChecked(false);
             btnActivateBeacon.setEnabled(true);
-
+            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
         }
 
         return inflateView;
@@ -333,7 +338,7 @@ public class UserSettingFragment extends Fragment {
     @OnClick(R.id.btnActivateBeacon)
     public void turnOnOffBeacon() {
        // btnActivateBeacon.setBackground(R.drawable.bluetooth_checked);
-        btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth_checked);
+
         final SharedPreferences pref = context.getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
         String userMajor = pref.getString("major", "");
@@ -343,6 +348,8 @@ public class UserSettingFragment extends Fragment {
             if (!userMajor.equals("") || !userMinor.equals("")) {
                 for (TimetableResult aSubject_time : BeaconScanActivation.timetableList) {
                     try {
+
+                        btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth_checked);
                         //Get the data of current subject for transmitting beacon signal
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
                         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
@@ -377,6 +384,10 @@ public class UserSettingFragment extends Fragment {
                 }
             }
         }
+ /*       else
+        {
+            Toast.makeText(context,"No more lesson today",Toast.LENGTH_LONG);
+        }*/
 
 //        //random time in 15 min time interval
 //        int min = 10000;
@@ -408,6 +419,7 @@ public class UserSettingFragment extends Fragment {
                     beaconTransmitter.stopAdvertising();
                     btnActivateBeacon.setChecked(false);
                     btnActivateBeacon.setEnabled(true);
+                    btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
                     editor.putString("isActivateBeacon", "false");
                     editor.apply();
                 }

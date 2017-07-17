@@ -1,6 +1,8 @@
 package edu.np.ece.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,11 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import edu.np.ece.attendancetakingapplication.ChangePasswordActivity;
+import edu.np.ece.attendancetakingapplication.LogInActivity;
+import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.Preferences;
 import edu.np.ece.attendancetakingapplication.R;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServerCallBack;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A simple {@link } subclass.
@@ -33,12 +44,22 @@ public class InfoFragment extends android.app.Fragment {
     private String mParam1;
     private String mParam2;
 
+    private Activity context;
+
     private View InfoView;
+
+    private List<TimetableResult> timetablelist;
 
     private Activity context1;
 
     @BindView(R.id.tvName)
     TextView stName;
+
+    @BindView(R.id.tvAcad)
+    TextView stAcad;
+
+    @BindView(R.id.tvEmail)
+    TextView stEmail;
 
 
 
@@ -90,7 +111,54 @@ public class InfoFragment extends android.app.Fragment {
         String infoLogin = pref.getString("isLogin","false");
         if(nameStudent.equals("true") && infoLogin.equals("true")){
             String stname = pref.getString("student_name","");
+            String stacad = pref.getString("student_acad","");
+//            String stEmail = pref.getString("student_email","");
+            stAcad.setText(stacad);
             stName.setText(stname);
+
+            Bundle arguments = getArguments();
+
+
+
+            String aucode = pref.getString("authorizationCode",null);
+            ServerApi client = ServiceGenerator.createService(ServerApi.class,aucode);
+            Call<List<TimetableResult>> call = client.getTimetableCurrentWeek("students");
+            call.enqueue(new ServerCallBack<List<TimetableResult>>() {
+                @Override
+                public void onResponse(Call<List<TimetableResult>> call, Response<List<TimetableResult>> response) {
+                    try{
+                        timetablelist = response.body();
+                       if(timetablelist == null){
+                           final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                           builder.setTitle(R.string.another_login_title);
+                           builder.setMessage(R.string.another_login_content);
+                           builder.setPositiveButton("OK",
+                                   new DialogInterface.OnClickListener() {
+                                       @Override
+                                       public void onClick(final DialogInterface dialog, final int i) {
+                                           Preferences.clearStudentInfo();
+                                           Intent intent = new Intent(getActivity(), LogInActivity.class);
+                                           startActivity(intent);
+                                       }
+                                   });
+                           builder.create().show();
+
+                       }
+                       else{
+
+                           for (int i = 0; i < timetablelist.size(); i++){
+                               stEmail.setText(String.valueOf(timetablelist.get(0).getStudentList().get(0).getEmail()));
+                               break;
+
+                           }
+                       }
+
+
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
         setUserSettingLayout();
         return InfoView;
