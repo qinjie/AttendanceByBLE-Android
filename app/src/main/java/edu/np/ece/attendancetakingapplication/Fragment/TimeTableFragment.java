@@ -232,8 +232,8 @@ public class TimeTableFragment extends Fragment {
                                 DatabaseManager.getInstance().addSubject(aSubject);
 
 
-                                List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",timetableList.get(i).getLesson_id());
-                                String group= subjectList.get(0).getClass_section();
+                       //         List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",timetableList.get(i).getLesson_id());
+                       //         String group= subjectList.get(0).getClass_section();
 
 
                                 SubjectDateTime aSubjectDateTime = DatabaseManager.getInstance().newSubjectDateTimeItem();
@@ -267,6 +267,8 @@ public class TimeTableFragment extends Fragment {
                                 }
 
                             }
+
+
 
 
                         }

@@ -121,8 +121,9 @@ public class AttendanceHistoryFragment extends Fragment {
 
             adapter = new HistoryListAdapter(context, R.layout.item_history_subject, R.layout.item_week_day, data, itemType);
 
-            adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -152,7 +153,6 @@ public class AttendanceHistoryFragment extends Fragment {
                     Toast.makeText(getActivity(),data.get(position).getLesson_date().getLesson_id(),Toast.LENGTH_SHORT).show();
                 }
             });
-
 
         } catch (Exception e) {
             e.printStackTrace();
