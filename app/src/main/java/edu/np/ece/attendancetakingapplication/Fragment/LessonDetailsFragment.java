@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -217,7 +218,8 @@ public class LessonDetailsFragment extends Fragment {
             teacher_phone.setText(arguments.getString("Teacher_phone"));
             teacher_mail.setText(arguments.getString("Teacher_mail"));
             teacher_venue.setText(arguments.getString("Teacher_venue"));
-
+            lesson_name.setText(arguments.getString("lesson_name"));
+            lesson_credit.setText(arguments.getString("credit_unit"));
 
             loadInfo();
 

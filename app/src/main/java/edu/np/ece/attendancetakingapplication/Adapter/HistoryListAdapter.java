@@ -146,13 +146,14 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                             + listSubject.get(0).getCatalog_number());
 
                     subjectHolder.tvAttendance.setText(subject.getRecorded_time());
+                    subjectHolder.tvClass.setText(listSubject.get(0).getClass_section());
                     String status= subject.getStatus();
                     if(status.equals("0")){
 
                         subjectHolder.imgAttendance.setImageResource(R.drawable.circle_green_32);
                     }
                     else if(status.equals("-1")){
-
+                        subjectHolder.tvAttendance.setText("");
                         subjectHolder.imgAttendance.setImageResource(R.drawable.circle_red_32);
                     }
                     else{

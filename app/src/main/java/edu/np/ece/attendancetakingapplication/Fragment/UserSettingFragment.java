@@ -1,19 +1,23 @@
 package edu.np.ece.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,17 +28,22 @@ import org.altbeacon.beacon.BeaconTransmitter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
-import edu.np.ece.attendancetakingapplication.ChangePasswordActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
+import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
+import edu.np.ece.attendancetakingapplication.OrmLite.SubjectDateTime;
 import edu.np.ece.attendancetakingapplication.Preferences;
 import edu.np.ece.attendancetakingapplication.R;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
@@ -43,6 +52,9 @@ import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static edu.np.ece.attendancetakingapplication.R.id.Record_time;
+import static edu.np.ece.attendancetakingapplication.R.id.tvInfo;
+
 
 public class UserSettingFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -50,23 +62,49 @@ public class UserSettingFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private  ArrayList<String> datas = new ArrayList<String>();
+
+    private TimeCount time;
+
     private Activity context;
 
     private View inflateView;
 
-    @BindView(R.id.user_profile_name)
-    TextView userName;
+    Typeface face ;
 
-    @BindView(R.id.user_profile_short_bio)
-    TextView userBio;
+    private List<AttendanceResult> record;
+
+    @BindView(R.id.tvModule)
+    TextView Module;
+
+
+
+
 
     @BindView(R.id.btnActivateBeacon)
-    ToggleButton btnActivateBeacon;
+    ImageButton btnActivateBeacon;
+
+    @BindView(R.id.tvClass)
+    TextView Class;
+
+    @BindView(R.id.tvTime)
+    TextView Time;
+
+    @BindView(R.id.tvVenue)
+    TextView Venue;
+
+    @BindView(tvInfo)
+    TextView Info;
+
+    @BindView(Record_time)
+    TextView R_Time;
+
 
     private Handler mHandler;
     public static BeaconTransmitter beaconTransmitter;
     public static Beacon.Builder beaconBuilder;
-
+    private String aID;
+    private String aDate;
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -100,7 +138,7 @@ public class UserSettingFragment extends Fragment {
         }
     }
 
-    public void setUserSettingLayout() {
+/*    public void setUserSettingLayout() {
         TextView signoutTv = (TextView) inflateView.findViewById(R.id.btn_signout);
         signoutTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +155,7 @@ public class UserSettingFragment extends Fragment {
                 startActivity(intent);
             }
         });
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,6 +165,8 @@ public class UserSettingFragment extends Fragment {
 
         ButterKnife.bind(this, inflateView);
 
+        time = new TimeCount(10000 , 1000);
+
         SharedPreferences pref = getActivity().getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
         String isLogin = pref.getString("isLogin", "false");
@@ -134,25 +174,101 @@ public class UserSettingFragment extends Fragment {
 
         if (isLogin.equals("true") && isStudent.equals("true")) {
             String studentName = pref.getString("student_name", "");
-            userName.setText(studentName);
 
-            userBio.setText("Still not take attendance yet for this class");
+
+
+
+
 
             if (BeaconScanActivation.timetableList != null) {
+
                 for (final TimetableResult aSubject_time : BeaconScanActivation.timetableList) {
                     try {
                         //Get the data of current subject to display attendance status
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
+                         aID = aSubject_time.getLesson_id();
+                        List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",aID);
+                        List<SubjectDateTime> subjectDateTimeList = subjectList.get(0).getSubject_Datetime();
+
+                        String sTime = aSubject_time.getLesson_date().getLdate()+" "+aSubject_time.getLesson().getStart_time();
+
+
+
+                        String aModuleSec = subjectList.get(0).getSubject_area();
+                        String aModule = subjectList.get(0).getCatalog_number();
+                        datas.add(aModuleSec+" "+ aModule) ;
+                        Module.setText(aModuleSec + " " + aModule);//显示Module
+
+
+                        String aClass = aSubject_time.getLesson().getClass_section();
+                        datas.add(aClass);
+                        Class.setText(aClass);//显示Class
+
+
+//                        String cStartTime = aSubject_time.getLesson().getStart_time();
+//                        String cEndTime = aSubject_time.getLesson().getEnd_time();
+                        String cStartTime = subjectDateTimeList.get(0).getStartTime();
+                        String cEndTime = subjectDateTimeList.get(0).getEndTime();
+                        Time.setText(cStartTime+ " - " + cEndTime);//显示时间
+                        datas.add(cStartTime+ " - " + cEndTime);
+
+//                        String cVenue = aSubject_time.getLesson().getFacility() ;
+                        String cVenue = subjectList.get(0).getLocation();
+                        Venue.setText("#" + cVenue);//显示教室地点
+                        datas.add(cVenue);
+
+                        aDate = aSubject_time.getLesson_date().getLdate();
+
+
+
+
                         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
                         Calendar calendar1 = Calendar.getInstance();
                         calendar1.setTime(time);
 
+                        Date time2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(sTime);
+                        Calendar calendar3 = Calendar.getInstance();
+                        calendar3.setTime(time2);
+
                         Date timeNow = new Date();
                         Calendar calendar2 = Calendar.getInstance();
                         calendar2.setTime(timeNow);
+                        long diff =time2.getTime() - timeNow.getTime();
+                        long min = diff/(1000*60);
 
-                        if (calendar2.getTime().before(calendar1.getTime())) {
+                        String minn = String.valueOf(min);
+                        int m = Integer.parseInt(minn);
 
+                        //Log.e("test",minn);
+
+//                        if(min > 5 ){
+//                            userName.setText("Not yet time. \n Please try at 5 min before the class");
+//                        }
+
+                       if(calendar2.getTime().before(calendar1.getTime()) ){
+                           if(m<5){
+                               btnActivateBeacon.setVisibility(View.VISIBLE);
+                               Info.setText("Waiting for\n beacons from another students.");
+                               //  btnActivateBeacon.setChecked(false);
+                               btnActivateBeacon.setEnabled(true);
+                           }
+                           else{
+                               // btnActivateBeacon.setVisibility(View.INVISIBLE);
+                               //btnActivateBeacon.setChecked(false);
+                               btnActivateBeacon.setEnabled(false);
+                               Info.setText("Not yet time \n try again 5 min before class");
+                               btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6_f);
+                           }
+
+
+//                        if(m < 7) {
+//                          btnActivateBeacon.setVisibility(View.VISIBLE);
+//
+//                        }
+//                else{        //if(m < 5){
+                           datas.clear();
+                           Log.e("test",minn);
+                            //btnActivateBeacon.setVisibility(View.VISIBLE);
                             final String auCode = pref.getString("authorizationCode", null);
                             JsonParser parser = new JsonParser();
                             JsonObject obj = parser.parse("{" +
@@ -160,15 +276,73 @@ public class UserSettingFragment extends Fragment {
                                     "}").getAsJsonObject();
 
                             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
-                            Call<String> call = client.checkAttendanceStatus(obj);
+                           Call<List<AttendanceResult>> call = client.getAttendanceReports();
+                           call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
+                               @Override
+                               public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
+                                   try {
+                                       record = response.body();
+                                       if (record == null) {
+                                           final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                           builder.setTitle(R.string.another_login_title);
+                                           builder.setMessage(R.string.another_login_content);
+                                           builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                               @Override
+                                               public void onClick(final DialogInterface dialog, final int i) {
+                                                   Preferences.clearStudentInfo();
+                                                   Intent intent = new Intent(getActivity(), LogInActivity.class);
+                                                   startActivity(intent);
+                                               }
+                                           });
+                                           builder.create().show();
+                                       }
+                                       else{
+                                           for (int i = 0; i<record.size();i++){
+                                               String lessonId = record.get(i).getLesson_date().getLesson_id();
+                                               String lessonTime = record.get(i).getLesson_date().getLdate();
+
+                                               if(aID.equals(lessonId)&&aDate.equals(lessonTime)) {
+                                                   Info.setText("Attendance taken at");
+                                                   Info.setTextSize(25);
+                                                   String record_time = record.get(i).getRecorded_time();;
+                                                   String Status = record.get(i).getStatus();
+                                                   R_Time.setText(record_time);
+                                                   if (Status.equals("0")) {
+                                                        R_Time.setTextColor(R_Time.getResources().getColor(R.color.green));
+
+                                                       break;
+                                                   }
+                                                   else if (Status.equals("-1")){
+                                                        R_Time.setTextColor(Color.RED);
+                                                       break;
+                                                   }
+                                                   else{
+                                                       R_Time.setTextColor(R_Time.getResources().getColor(R.color.md_amber_700));
+                                                       break;
+                                                   }
+                                               }
+
+
+                                           }
+                                       }
+                                   }
+                                   catch(Exception e){
+                                       e.printStackTrace();
+                                   }
+                               }
+                           });
+/*                            Call<String> call = client.checkAttendanceStatus(obj);
                             call.enqueue(new ServerCallBack<String>() {
                                 @Override
                                 public void onResponse(Call<String> call, Response<String> response) {
-                                    String result = response.body();
-
+                                    String result = response.body();;
+                                    SharedPreferences getRecord = getActivity().getSharedPreferences("Record", Context.MODE_PRIVATE);
+                                    String r = getRecord.getString("Record_Time",null);
                                     if (result != null) {
                                         if (result.equals("0")) {
-                                            userBio.setText("You're present for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+
+
+                                            userBio.setText(r);
                                         }
 
                                         if (result.equals("-1")) {
@@ -178,7 +352,7 @@ public class UserSettingFragment extends Fragment {
                                         if (result.equals("Not yet")) {
                                             userBio.setText("Still not take attendance yet for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
                                         } else {
-                                            userBio.setText("You're late for the class "+aSubject_time.getLesson().getSubject_area()+" "+aSubject_time.getLesson().getCatalog_number());
+                                            userBio.setText(r);
 
                                         }
                                     } else {
@@ -201,15 +375,26 @@ public class UserSettingFragment extends Fragment {
 
                                 }
 
+
+
+
                                 @Override
                                 public void onFailure(Call<String> call, Throwable t) {
                                     super.onFailure(call, t);
                                 }
-                            });
+                            });*/
 
                             break;
 
                         }
+//                        else{
+//                           Module.setText(datas.get(0));
+//                           Class.setText(datas.get(1));
+//                           Time.setText(datas.get(2));
+//                           Venue.setText(datas.get(3));
+//                            btnActivateBeacon.setVisibility(View.INVISIBLE);
+//                        }
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -219,21 +404,22 @@ public class UserSettingFragment extends Fragment {
 
         }
 
-        setUserSettingLayout();
+//        setUserSettingLayout();
 
         mHandler = new Handler();
 
 
-        String isBeaconActivated = pref.getString("isActivateBeacon", "");
-        if (isBeaconActivated.equals("true")) {
-            btnActivateBeacon.setChecked(true);
-            btnActivateBeacon.setEnabled(false);
-
-        } else {
-            btnActivateBeacon.setChecked(false);
-            btnActivateBeacon.setEnabled(true);
-
-        }
+//        String isBeaconActivated = pref.getString("isActivateBeacon", "");
+//        if (isBeaconActivated.equals("true")) {
+//           // btnActivateBeacon.setChecked(true);
+//            btnActivateBeacon.setEnabled(false);
+//            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
+//
+//        } else {
+//          //  btnActivateBeacon.setChecked(false);
+//            btnActivateBeacon.setEnabled(true);
+//            //btnActivateBeacon.setBackgroundResource(R.drawable.icon_bluetooth);
+//        }
 
         return inflateView;
     }
@@ -241,6 +427,7 @@ public class UserSettingFragment extends Fragment {
 
     @OnClick(R.id.btnActivateBeacon)
     public void turnOnOffBeacon() {
+       // btnActivateBeacon.setBackground(R.drawable.bluetooth_checked);
 
         final SharedPreferences pref = context.getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
@@ -251,6 +438,8 @@ public class UserSettingFragment extends Fragment {
             if (!userMajor.equals("") || !userMinor.equals("")) {
                 for (TimetableResult aSubject_time : BeaconScanActivation.timetableList) {
                     try {
+
+                        btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6);
                         //Get the data of current subject for transmitting beacon signal
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
                         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
@@ -285,6 +474,10 @@ public class UserSettingFragment extends Fragment {
                 }
             }
         }
+ /*       else
+        {
+            Toast.makeText(context,"No more lesson today",Toast.LENGTH_LONG);
+        }*/
 
 //        //random time in 15 min time interval
 //        int min = 10000;
@@ -292,11 +485,12 @@ public class UserSettingFragment extends Fragment {
 //        Random r = new Random();
 //        long randomTime = r.nextInt(max - min) + min;
 
-        if (btnActivateBeacon.isChecked() && beaconTransmitter != null && beaconBuilder != null) {
+        if ( btnActivateBeacon.callOnClick()&&beaconTransmitter != null && beaconBuilder != null) {
 
             final SharedPreferences.Editor editor = pref.edit();
             editor.putString("isActivateBeacon", "true");
             editor.apply();
+            time.start();
 
             //transmit beacon signal in next 1 second
             Toast.makeText(context, "Please keep app open at least next 15 minutes to get attendance.", Toast.LENGTH_SHORT).show();
@@ -314,8 +508,9 @@ public class UserSettingFragment extends Fragment {
                 public void run() {
                     Toast.makeText(context, "Transmitting beacon done. Please refresh this page to check new attendance status", Toast.LENGTH_SHORT).show();
                     beaconTransmitter.stopAdvertising();
-                    btnActivateBeacon.setChecked(false);
+                    //btnActivateBeacon.setChecked(false);
                     btnActivateBeacon.setEnabled(true);
+                    btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth_light);
                     editor.putString("isActivateBeacon", "false");
                     editor.apply();
                 }
@@ -326,5 +521,30 @@ public class UserSettingFragment extends Fragment {
 
     }
 
+
+    private class TimeCount extends CountDownTimer {
+
+        /**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            Info.setText("Broadcasting... \n"+millisUntilFinished / 1000 +" sec" );
+        }
+
+        @Override
+        public void onFinish() {
+            Info.setText("Broadcast finished");
+        }
+
+    }
 
 }

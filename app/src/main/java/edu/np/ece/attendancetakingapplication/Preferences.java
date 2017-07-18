@@ -15,16 +15,14 @@ import android.net.NetworkInfo;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import edu.np.ece.attendancetakingapplication.Model.LoginResult;
-
-import edu.np.ece.attendancetakingapplication.R;
-
-import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
-import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
-
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
+
+import edu.np.ece.attendancetakingapplication.Model.LoginResult;
+import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
+import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
 
 /**
  * Created by Sonata on 10/26/2016.
@@ -162,6 +160,15 @@ public class Preferences {
         editor.putString("minor", _studentInfo.getMinor());
         editor.putString("status", _studentInfo.getStatus());
 
+
+        editor.apply();
+    }
+
+    public static void StudentInfo(StudentInfo _Info){
+        SharedPreferences pref = activity.getSharedPreferences("ATK_BLE_Preferences",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString("student_email", _Info.getEmail());
 
         editor.apply();
     }

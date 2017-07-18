@@ -23,7 +23,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "SubjectDB.sqlite";
 
     // any time you make changes to your database objects, you may have to increase the database versdion
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     // the DAO object we use to access the SimpleData table
     private Dao<Subject, Integer> SubjectDao = null;
@@ -54,11 +54,31 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db,ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             List<String> allSql = new ArrayList<String>();
-            switch(oldVersion)
+            /*switch(oldVersion)
             {
                 case 1:
                     //allSql.add("alter table AdData add column `new_col` VARCHAR");
                     //allSql.add("alter table AdData add column `new_col2` VARCHAR");
+
+
+            }*/
+            if(oldVersion<5){
+                try {
+                    SubjectDao.executeRaw("ALTER TABLE `Subject` ADD COLUMN teacher_office STRING;");
+                    SubjectDao.executeRaw("ALTER TABLE `Subject` ADD COLUMN teacher_phone STRING;");
+                    SubjectDao.executeRaw("ALTER TABLE `Subject` ADD COLUMN class_section STRING;");
+                } catch (java.sql.SQLException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            if(oldVersion<6){
+                try {
+                    SubjectDao.executeRaw("ALTER TABLE `Subject` ADD COLUMN lesson_name STRING;");
+                    SubjectDao.executeRaw("ALTER TABLE `Subject` ADD COLUMN credit_unit STRING;");
+                } catch (java.sql.SQLException e) {
+                    e.printStackTrace();
+                }
             }
             for (String sql : allSql) {
                 db.execSQL(sql);

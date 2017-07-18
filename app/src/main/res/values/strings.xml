@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Attendance Taking</string>
+    <string name="app_name">Np Attendance</string>
     <string name="action_registerDevice"> I agree to register this device for my account. </string>
 
     <string name="error_title_login_failed">Login Failed</string>

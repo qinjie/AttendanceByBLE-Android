@@ -85,9 +85,11 @@ public class HistoryByLessonAdapter extends ArrayAdapter<Subject> {
             holder.tvLesson_timeslot.setText(subjectDateTimes.get(position).getStartTime()+" - "+subjectDateTimes.get(position).getEndTime());
             String state= status.get(position);
             if(state.equals("0")){
+
                 holder.imgAttendance_rate.setImageResource(R.drawable.circle_green_32);
             }
             else if(state.equals("-1")){
+                holder.tvAttendance_time.setText("");
                 holder.imgAttendance_rate.setImageResource(R.drawable.circle_red_32);
             }
             else {
