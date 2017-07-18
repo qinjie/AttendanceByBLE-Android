@@ -61,6 +61,9 @@ public class InfoFragment extends android.app.Fragment {
     @BindView(R.id.tvEmail)
     TextView stEmail;
 
+    @BindView(R.id.tvPhone)
+    TextView stPhone;
+
 
 
 
@@ -111,9 +114,9 @@ public class InfoFragment extends android.app.Fragment {
         String infoLogin = pref.getString("isLogin","false");
         if(nameStudent.equals("true") && infoLogin.equals("true")){
             String stname = pref.getString("student_name","");
-            String stacad = pref.getString("student_acad","");
+            final String stacad = pref.getString("student_acad","");
 //            String stEmail = pref.getString("student_email","");
-            stAcad.setText(stacad);
+
             stName.setText(stname);
 
             Bundle arguments = getArguments();
@@ -148,6 +151,9 @@ public class InfoFragment extends android.app.Fragment {
 
                            for (int i = 0; i < timetablelist.size(); i++){
                                stEmail.setText(String.valueOf(timetablelist.get(0).getStudentList().get(0).getEmail()));
+                               stPhone.setText(String.valueOf(timetablelist.get(0).getStudentList().get(0).getPhone_number()));
+                               String acadLevel = String.valueOf(timetablelist.get(0).getStudentList().get(0).getAcad_level());
+                               stAcad.setText(stacad+"\n"+acadLevel);
                                break;
 
                            }

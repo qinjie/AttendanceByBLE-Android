@@ -6,6 +6,8 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -50,6 +52,7 @@ import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static edu.np.ece.attendancetakingapplication.R.id.Record_time;
 import static edu.np.ece.attendancetakingapplication.R.id.tvInfo;
 
 
@@ -67,16 +70,16 @@ public class UserSettingFragment extends Fragment {
 
     private View inflateView;
 
+    Typeface face ;
+
     private List<AttendanceResult> record;
 
     @BindView(R.id.tvModule)
     TextView Module;
 
-    @BindView(R.id.user_profile_name)
-    TextView userName;
 
-    @BindView(R.id.user_profile_short_bio)
-    TextView userBio;
+
+
 
     @BindView(R.id.btnActivateBeacon)
     ImageButton btnActivateBeacon;
@@ -92,6 +95,9 @@ public class UserSettingFragment extends Fragment {
 
     @BindView(tvInfo)
     TextView Info;
+
+    @BindView(Record_time)
+    TextView R_Time;
 
 
     private Handler mHandler;
@@ -168,9 +174,9 @@ public class UserSettingFragment extends Fragment {
 
         if (isLogin.equals("true") && isStudent.equals("true")) {
             String studentName = pref.getString("student_name", "");
-            userName.setText(studentName);
 
-            userBio.setText("Still not take attendance yet for this class");
+
+
 
 
 
@@ -240,6 +246,19 @@ public class UserSettingFragment extends Fragment {
 //                        }
 
                        if(calendar2.getTime().before(calendar1.getTime()) ){
+                           if(m<5){
+                               btnActivateBeacon.setVisibility(View.VISIBLE);
+                               Info.setText("Waiting for\n beacons from another students.");
+                               //  btnActivateBeacon.setChecked(false);
+                               btnActivateBeacon.setEnabled(true);
+                           }
+                           else{
+                               // btnActivateBeacon.setVisibility(View.INVISIBLE);
+                               //btnActivateBeacon.setChecked(false);
+                               btnActivateBeacon.setEnabled(false);
+                               Info.setText("Not yet time \n try again 5 min before class");
+                               btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6_f);
+                           }
 
 
 //                        if(m < 7) {
@@ -281,14 +300,28 @@ public class UserSettingFragment extends Fragment {
                                            for (int i = 0; i<record.size();i++){
                                                String lessonId = record.get(i).getLesson_date().getLesson_id();
                                                String lessonTime = record.get(i).getLesson_date().getLdate();
-                                               if(aID.equals(lessonId)&&aDate.equals(lessonTime)){
-                                                   String record_time = record.get(i).getRecorded_time();
-                                                   Info.setText(record_time);
-                                                   break;
+
+                                               if(aID.equals(lessonId)&&aDate.equals(lessonTime)) {
+                                                   Info.setText("Attendance taken at");
+                                                   Info.setTextSize(25);
+                                                   String record_time = record.get(i).getRecorded_time();;
+                                                   String Status = record.get(i).getStatus();
+                                                   R_Time.setText(record_time);
+                                                   if (Status.equals("0")) {
+                                                        R_Time.setTextColor(R_Time.getResources().getColor(R.color.green));
+
+                                                       break;
+                                                   }
+                                                   else if (Status.equals("-1")){
+                                                        R_Time.setTextColor(Color.RED);
+                                                       break;
+                                                   }
+                                                   else{
+                                                       R_Time.setTextColor(R_Time.getResources().getColor(R.color.md_amber_700));
+                                                       break;
+                                                   }
                                                }
-                                               else{
-                                                   userBio.setText("");
-                                               }
+
 
                                            }
                                        }
@@ -350,18 +383,7 @@ public class UserSettingFragment extends Fragment {
                                     super.onFailure(call, t);
                                 }
                             });*/
-                            if(m<5){
-                                btnActivateBeacon.setVisibility(View.VISIBLE);
-                                Info.setText("Waiting for beacons from another students.");
-                              //  btnActivateBeacon.setChecked(false);
-                                btnActivateBeacon.setEnabled(true);
-                            }
-                            else{
-                               // btnActivateBeacon.setVisibility(View.INVISIBLE);
-                                //btnActivateBeacon.setChecked(false);
-                                btnActivateBeacon.setEnabled(false);
-                                Info.setText("Not yet time \n try again 5 min before class");
-                            }
+
                             break;
 
                         }
@@ -417,7 +439,7 @@ public class UserSettingFragment extends Fragment {
                 for (TimetableResult aSubject_time : BeaconScanActivation.timetableList) {
                     try {
 
-                        btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth_checked);
+                        btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6);
                         //Get the data of current subject for transmitting beacon signal
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
                         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
@@ -488,7 +510,7 @@ public class UserSettingFragment extends Fragment {
                     beaconTransmitter.stopAdvertising();
                     //btnActivateBeacon.setChecked(false);
                     btnActivateBeacon.setEnabled(true);
-                    btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6);
+                    btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth_light);
                     editor.putString("isActivateBeacon", "false");
                     editor.apply();
                 }
@@ -515,7 +537,7 @@ public class UserSettingFragment extends Fragment {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            Info.setText("Broadcasting... \n"+millisUntilFinished / 1000 +" s   ec" );
+            Info.setText("Broadcasting... \n"+millisUntilFinished / 1000 +" sec" );
         }
 
         @Override
@@ -524,4 +546,5 @@ public class UserSettingFragment extends Fragment {
         }
 
     }
+
 }

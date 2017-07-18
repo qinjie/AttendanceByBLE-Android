@@ -37,6 +37,14 @@ public class StudentInfo {
     @Expose
     private UserBeacon beacon;
 
+    @SerializedName("acad_level")
+    @Expose
+    private String acad_level;
+
+    @SerializedName("phone")
+    @Expose
+    private String phone_number;
+
     public StudentInfo() {
     }
 
@@ -68,6 +76,22 @@ public class StudentInfo {
 
     public String getName() {
         return name;
+    }
+
+    public void setAcad_level(String acad_level){
+        this.acad_level = acad_level;
+    }
+
+    public String getAcad_level(){
+        return acad_level;
+    }
+
+    public void setPhone_number(String phone_number){
+        this.phone_number = phone_number;
+    }
+
+    public String getPhone_number(){
+        return phone_number;
     }
 
     public void setName(String name) {
