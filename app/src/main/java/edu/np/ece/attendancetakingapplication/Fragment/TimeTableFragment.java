@@ -2,16 +2,12 @@ package edu.np.ece.attendancetakingapplication.Fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +15,15 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import edu.np.ece.attendancetakingapplication.Adapter.TimetableListAdapter;
 import edu.np.ece.attendancetakingapplication.BeaconScanActivation;
 import edu.np.ece.attendancetakingapplication.DetailsActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
-import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.Lecturer;
 import edu.np.ece.attendancetakingapplication.Model.Lesson;
 import edu.np.ece.attendancetakingapplication.Model.LessonBeacon;
@@ -32,8 +32,6 @@ import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.Model.UserBeacon;
 import edu.np.ece.attendancetakingapplication.Model.Venue;
-import edu.np.ece.attendancetakingapplication.NavigationActivity;
-import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseHelper;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.OrmLite.Student;
 import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
@@ -43,17 +41,11 @@ import edu.np.ece.attendancetakingapplication.R;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerCallBack;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Response;
 
 
-public class TimeTableFragment extends Fragment {
+public class    TimeTableFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
