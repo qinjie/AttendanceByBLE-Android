@@ -129,9 +129,10 @@ public class AttendanceHistoryFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     List<Subject> subjectList= DatabaseManager.getInstance().QueryBuilder("lesson_id",data.get(position).getLesson_date().getLesson_id());
                     List<SubjectDateTime> subjectDateTimeList=subjectList.get(0).getSubject_Datetime();
+
                     Intent intent = new Intent(getActivity(), DetailsActivity.class);
 
-                    intent.putExtra("Catalog",subjectList.get(0).getCatalog_number());
+                    /*intent.putExtra("Catalog",subjectList.get(0).getCatalog_number());
                     intent.putExtra("Area",subjectList.get(0).getSubject_area());
                     //lesson full name + lesson credit
                     intent.putExtra("Group",subjectList.get(0).getClass_section());
@@ -146,8 +147,24 @@ public class AttendanceHistoryFragment extends Fragment {
                     intent.putExtra("Lesson_id",data.get(position).getLesson_date().getLesson_id());
 
                     intent.putExtra("lesson_name",subjectList.get(0).getLesson_name());
-                    intent.putExtra("credit_unit",subjectList.get(0).getCredit_unit());
+                    intent.putExtra("credit_unit",subjectList.get(0).getCredit_unit());*/
 
+                    intent.putExtra("Catalog",data.get(position).getLesson().getCatalog_number());
+                    intent.putExtra("Area",data.get(position).getLesson().getSubject_area());
+                    //lesson full name + lesson credit
+                    intent.putExtra("Group",data.get(position).getLesson().getClass_section());
+                    intent.putExtra("Timestart",data.get(position).getLesson().getStart_time());
+                    intent.putExtra("Timeend",data.get(position).getLesson().getEnd_time());
+                    intent.putExtra("Venue",data.get(position).getLesson().getVenue_id());
+                   /* intent.putExtra("Teacher_name",historicalList.get(position).getLecturer());
+                    intent.putExtra("Teacher_phone",subjectList.get(0).getTeacher_phone());
+                    intent.putExtra("Teacher_mail",subjectList.get(0).getTeacher_email());
+                    intent.putExtra("Teacher_venue",subjectList.get(0).getTeacher_office());*/
+                    intent.putExtra("Lesson_date",data.get(position).getLesson_date().getLdate());
+                    intent.putExtra("Lesson_id",data.get(position).getLesson_date().getLesson_id());
+
+                    intent.putExtra("lesson_name",data.get(position).getLesson().getLesson_name());
+                    intent.putExtra("credit_unit",data.get(position).getLesson().getCredit_unit());
 
                     startActivity(intent);
                     Toast.makeText(getActivity(),data.get(position).getLesson_date().getLesson_id(),Toast.LENGTH_SHORT).show();

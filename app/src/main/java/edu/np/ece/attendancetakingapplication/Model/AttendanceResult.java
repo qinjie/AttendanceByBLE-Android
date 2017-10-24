@@ -40,6 +40,19 @@ public class AttendanceResult {
     @Expose
     private String lecturer;
 
+    @SerializedName("lesson")
+    @Expose
+    private Lesson lesson;
+
+
+    public Lesson getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(Lesson lesson) {
+        this.lesson = lesson;
+    }
+
     public String getId() {
         return id;
     }
