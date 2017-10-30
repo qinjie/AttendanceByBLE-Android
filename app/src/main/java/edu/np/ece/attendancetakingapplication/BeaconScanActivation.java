@@ -38,7 +38,6 @@ import java.util.Random;
 
 import edu.np.ece.attendancetakingapplication.JobScheduler.BeaconJobScheduler;
 import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
-import edu.np.ece.attendancetakingapplication.Model.StudentInfo;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
@@ -110,12 +109,15 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                     final String auCode = pref.getString("authorizationCode", null);
                     final String studentId = pref.getString("student_id", null);
 
-                    String[] studentId_lessonDateId = region.getUniqueId().split(";");
-                    if (studentId_lessonDateId.length > 0) {
+                    //String[] studentId_lessonDateId = region.getUniqueId().split(";");
+                    String[] lecturerId_lessonDateId = region.getUniqueId().split(";");
+                    //if (studentId_lessonDateId.length > 0) {
+                    if(lecturerId_lessonDateId.length>0){
                         //Get data of detected student
-                        String detectedStudentId = studentId_lessonDateId[0];
-                        String lessonDateId = studentId_lessonDateId[1];
-
+                        //String detectedStudentId = studentId_lessonDateId[0];
+                        //String lessonDateId = studentId_lessonDateId[1];
+                        String detectedLecturerId = lecturerId_lessonDateId[0];
+                        String lessonDateId = lecturerId_lessonDateId[1];
                         if (timetableList != null) {
                             JsonParser parser = new JsonParser();
                             JsonObject obj = parser.parse("{" +
@@ -124,14 +126,18 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     "{" +
                                     "\"lesson_date_id\":\"" + lessonDateId + "\"," +
                                     "\"student_id_1\":\"" + studentId + "\"," +
-                                    "\"student_id_2\":\"" + detectedStudentId + "\"" +
+                                    "\"lecturer_id\":\"" + detectedLecturerId + "\"" +
                                     "}" +
                                     "]" +
                                     "}").getAsJsonObject();
-
+                          /*  JsonObject obj = new JsonObject();
+                            obj.addProperty("lesson_date_id",lessonDateId);
+                            obj.addProperty("lecturer_id",detectedLecturerId);
+                            obj.addProperty("student_id",studentId);
+*/
 
                             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
-                            Call<String> call = client.takeAttendance(obj);
+                            Call<String> call = client.createLecturerAttendance(obj);
                             call.enqueue(new ServerCallBack<String>() {
                                 @Override
                                 public void onResponse(Call<String> call, Response<String> response) {
@@ -341,7 +347,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                             }
 
                                             //adding students beacon region to be monitored
-                                            for (StudentInfo aStudent : aSubject_time.getStudentList()) {
+/*                                            for (StudentInfo aStudent : aSubject_time.getStudentList()) {
                                                 if (!aStudent.getBeacon().getMajor().equals("")) {
                                                     String studentMajor = aStudent.getBeacon().getMajor();
                                                     String studentMinor = aStudent.getBeacon().getMinor();
@@ -353,7 +359,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                                         regionList.add(region);
                                                     }
                                                 }
-                                            }
+                                            }*/
 
                                         }
 
