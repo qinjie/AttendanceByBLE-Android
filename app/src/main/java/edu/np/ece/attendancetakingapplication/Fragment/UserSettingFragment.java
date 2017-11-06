@@ -245,9 +245,13 @@ public class UserSettingFragment extends Fragment {
 //                        }
 
                        if(calendar2.getTime().before(calendar1.getTime()) ){
-                           if(m<5){
+                           if(m<0||m==0){
                                btnActivateBeacon.setVisibility(View.VISIBLE);
+<<<<<<< HEAD
                                Info.setText("Waiting for\n beacons from lecturer");
+=======
+                               Info.setText("Waiting for\n beacons from classmates.");
+>>>>>>> refs/remotes/origin/miya
                                //  btnActivateBeacon.setChecked(false);
                                btnActivateBeacon.setEnabled(true);
                            }
@@ -255,7 +259,7 @@ public class UserSettingFragment extends Fragment {
                                // btnActivateBeacon.setVisibility(View.INVISIBLE);
                                //btnActivateBeacon.setChecked(false);
                                btnActivateBeacon.setEnabled(false);
-                               Info.setText("Not yet time \n try again 5 min before class");
+                               Info.setText("Not yet time \n try again at class time");
                                btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6_f);
                            }
 
@@ -301,7 +305,7 @@ public class UserSettingFragment extends Fragment {
                                                String lessonTime = record.get(i).getLesson_date().getLdate();
 
                                                if(aID.equals(lessonId)&&aDate.equals(lessonTime)) {
-                                                   Info.setText("Attendance taken at");
+                                                   Info.setText("Attendance Taken At");
                                                    Info.setTextSize(25);
                                                    String record_time = record.get(i).getRecorded_time();;
                                                    String Status = record.get(i).getStatus();

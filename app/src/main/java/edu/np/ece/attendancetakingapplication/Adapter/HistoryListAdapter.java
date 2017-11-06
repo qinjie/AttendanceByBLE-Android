@@ -123,12 +123,13 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
 
         try {
             AttendanceResult subject = data.get(position);
-
+/*
             String lessonId =subject.getLesson_date().getLesson_id();
             List<Subject> listSubject=new ArrayList<>();
             listSubject = DatabaseManager.getInstance().QueryBuilder("lesson_id",lessonId);
             List<SubjectDateTime> subjectDateTimeList=new ArrayList<>();
-            subjectDateTimeList=listSubject.get(0).getSubject_Datetime();
+            subjectDateTimeList=listSubject.get(0).getSubject_Datetime();*/
+
             switch (itemType) {
                 //Put data into layout for display weekday
                 case Preferences.LIST_ITEM_TYPE_1:
@@ -140,6 +141,14 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
 
                 //Put data into layout for display Subject
                 case Preferences.LIST_ITEM_TYPE_2:
+
+                    subjectHolder.tvStartTime.setText(subject.getLesson().getStart_time());
+                    subjectHolder.tvEndTime.setText(subject.getLesson().getEnd_time());
+                    subjectHolder.tvSubjectArea.setText(subject.getLesson().getSubject_area()+" "+subject.getLesson().getCatalog_number());
+                    subjectHolder.tvAttendance.setText(subject.getRecorded_time());
+                    subjectHolder.tvClass.setText(subject.getLesson().getClass_section());
+
+/*
                     subjectHolder.tvStartTime.setText(subjectDateTimeList.get(0).getStartTime());
                     subjectHolder.tvEndTime.setText(subjectDateTimeList.get(0).getEndTime());
                     subjectHolder.tvSubjectArea.setText(listSubject.get(0).getSubject_area() + " "
@@ -147,6 +156,7 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
 
                     subjectHolder.tvAttendance.setText(subject.getRecorded_time());
                     subjectHolder.tvClass.setText(listSubject.get(0).getClass_section());
+                    */
                     String status= subject.getStatus();
                     if(status.equals("0")){
 

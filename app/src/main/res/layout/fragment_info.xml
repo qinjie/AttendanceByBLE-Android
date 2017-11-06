@@ -18,31 +18,35 @@
                 android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginLeft="20dp"
 
                 android:layout_marginTop="20dp"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:typeface="serif" />
+                android:textColor="@color/md_black_1000"
+                android:textSize="23sp" />
 
             <TextView
                 android:id="@+id/tvEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvName"
-                android:layout_marginLeft="85dp"
+                android:layout_marginLeft="20dp"
+
                 android:layout_marginTop="10dp"
-                android:textSize="15sp"
-                android:typeface="serif" />
+                android:textColor="@color/md_grey_600"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvEmail"
-                android:layout_marginLeft="85dp"
+
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:textSize="15sp"
-                android:typeface="serif" />
+                android:textColor="@color/md_grey_600"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/adcd"
@@ -52,20 +56,21 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
                 android:text="Acad"
-                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textColor="@color/md_black_1000"
+
                 android:textSize="14sp"
-                android:typeface="serif" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvAcad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/adcd"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="30dp"
                 android:layout_toEndOf="@+id/tvAd"
-                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textColor="@color/md_black_1000"
 
-                android:textSize="15sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -76,16 +81,17 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="50dp"
                 android:text="Advisor"
-                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textColor="@color/md_black_1000"
+
                 android:textSize="14sp"
-                android:typeface="serif" />
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:id="@+id/advsiorlayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/tvAd"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="30dp"
                 android:layout_toEndOf="@+id/tvAd">
 
                 <TextView
@@ -93,9 +99,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Heng Kai Xin"
-                    android:textAppearance="@android:style/TextAppearance.Holo"
-                    android:textSize="14sp"
-                    android:typeface="serif" />
+
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tvAdvisorPhone"
@@ -105,9 +110,8 @@
                     android:layout_marginTop="10dp"
                     android:autoLink="all"
                     android:text="64607123"
-                    android:textAppearance="@android:style/TextAppearance.Holo"
-                    android:textSize="14sp"
-                    android:typeface="serif" />
+
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tvAdvisorEmail"
@@ -117,9 +121,8 @@
                     android:layout_marginTop="10dp"
                     android:autoLink="all"
                     android:text="hkx@np.edu.sg"
-                    android:textAppearance="@android:style/TextAppearance.Holo"
-                    android:textSize="14sp"
-                    android:typeface="serif" />
+
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tvLocation"
@@ -128,9 +131,8 @@
                     android:layout_below="@+id/tvAdvisorEmail"
                     android:layout_marginTop="10dp"
                     android:text="BLK 7 Level 3"
-                    android:textAppearance="@android:style/TextAppearance.Holo"
-                    android:textSize="14sp"
-                    android:typeface="serif" />
+
+                    android:textSize="15sp" />
             </RelativeLayout>
 
             <TextView
@@ -138,6 +140,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/advsiorlayout"
+
                 android:layout_marginTop="220dp"
                 android:background="@color/md_dark_dividers"
                 android:clickable="true"
@@ -145,6 +148,15 @@
                 android:textAppearance="@android:style/TextAppearance.Holo"
                 android:textSize="23sp"
                 android:typeface="serif" />
+
+                <!--android:layout_marginTop="110dp"-->
+                <!--android:background="@drawable/item"-->
+                <!--android:clickable="true"-->
+                <!--android:text="Change Password"-->
+                <!--android:textColor="@color/md_black_1000"-->
+
+                <!--android:textSize="23sp" />-->
+
 
             <TextView
                 android:id="@+id/btSignout"
@@ -158,6 +170,14 @@
                 android:textAppearance="@android:style/TextAppearance.Holo"
                 android:textSize="23sp"
                 android:typeface="serif" />
+<!--=======-->
+                <!--android:background="@drawable/item"-->
+                <!--android:clickable="true"-->
+                <!--android:text="Sign Out"-->
+
+                <!--android:textColor="@color/md_black_1000"-->
+                <!--android:textSize="23sp" />-->
+<!--&gt;>>>>>> refs/remotes/origin/miya-->
         </RelativeLayout>
     </ScrollView>
 

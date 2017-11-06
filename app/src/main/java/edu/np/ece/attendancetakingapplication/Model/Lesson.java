@@ -60,6 +60,17 @@ public class Lesson {
     @Expose
     private String credit_unit;
 
+    @SerializedName("venue_id")
+    @Expose
+    private String venue_id;
+
+    public String getVenue_id() {
+        return venue_id;
+    }
+
+    public void setVenue_id(String venue_id) {
+        this.venue_id = venue_id;
+    }
 
     public String getModule_id() {
         return module_id;

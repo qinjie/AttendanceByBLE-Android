@@ -125,7 +125,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     "[" +
                                     "{" +
                                     "\"lesson_date_id\":\"" + lessonDateId + "\"," +
-                                    "\"student_id_1\":\"" + studentId + "\"," +
+                                    "\"student_id\":\"" + studentId + "\"," +
                                     "\"lecturer_id\":\"" + detectedLecturerId + "\"" +
                                     "}" +
                                     "]" +
