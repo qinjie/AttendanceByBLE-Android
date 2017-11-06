@@ -248,7 +248,7 @@ public class UserSettingFragment extends Fragment {
                        if(calendar2.getTime().before(calendar1.getTime()) ){
                            if(m<0||m==0){
                                btnActivateBeacon.setVisibility(View.VISIBLE);
-                               Info.setText("Waiting for\n beacons from classmates.");
+                               Info.setText("Waiting for\n beacons from lecturer");
                                //  btnActivateBeacon.setChecked(false);
                                btnActivateBeacon.setEnabled(true);
                            }
