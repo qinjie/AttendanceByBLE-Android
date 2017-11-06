@@ -38,7 +38,20 @@ public class AttendanceResult {
 
     @SerializedName("lecturer")
     @Expose
-    private String lecturer;
+    private Lecturer lecturer;
+
+    @SerializedName("lesson")
+    @Expose
+    private Lesson lesson;
+
+
+    public Lesson getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(Lesson lesson) {
+        this.lesson = lesson;
+    }
 
     public String getId() {
         return id;
@@ -79,16 +92,11 @@ public class AttendanceResult {
         this.lesson_date=lesson_date;
     }
 
-    public String getLecturer(){return lecturer;}
-    public void setLecturer(String lecturer){
-        this.lecturer=lecturer;
+    public Lecturer getLecturer() {
+        return lecturer;
     }
 
-
-
-
-
-
-
-
+    public void setLecturer(Lecturer lecturer) {
+        this.lecturer = lecturer;
+    }
 }
