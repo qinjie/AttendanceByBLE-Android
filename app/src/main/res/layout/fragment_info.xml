@@ -140,13 +140,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/advsiorlayout"
-                android:layout_marginTop="110dp"
-                android:background="@drawable/item"
+                android:layout_marginTop="220dp"
+                android:background="@color/md_dark_dividers"
                 android:clickable="true"
                 android:text="Change Password"
-                android:textColor="@color/md_black_1000"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textSize="23sp"
+                android:typeface="serif" />
 
-                android:textSize="23sp" />
 
             <TextView
                 android:id="@+id/btSignout"
@@ -154,12 +155,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/btChange_password"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/item"
+                android:background="@color/md_dark_dividers"
                 android:clickable="true"
                 android:text="Sign Out"
+                android:textAppearance="@android:style/TextAppearance.Holo"
+                android:textSize="23sp"
+                android:typeface="serif" />
 
-                android:textColor="@color/md_black_1000"
-                android:textSize="23sp" />
         </RelativeLayout>
     </ScrollView>
 

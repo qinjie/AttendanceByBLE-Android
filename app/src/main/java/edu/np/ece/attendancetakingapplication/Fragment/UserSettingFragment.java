@@ -29,7 +29,6 @@ import org.altbeacon.beacon.BeaconTransmitter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -248,7 +247,9 @@ public class UserSettingFragment extends Fragment {
                        if(calendar2.getTime().before(calendar1.getTime()) ){
                            if(m<0||m==0){
                                btnActivateBeacon.setVisibility(View.VISIBLE);
-                               Info.setText("Waiting for\n beacons from classmates.");
+
+                               Info.setText("Waiting for\n beacons from lecturer");
+
                                //  btnActivateBeacon.setChecked(false);
                                btnActivateBeacon.setEnabled(true);
                            }
@@ -276,7 +277,7 @@ public class UserSettingFragment extends Fragment {
                                     "}").getAsJsonObject();
 
                             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
-                           Call<List<AttendanceResult>> call = client.getAttendanceReports();
+                           Call<List<AttendanceResult>> call = client.Attendance();
                            call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
                                @Override
                                public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
@@ -459,9 +460,9 @@ public class UserSettingFragment extends Fragment {
 
                             //Estimote company code
                             //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
-                            beaconBuilder.setManufacturer(0x015D);
+                            beaconBuilder.setManufacturer(0x004C);
                             beaconBuilder.setTxPower(-59);
-                            beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
+                          //  beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
                             BeaconParser beaconParser = new BeaconParser()
                                     .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
                             beaconTransmitter = new BeaconTransmitter(getActivity().getBaseContext(), beaconParser);

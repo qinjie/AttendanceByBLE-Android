@@ -10,8 +10,6 @@ import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.BeaconTransmitter;
 
-import java.util.Arrays;
-
 import edu.np.ece.attendancetakingapplication.Preferences;
 
 /**
@@ -59,9 +57,9 @@ public class BeaconJobScheduler extends JobService {
 
                 //Estimote company code
                 //read more: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
-                beaconBuilder.setManufacturer(0x015D);
+                beaconBuilder.setManufacturer(0x004C);
                 beaconBuilder.setTxPower(-59);
-                beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
+                //beaconBuilder.setDataFields(Arrays.asList(new Long[]{0l}));
                 BeaconParser beaconParser = new BeaconParser()
                         .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24");
                 final BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
