@@ -1,11 +1,9 @@
 package edu.np.ece.attendancetakingapplication.Fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -13,18 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import edu.np.ece.attendancetakingapplication.Adapter.HistoryByLessonAdapter;
-import edu.np.ece.attendancetakingapplication.Adapter.HistoryListAdapter;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
 import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
-import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
-import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
 import edu.np.ece.attendancetakingapplication.NavigationActivity;
 import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
 import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
@@ -148,7 +141,7 @@ public class HistoryByLessonFragment extends Fragment {
 
             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
 
-            Call<List<AttendanceResult>> call = client.getAttendanceReports();
+            Call<List<AttendanceResult>> call = client.Attendance();
             call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
                 @Override
                 public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {

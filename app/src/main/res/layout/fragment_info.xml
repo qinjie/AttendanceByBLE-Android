@@ -149,16 +149,6 @@
                 android:typeface="serif" />
 
 
-
-
-               <!-- android:layout_marginTop="110dp"
-                android:background="@drawable/item"
-                android:clickable="true"
-                android:text="Change Password"
-                android:textColor="@color/md_black_1000"
-
-                android:textSize="23sp" />-->
-
             <TextView
                 android:id="@+id/btSignout"
                 android:layout_width="match_parent"
@@ -172,15 +162,6 @@
                 android:textSize="23sp"
                 android:typeface="serif" />
 
-
-
-             <!--
-                android:background="@drawable/item"
-                android:clickable="true"
-                android:text="Sign Out"
-
-                android:textColor="@color/md_black_1000"
-                android:textSize="23sp" />-->
         </RelativeLayout>
     </ScrollView>
 

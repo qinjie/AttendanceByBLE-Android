@@ -4,16 +4,15 @@ package edu.np.ece.attendancetakingapplication.Retrofit;
  * Created by Sonata on 10/26/2016.
  */
 
+import com.google.gson.JsonObject;
+
+import java.util.List;
+
 import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
 import edu.np.ece.attendancetakingapplication.Model.LoginInfo;
 import edu.np.ece.attendancetakingapplication.Model.LoginResult;
 import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
-
-import com.google.gson.JsonObject;
-
-import java.util.List;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -36,7 +35,7 @@ public interface ServerApi {
     Call<ResponseBody> logout();
 
     @GET("attendance")
-    Call<List<AttendanceResult>> getAttendanceReports();
+    Call<List<AttendanceResult>> Attendance();
 
     @POST("user/change-password")
     Call<ResponseBody> changePassword(@Body JsonObject toUp);
@@ -58,5 +57,8 @@ public interface ServerApi {
 
     @POST("timetable/get-status")
     Call<String> checkAttendanceStatus(@Body JsonObject obj);
+
+    @POST("beacon-attendance-lecturer/student-attendance")
+    Call<String> createLecturerAttendance(@Body JsonObject obj);
 
 }

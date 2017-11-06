@@ -15,24 +15,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import edu.np.ece.attendancetakingapplication.DetailsActivity;
-import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
-import edu.np.ece.attendancetakingapplication.Model.TimetableResult;
-import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
-import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
-import edu.np.ece.attendancetakingapplication.OrmLite.SubjectDateTime;
-import edu.np.ece.attendancetakingapplication.R;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import edu.np.ece.attendancetakingapplication.Adapter.HistoryListAdapter;
+import edu.np.ece.attendancetakingapplication.DetailsActivity;
 import edu.np.ece.attendancetakingapplication.LogInActivity;
-import edu.np.ece.attendancetakingapplication.Model.HistoricalResult;
+import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
 import edu.np.ece.attendancetakingapplication.NavigationActivity;
+import edu.np.ece.attendancetakingapplication.OrmLite.DatabaseManager;
+import edu.np.ece.attendancetakingapplication.OrmLite.Subject;
+import edu.np.ece.attendancetakingapplication.OrmLite.SubjectDateTime;
 import edu.np.ece.attendancetakingapplication.Preferences;
+import edu.np.ece.attendancetakingapplication.R;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerApi;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServerCallBack;
 import edu.np.ece.attendancetakingapplication.Retrofit.ServiceGenerator;
@@ -185,7 +182,7 @@ public class AttendanceHistoryFragment extends Fragment {
 
             ServerApi client = ServiceGenerator.createService(ServerApi.class, auCode);
 
-            Call<List<AttendanceResult>> call = client.getAttendanceReports();
+            Call<List<AttendanceResult>> call = client.Attendance();
             call.enqueue(new ServerCallBack<List<AttendanceResult>>() {
                 @Override
                 public void onResponse(Call<List<AttendanceResult>> call, Response<List<AttendanceResult>> response) {
