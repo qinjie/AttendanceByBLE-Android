@@ -9,9 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import edu.np.ece.attendancetakingapplication.Model.AttendanceResult;
@@ -145,18 +148,25 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                     subjectHolder.tvStartTime.setText(subject.getLesson().getStart_time());
                     subjectHolder.tvEndTime.setText(subject.getLesson().getEnd_time());
                     subjectHolder.tvSubjectArea.setText(subject.getLesson().getSubject_area()+" "+subject.getLesson().getCatalog_number());
-                    subjectHolder.tvAttendance.setText(subject.getRecorded_time());
+
+                    String aTime= subject.getLesson_date().getLdate()+" "+subject.getRecorded_time();
+                    String sTime=subject.getLesson_date().getLdate()+" "+subject.getLesson().getStart_time();
+
+                    Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(aTime);
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.setTime(time);
+
+                    Date time2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(sTime);
+                    Calendar calendar3 = Calendar.getInstance();
+                    calendar3.setTime(time2);
+                    long diff =time.getTime() - time2.getTime();
+                    long min = diff/(1000*60);
+                    String strmin=String.valueOf(min);
+
+
+                    subjectHolder.tvAttendance.setText(strmin+" mins late");
                     subjectHolder.tvClass.setText(subject.getLesson().getClass_section());
 
-/*
-                    subjectHolder.tvStartTime.setText(subjectDateTimeList.get(0).getStartTime());
-                    subjectHolder.tvEndTime.setText(subjectDateTimeList.get(0).getEndTime());
-                    subjectHolder.tvSubjectArea.setText(listSubject.get(0).getSubject_area() + " "
-                            + listSubject.get(0).getCatalog_number());
-
-                    subjectHolder.tvAttendance.setText(subject.getRecorded_time());
-                    subjectHolder.tvClass.setText(listSubject.get(0).getClass_section());
-                    */
                     String status= subject.getStatus();
                     if(status.equals("0")){
 

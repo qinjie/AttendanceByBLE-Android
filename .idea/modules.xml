@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AttendanceByBLE-Android.iml" filepath="$PROJECT_DIR$/AttendanceByBLE-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/AttendanceByBLE-Android-Stud.iml" filepath="$PROJECT_DIR$/AttendanceByBLE-Android-Stud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Student_new.iml" filepath="$PROJECT_DIR$/Student_new.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
