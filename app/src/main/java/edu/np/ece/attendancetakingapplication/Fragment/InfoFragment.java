@@ -113,7 +113,7 @@ public class InfoFragment extends android.app.Fragment {
         String nameStudent = pref.getString("isStudent","true");
         String infoLogin = pref.getString("isLogin","false");
         if(nameStudent.equals("true") && infoLogin.equals("true")){
-            String stname = pref.getString("student_name","");
+            final String stname = pref.getString("student_name","");
             final String stacad = pref.getString("student_acad","");
 //            String stEmail = pref.getString("student_email","");
 
@@ -150,11 +150,17 @@ public class InfoFragment extends android.app.Fragment {
                        else{
 
                            for (int i = 0; i < timetablelist.size(); i++){
-                               stEmail.setText(String.valueOf(timetablelist.get(0).getStudentList().get(0).getEmail()));
-                               stPhone.setText(String.valueOf(timetablelist.get(0).getStudentList().get(0).getPhone_number()));
-                               String acadLevel = String.valueOf(timetablelist.get(0).getStudentList().get(0).getAcad_level());
-                               stAcad.setText(stacad+"\n"+acadLevel);
-                               break;
+                               for(int e=0;e<timetablelist.get(0).getStudentList().size();e++){
+                                   if(stname.compareToIgnoreCase(timetablelist.get(0).getStudentList().get(e).getName())==0){
+                                       stEmail.setText(String.valueOf(timetablelist.get(0).getStudentList().get(e).getEmail()));
+                                       stPhone.setText(String.valueOf(timetablelist.get(0).getStudentList().get(e).getPhone_number()));
+                                       String acadLevel = String.valueOf(timetablelist.get(0).getStudentList().get(e).getAcad_level());
+                                       stAcad.setText(stacad+"\n"+acadLevel);
+                                       break;
+                                   }
+
+                               }
+
 
                            }
                        }
