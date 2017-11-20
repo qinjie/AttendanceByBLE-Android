@@ -167,15 +167,6 @@ public class HistoryListAdapter extends ArrayAdapter<AttendanceResult> {
                     subjectHolder.tvAttendance.setText(strmin+" mins late");
                     subjectHolder.tvClass.setText(subject.getLesson().getClass_section());
 
-/*
-                    subjectHolder.tvStartTime.setText(subjectDateTimeList.get(0).getStartTime());
-                    subjectHolder.tvEndTime.setText(subjectDateTimeList.get(0).getEndTime());
-                    subjectHolder.tvSubjectArea.setText(listSubject.get(0).getSubject_area() + " "
-                            + listSubject.get(0).getCatalog_number());
-
-                    subjectHolder.tvAttendance.setText(subject.getRecorded_time());
-                    subjectHolder.tvClass.setText(listSubject.get(0).getClass_section());
-                    */
                     String status= subject.getStatus();
                     if(status.equals("0")){
 

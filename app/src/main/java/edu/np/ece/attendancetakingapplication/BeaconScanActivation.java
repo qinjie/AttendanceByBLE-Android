@@ -77,6 +77,9 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+        org.apache.log4j.Logger log = Log4jHelper.getLogger("BeaconScan");
+        Date time3 = new Date();
+        log.info("Open time: "+ time3.toString());
 
 
 
@@ -98,6 +101,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
 
     @Override
     public void didDetermineStateForRegion(int status, Region region) {
+        final org.apache.log4j.Logger log = Log4jHelper.getLogger("BeaconScan");
         final SharedPreferences pref = getSharedPreferences(Preferences.SharedPreferencesTag, Preferences.SharedPreferences_ModeTag);
 
         String isLogin = pref.getString("isLogin", "false");
@@ -118,6 +122,11 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                         //String lessonDateId = studentId_lessonDateId[1];
                         String detectedLecturerId = lecturerId_lessonDateId[0];
                         String lessonDateId = lecturerId_lessonDateId[1];
+                        log.info("monitor: detected beacon");
+                        log.info("LecturerID: "+ detectedLecturerId);
+                        log.info("LessonDateID: "+lessonDateId);
+                        Date time1 = new Date();
+                        log.info("monitored time: "+ time1.toString() );
                         if (timetableList != null) {
                             JsonParser parser = new JsonParser();
                             JsonObject obj = parser.parse("{" +
@@ -125,7 +134,7 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                                     "[" +
                                     "{" +
                                     "\"lesson_date_id\":\"" + lessonDateId + "\"," +
-                                    "\"student_id_1\":\"" + studentId + "\"," +
+                                    "\"student_id\":\"" + studentId + "\"," +
                                     "\"lecturer_id\":\"" + detectedLecturerId + "\"" +
                                     "}" +
                                     "]" +
@@ -141,6 +150,8 @@ public class BeaconScanActivation extends Application implements BootstrapNotifi
                             call.enqueue(new ServerCallBack<String>() {
                                 @Override
                                 public void onResponse(Call<String> call, Response<String> response) {
+                                    Date time2 = new Date();
+                                    log.info("taken time: " +time2.toString());
                                     if (response.body().equals("Attendance taking successfully")) {
 
                                         Toast.makeText(getBaseContext(), "Taking attendance success", Toast.LENGTH_SHORT).show();

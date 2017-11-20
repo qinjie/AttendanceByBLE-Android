@@ -68,6 +68,7 @@ public class UserSettingFragment extends Fragment {
     private Activity context;
 
     private View inflateView;
+    TextView mTextView;
 
     Typeface face ;
 
@@ -104,6 +105,7 @@ public class UserSettingFragment extends Fragment {
     public static Beacon.Builder beaconBuilder;
     private String aID;
     private String aDate;
+    private String aLID;
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -159,6 +161,8 @@ public class UserSettingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         inflateView = inflater.inflate(R.layout.fragment_user_setting, container, false);
 
@@ -186,6 +190,7 @@ public class UserSettingFragment extends Fragment {
                         //Get the data of current subject to display attendance status
                         String aTime = aSubject_time.getLesson_date().getLdate() + " " + aSubject_time.getLesson().getEnd_time();
                          aID = aSubject_time.getLesson_id();
+                        aLID = aSubject_time.getLesson_date().getId();
                         List<Subject> subjectList = DatabaseManager.getInstance().QueryBuilder("lesson_id",aID);
                         List<SubjectDateTime> subjectDateTimeList = subjectList.get(0).getSubject_Datetime();
 
@@ -304,21 +309,28 @@ public class UserSettingFragment extends Fragment {
 
                                                if(aID.equals(lessonId)&&aDate.equals(lessonTime)) {
                                                    Info.setText("Attendance Taken At");
+                                                   Info.setTextColor(Info.getResources().getColor(R.color.md_green_800));
                                                    Info.setTextSize(25);
                                                    String record_time = record.get(i).getRecorded_time();;
                                                    String Status = record.get(i).getStatus();
                                                    R_Time.setText(record_time);
                                                    if (Status.equals("0")) {
                                                         R_Time.setTextColor(R_Time.getResources().getColor(R.color.green));
+                                                       btnActivateBeacon.setEnabled(false);
+                                                       btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6_f);
 
                                                        break;
                                                    }
                                                    else if (Status.equals("-1")){
                                                         R_Time.setTextColor(Color.RED);
+                                                        R_Time.setText("");
+                                                        Info.setText("Waiting for\n beacons from lecturer");
                                                        break;
                                                    }
                                                    else{
                                                        R_Time.setTextColor(R_Time.getResources().getColor(R.color.md_amber_700));
+                                                       btnActivateBeacon.setEnabled(false);
+                                                       btnActivateBeacon.setBackgroundResource(R.drawable.bluetooth6_f);
                                                        break;
                                                    }
                                                }
@@ -504,6 +516,8 @@ public class UserSettingFragment extends Fragment {
             }, 1000);
 
             //turn off beacon after 10 seconds
+
+
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
