@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
@@ -194,7 +196,33 @@ public class NavigationActivity extends AppCompatActivity{
                     }
                 });
                 builder.show();
+
             }
+        }
+        else{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Gentle Remind:Bluetooth service and location access");
+            builder.setMessage("Please activate bluetooth service and grant location access so this app can detect start taking attendance.");
+            builder.setNegativeButton("Activate Already", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialogInterface, final int i) {
+                    return;
+                }
+            });
+            builder.setPositiveButton("Activate Now",
+
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialogInterface, final int i) {
+
+                            Intent intent=new Intent(Settings.ACTION_SETTINGS);
+                            startActivity(intent);
+                        }
+                    }
+
+            );
+
+            builder.create().show();
         }
     }
 
